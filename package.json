@@ -1,0 +1,23 @@
+{
+  "name": "plutus-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "istanbul cover --reporter=html ./node_modules/mocha/bin/_mocha -- -R spec --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitorDaynno/Plutus-Server.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Vítor Daynno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VitorDaynno/Plutus-Server/issues"
+  },
+  "homepage": "https://github.com/VitorDaynno/Plutus-Server#readme"
+}
