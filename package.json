@@ -1,5 +1,5 @@
 {
-  "name": "plutus-server",
+  "name": "plutus-service",
   "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VitorDaynno/Plutus-Server.git"
+    "url": "git+https://github.com/VitorDaynno/Plutus-Service.git"
   },
   "keywords": [
     "node"
@@ -17,7 +17,14 @@
   "author": "Vítor Daynno",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/VitorDaynno/Plutus-Server/issues"
+    "url": "https://github.com/VitorDaynno/Plutus-Service/issues"
   },
-  "homepage": "https://github.com/VitorDaynno/Plutus-Server#readme"
+  "homepage": "https://github.com/VitorDaynno/Plutus-Service#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "4.1.2",
+    "istanbul": "0.4.5",
+    "mocha": "5.2.0",
+    "supertest": "3.1.0"
+  }
 }
