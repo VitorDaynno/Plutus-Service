@@ -20,7 +20,14 @@
     "url": "https://github.com/VitorDaynno/Plutus-Service/issues"
   },
   "homepage": "https://github.com/VitorDaynno/Plutus-Service#readme",
-  "dependencies": {},
+  "dependencies": {
+    "express": "4.16.3",
+    "express-load": "1.1.16",
+    "method-override": "3.0.0",
+    "mongoose": "5.2.7",
+    "promise": "8.0.1",
+    "winston": "3.0.0"
+  },
   "devDependencies": {
     "chai": "4.1.2",
     "istanbul": "0.4.5",

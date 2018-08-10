@@ -1,6 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
-var TransactionBO = require('../../src/business/transactionBO.js');
+var TransactionBO = require('../../../src/business/transactionBO');
 
 describe('TransactionBO', function(){
 

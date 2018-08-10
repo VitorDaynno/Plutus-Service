@@ -1,6 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
-var UserBO = require('../../src/business/userBO.js');
+var UserBO = require('../../../src/business/userBO.js');
 
 describe('userBO', function(){
 

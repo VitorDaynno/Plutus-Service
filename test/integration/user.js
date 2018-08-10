@@ -6,7 +6,7 @@ describe('users', function(){
   var server;
 
   before(function(){
-    server = require('../../../src/server');
+    server = require('../../src/server');
   });
 
   after(function(){
