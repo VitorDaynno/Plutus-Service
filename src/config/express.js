@@ -21,6 +21,7 @@ module.exports = function () {
     load('controllers', {cwd:'src/api'})
         .then('routes')
         .into(app);
+
     console.log('app');
 
     return app;

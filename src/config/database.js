@@ -1,5 +1,5 @@
 var mongoose    = require('mongoose');
-var logger      = require('winston');
+var logger      = require('./logger')();
 var settings    = require('./settings');
 var Promise     = require('promise');
 
