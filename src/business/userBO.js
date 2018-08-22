@@ -5,12 +5,22 @@ module.exports = function(dependencies) {
 
     return {
         dependencies:dependencies,
-        auth: function(email, password){
+
+        auth: function(body){
             return new Promise(function(resolve, reject){
-                logger.info('');
-                dao.find(email, password)
+                if (!body.email || !body.password){
+                    logger.error('[UserBO] An error occurred because email or password not exist');
+                    reject({code:422, message:'Email and password are required'});
+                }
+
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        logger.info('[UserBO] Get user by email ', body.email);
+                        return dao.getAll({email: body.email, password: body.password});
+                    })
                     .then(function(user){
-                        resolve(user);
+                        resolve();
                     });
             });
         }

@@ -1,10 +1,8 @@
 var logger = require('../../config/logger')();
-var UserBO = require('../../business/userBO');
-var UserDAO = require('../../dao/userDAO');
+var BOFactory = require('../../factories/factoryBO');
 
 module.exports = function() {
-    var userDAO = new UserDAO();
-    var business = new UserBO({userDAO: userDAO});
+    var business = BOFactory.getBO('user');
 
     return {
         auth: function(req, res){
@@ -12,6 +10,9 @@ module.exports = function() {
             business.auth(req.body)
                 .then(function(user){
                     res.send(user);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
                 });
         }
     };

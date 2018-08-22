@@ -17,7 +17,7 @@ module.exports = function(){
   });
 
   mongoose.connection.on('error', function(erro) {
-    logger.info('Mongoose! Error : ' + erro);
+    logger.error('Mongoose! Error : ' + erro);
   });
 
   process.on('SIGINT', function() {
