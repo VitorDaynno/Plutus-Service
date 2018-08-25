@@ -6,7 +6,7 @@ module.exports = function() {
 
     return {
         auth: function(req, res){
-            logger.info('Auth a user by email ', req.body.email);
+            logger.info('[User-Controller] Auth a user by email ' + req.body.email);
             business.auth(req.body)
                 .then(function(user){
                     res.send(user);

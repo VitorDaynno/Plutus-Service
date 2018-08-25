@@ -1,8 +1,18 @@
-module.exports = function() {
+var logger = require('../config/logger');
+
+module.exports = function(dependencies) {
+    var user = dependencies.user;
+
     return {
-        getAll: function(){
+        dependencies: dependencies,
+
+        getAll: function(filter){
             return new Promise(function(resolve, reject){
-                resolve();
+                user.find(filter)
+                    .exec()
+                    .then(function(user) {
+                        resolve(user);
+                    });
             });
         }
     };

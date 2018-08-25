@@ -11,17 +11,22 @@ module.exports = function(dependencies) {
                 if (!body.email || !body.password){
                     logger.error('[UserBO] An error occurred because email or password not exist');
                     reject({code:422, message:'Email and password are required'});
-                }
-
-                var chain = Promise.resolve();
-                chain
-                    .then(function(){
-                        logger.info('[UserBO] Get user by email ', body.email);
-                        return dao.getAll({email: body.email, password: body.password});
-                    })
-                    .then(function(user){
-                        resolve();
-                    });
+                } else {
+                    var chain = Promise.resolve();
+                    chain
+                        .then(function(){
+                            logger.info('[UserBO] Get user by email ', body.email);
+                            return dao.getAll({email: body.email, password: body.password});
+                        })
+                        .then(function(user){
+                            if (user){
+                                logger.error('[UserBO] Email or password are incorrect');
+                                reject({code: 403, message: 'Email or password are incorrect'});
+                            } else {
+                                resolve();
+                            };
+                        });
+                };
             });
         }
     };
