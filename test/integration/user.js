@@ -35,7 +35,7 @@ describe('users', function(){
                 .post('/v1/users/auth')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .send({email:'teste@emailteste.com'})
+                .send({email:'test@mailtest.com'})
                 .expect(422);
     });
     it('Should return error with incorrect password', function(){
@@ -43,7 +43,7 @@ describe('users', function(){
                 .post('/v1/users/auth')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .send({email:'teste@emailteste.com', password: '123'})
+                .send({email:'test@mailtest.com', password: '123'})
                 .expect(403);
     });
     it('Should return success with valid credentials', function(){
@@ -51,7 +51,7 @@ describe('users', function(){
                 .post('/v1/users/auth')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .send({email:'teste@emailteste.com', password: '1234'})
+                .send({email:'test@mailtest.com', password: '1234'})
                 .expect(200)
                 .then(function(response){
                     expect(response).contains(token);

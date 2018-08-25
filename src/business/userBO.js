@@ -2,6 +2,7 @@ var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
     var dao = dependencies.userDAO;
+    var jwt = dependencies.jwtHelper;
 
     return {
         dependencies:dependencies,
@@ -15,15 +16,18 @@ module.exports = function(dependencies) {
                     var chain = Promise.resolve();
                     chain
                         .then(function(){
-                            logger.info('[UserBO] Get user by email ', body.email);
+                            logger.info('[UserBO] Get user by email ' + body.email);
                             return dao.getAll({email: body.email, password: body.password});
                         })
                         .then(function(user){
-                            if (user){
-                                logger.error('[UserBO] Email or password are incorrect');
-                                reject({code: 403, message: 'Email or password are incorrect'});
+                            if (user.name){
+                                token = jwt.createToken(user);
+                                console.log(token);
+                                user.token = token;
+                                resolve(user);
                             } else {
-                                resolve();
+                                logger.error('[UserBO] Email or password are incorrect');
+                                reject({code: 401, message: 'Email or password are incorrect'});
                             };
                         });
                 };
