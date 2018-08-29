@@ -81,7 +81,6 @@ describe('userBO', function(){
 
             return userBO.auth({email:'test@mailtest.com', password: '1234'})
                     .then(function(auth){
-                        console.log(auth)
                         expect(getAllStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
                         expect(createTokenStub.callCount).to.be.equals(1);
