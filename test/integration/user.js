@@ -1,6 +1,7 @@
-var request               = require('supertest');
-var chai                  = require('chai');
-var expect                = chai.expect;
+var mongoose = require('mongoose');
+var request  = require('supertest');
+var chai     = require('chai');
+var expect   = chai.expect;
 
 describe('users', function(){
   var server;
@@ -10,6 +11,7 @@ describe('users', function(){
   });
 
   after(function(){
+    mongoose.connection.close();
     server.close();
   });
 
@@ -44,17 +46,19 @@ describe('users', function(){
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .send({email:'test@mailtest.com', password: '123'})
-                .expect(403);
+                .expect(401);
     });
     it('Should return success with valid credentials', function(){
         return request(server)
                 .post('/v1/users/auth')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .send({email:'test@mailtest.com', password: '1234'})
+                .send({email:'admin@plutus.com.br', password: 'admin123'})
                 .expect(200)
                 .then(function(response){
-                    expect(response).contains(token);
+                  expect(response.body.name).to.be.equal('admin');
+                  expect(response.body.email).to.be.equal('admin@plutus.com.br');
+                  expect(response.body.token).to.be.not.equal('');
                 });
     });
   });

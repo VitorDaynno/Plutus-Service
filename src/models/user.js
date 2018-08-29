@@ -19,7 +19,7 @@ module.exports = function () {
         }
     });
 
-    model = model ? model : mongoose.model('User', user);
+    model = model ? model : mongoose.model('Users', user);
 
     return model;
 };

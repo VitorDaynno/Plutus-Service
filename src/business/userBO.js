@@ -3,6 +3,7 @@ var logger = require('../config/logger')();
 module.exports = function(dependencies) {
     var dao = dependencies.userDAO;
     var jwt = dependencies.jwtHelper;
+    var modelHelper = dependencies.modelHelper;
 
     return {
         dependencies:dependencies,
@@ -20,15 +21,25 @@ module.exports = function(dependencies) {
                             return dao.getAll({email: body.email, password: body.password});
                         })
                         .then(function(user){
-                            if (user.name){
-                                token = jwt.createToken(user);
-                                console.log(token);
-                                user.token = token;
-                                resolve(user);
+                            logger.info('[UserBO] The user are returned: ' + JSON.stringify(user));
+                            if (user.length > 0){
+                                return user[0];
                             } else {
                                 logger.error('[UserBO] Email or password are incorrect');
-                                reject({code: 401, message: 'Email or password are incorrect'});
+                                throw {code: 401, message: 'Email or password are incorrect'};
                             };
+                        })
+                        .then(function(user){
+                            return modelHelper.parseUser(user);
+                        })
+                        .then(function(user){
+                            token = jwt.createToken(user);
+                            user.token = token;
+                            resolve(user);
+                        })
+                        .catch(function(error){
+                            logger.error('[UserBO] An error occurred: ', error);
+                            reject(error);
                         });
                 };
             });
