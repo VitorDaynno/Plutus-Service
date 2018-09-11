@@ -4,6 +4,7 @@ module.exports = function(dependencies) {
     var dao = dependencies.userDAO;
     var jwt = dependencies.jwtHelper;
     var modelHelper = dependencies.modelHelper;
+    var cryptoHelper = dependencies.cryptoHelper;
 
     return {
         dependencies:dependencies,
@@ -17,8 +18,12 @@ module.exports = function(dependencies) {
                     var chain = Promise.resolve();
                     chain
                         .then(function(){
+                            return cryptoHelper.encrypt(body.password);
+                        })
+                        .then(function(password){
+                            console.log(password)
                             logger.info('[UserBO] Get user by email ' + body.email);
-                            return dao.getAll({email: body.email, password: body.password});
+                            return dao.getAll({email: body.email, password: password});
                         })
                         .then(function(user){
                             logger.info('[UserBO] The user are returned: ' + JSON.stringify(user));

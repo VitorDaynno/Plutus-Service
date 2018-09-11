@@ -7,5 +7,8 @@ module.exports = {
     jwt: {
         secret: process.env.SECRET || 'secret-key',
         expiresIn: 4000
+    },
+    crypto: {
+        secret: process.env.SECRETKEY || 'secret-key'
     }
 };

@@ -2,6 +2,7 @@ var DAOFactory = require('./factoryDAO');
 var UserBO = require('../business/userBO');
 var JWTHelper = require('../helpers/jwtHelper');
 var ModelHelper = require('../helpers/modelHelper');
+var CryptoHelper = require('../helpers/cryptoHelper');
 var jwtHelper = new JWTHelper();
 
 
@@ -11,7 +12,8 @@ function factory(business){
             return new UserBO({
                 userDAO: DAOFactory.getDAO('user'),
                 jwtHelper: jwtHelper,
-                modelHelper: ModelHelper
+                modelHelper: ModelHelper,
+                cryptoHelper: CryptoHelper
             });
     }
 }

@@ -5,6 +5,7 @@ var UserBO = require('../../../src/business/userBO.js');
 var DAOFactory = require('../../../src/factories/factoryDAO');
 var JWTHelper = require('../../../src/helpers/jwtHelper');
 var ModelHelper = require('../../../src/helpers/modelHelper');
+var CryptoHelper = require('../../../src/helpers/cryptoHelper');
 
 describe('userBO', function(){
     var userDAO = DAOFactory.getDAO('user');
@@ -13,7 +14,8 @@ describe('userBO', function(){
     var userBO = new UserBO({
         userDAO: userDAO,
         jwtHelper: jwtHelper,
-        modelHelper: ModelHelper
+        modelHelper: ModelHelper,
+        cryptoHelper: CryptoHelper
     });
 
     describe('Auth', function(){
@@ -34,39 +36,58 @@ describe('userBO', function(){
                 });
         });
         it('Should return error when user dont exist', function(){
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
+            encryptStub
+                .withArgs('1234')
+                .returns('59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb');
+
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'tests@mailtest.com', password: '1234'})
+                .withArgs({email:'tests@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb'})
                 .returns(Promise.resolve({}));
 
             return userBO.auth({email:'tests@mailtest.com', password: '1234'})
                 .then()
                 .catch(function (error){
                     expect(getAllStub.callCount).to.be.equals(1);
+                    expect(encryptStub.callCount).to.be.equals(1);
                     expect(error.code).to.be.equals(401);
                     expect(error.message).to.be.equals('Email or password are incorrect');
                     getAllStub.restore();
+                    encryptStub.restore();
                 });
         });
         it('Should return error when password is incorrect', function(){
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
+            encryptStub
+                .withArgs('123')
+                .returns('efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19');
+
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'test@mailtest.com', password: '123'})
+                .withArgs({email:'test@mailtest.com', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
                 .returns(Promise.resolve({}));
 
             return userBO.auth({email: 'test@mailtest.com', password: '123'})
                 .then()
                 .catch(function (error){
                     expect(getAllStub.callCount).to.be.equals(1);
+                    expect(encryptStub.callCount).to.be.equals(1);
                     expect(error.code).to.be.equals(401);
                     expect(error.message).to.be.equals('Email or password are incorrect');
                     getAllStub.restore();
+                    encryptStub.restore();
                 });
         });
         it('Should return success with correct user', function(){
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
+            encryptStub
+                .withArgs('1234')
+                .returns('59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb');
+
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'test@mailtest.com', password: '1234'})
+                .withArgs({email:'test@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb'})
                 .returns([{_id: 1, name: 'test', email: 'test@mailtest.com'}]);
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
@@ -81,6 +102,7 @@ describe('userBO', function(){
 
             return userBO.auth({email:'test@mailtest.com', password: '1234'})
                     .then(function(auth){
+                        expect(encryptStub.callCount).to.be.equals(1);
                         expect(getAllStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
                         expect(createTokenStub.callCount).to.be.equals(1);
