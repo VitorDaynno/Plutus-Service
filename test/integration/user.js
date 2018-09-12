@@ -53,7 +53,7 @@ describe('users', function(){
                 .post('/v1/users/auth')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .send({email:'admin@plutus.com.br', password: 'admin123'})
+                .send({email:'admin@plutus.com.br', password: '1234'})
                 .expect(200)
                 .then(function(response){
                   expect(response.body.name).to.be.equal('admin');
