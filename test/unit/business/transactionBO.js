@@ -45,7 +45,7 @@ describe('TransactionBO', function(){
                 });
         });
         it('Should return error because FormPayment does not informed', function(){
-            return transactionBO.add({description: 'Tênis', value: 9-9.0, category: 'Vestuário', date: new Date()})
+            return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date()})
                 .then()
                 .catch(function(error){
                     expect(error.code).to.be.equals(422);

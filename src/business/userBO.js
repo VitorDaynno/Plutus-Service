@@ -21,7 +21,6 @@ module.exports = function(dependencies) {
                             return cryptoHelper.encrypt(body.password);
                         })
                         .then(function(password){
-                            console.log(password)
                             logger.info('[UserBO] Get user by email ' + body.email);
                             return dao.getAll({email: body.email, password: password});
                         })
