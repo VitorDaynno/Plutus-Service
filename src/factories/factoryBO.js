@@ -3,7 +3,9 @@ var UserBO = require('../business/userBO');
 var JWTHelper = require('../helpers/jwtHelper');
 var ModelHelper = require('../helpers/modelHelper');
 var CryptoHelper = require('../helpers/cryptoHelper');
-var FormPayment = require('../business/formPaymentBO');
+var FormPaymentBO = require('../business/formPaymentBO');
+var TransactionBO = require('../business/transactionBO');
+
 var jwtHelper = new JWTHelper();
 
 
@@ -17,7 +19,11 @@ function factory(business){
                 cryptoHelper: CryptoHelper
             });
         case 'formPayment':
-            return new FormPayment({});
+            return new FormPaymentBO({});
+        case 'transaction':
+            return new TransactionBO({
+                transactionDAO: DAOFactory.getDAO('transaction')
+            });
     }
 }
 

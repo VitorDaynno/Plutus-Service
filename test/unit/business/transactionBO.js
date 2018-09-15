@@ -7,11 +7,11 @@ var BusinessFactory = require('../../../src/factories/factoryBO');
 
 describe('TransactionBO', function(){
 
-    var transactionsDAO = DAOFactory.getDAO('transactions');
+    var transactionDAO = DAOFactory.getDAO('transaction');
     var formPayment = BusinessFactory.getBO('formPayment');
 
     var transactionBO = new TransactionBO({
-        transactionsDAO: transactionsDAO,
+        transactionDAO: transactionDAO,
         formPayment: formPayment
     });
 
@@ -65,18 +65,27 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(1);
                     expect(error.code).to.be.equals(404);
                     expect(error.message).to.be.equals('The formPayment not found');
+                    getByIdStub.restore();
                 });
         });
         it('Should add a transactions', function(){
             var getByIdStub = sinon.stub(formPayment, 'getById');
             getByIdStub
                 .withArgs('507f1f77bcf86cd799439011')
-                .returns({id:'507f1f77bcf86cd799439011', name: 'Crédito'});
+                .returns({id:'507f1f77bcf86cd799439011', name: 'Débito', type: 'debitCard'});
 
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'});
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
+                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(saveStub.callCount).to.be.equals(1);
+                    expect(transaction.id).to.equals(1);
                     expect(transaction.description).to.equals('Tênis');
                     expect(transaction.value).to.equals(-99.0);
                     expect(transaction.category).to.equals('Vestuário');

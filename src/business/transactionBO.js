@@ -2,8 +2,11 @@ var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
     var formPayment = dependencies.formPayment;
+    var dao = dependencies.transactionDAO;
 
     return {
+        dependencies:dependencies,
+
         add: function(transaction){
             return new Promise(function(resolve, reject){
                 var chain = Promise.resolve();
@@ -36,6 +39,16 @@ module.exports = function(dependencies) {
                     })
                     .then(function(formPayment){
                         logger.info('[TransactionBO] A formPayment are returned ' + JSON.stringify(formPayment));
+                        if (!formPayment.id){
+                            throw {code:404, message: 'The formPayment not found'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[TransactionBO] A transaction will be inserted');
+                        return dao.save(transaction);
+                    })
+                    .then(function(transaction){
+                        resolve(transaction);
                     })
                     .catch(function(error){
                         logger.error('[TransactionBO] An error occurred ', error);
