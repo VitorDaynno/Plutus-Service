@@ -1,14 +1,18 @@
 var chai = require('chai');
 var expect = chai.expect;
+var sinon = require('sinon');
 var TransactionBO = require('../../../src/business/transactionBO');
 var DAOFactory = require('../../../src/factories/factoryDAO');
+var BusinessFactory = require('../../../src/factories/factoryBO');
 
 describe('TransactionBO', function(){
 
     var transactionsDAO = DAOFactory.getDAO('transactions');
+    var formPayment = BusinessFactory.getBO('formPayment');
 
     var transactionBO = new TransactionBO({
-        transactionsDAO: transactionsDAO
+        transactionsDAO: transactionsDAO,
+        formPayment: formPayment
     });
 
     describe('add', function(){
@@ -53,6 +57,11 @@ describe('TransactionBO', function(){
                 });
         });
         it('Should return error because FormPayment are not found', function(){
+            var getByIdStub = sinon.stub(formPayment, 'getById');
+            getByIdStub
+                .withArgs('507f1f77bcf86cd799439010')
+                .returns({});
+
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .then()
                 .catch(function(error){
@@ -61,6 +70,11 @@ describe('TransactionBO', function(){
                 });
         });
         it('Should add a transactions', function(){
+            var getByIdStub = sinon.stub(formPayment, 'getById');
+            getByIdStub
+                .withArgs('507f1f77bcf86cd799439011')
+                .returns({id:'507f1f77bcf86cd799439011', name: 'Crédito'});
+
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
                     expect(transaction.description).to.equals('Tênis');
@@ -71,8 +85,8 @@ describe('TransactionBO', function(){
                 });
         });
         var id = null;
-        it('Should add a transactions', function(){
-        return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011', times: 5})
+        it('Should add a transactions with the number of installments greater than zero', function(){
+        return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011', installments: 5})
                 .then(function(transaction){
                     id = transaction.id;
                     expect(transaction.description).to.equals('Tênis');
@@ -80,7 +94,7 @@ describe('TransactionBO', function(){
                     expect(transaction.category).to.equals('Vestuário');
                     expect(transaction.purchaseDate).to.equals(new Date());
                     expect(transaction.formPayment).to.equals('507f1f77bcf86cd799439011');
-                    expect(transaction.timesId.length()).to.equals(5);
+                    expect(transaction.installments.length()).to.equals(5);
                 });
         });
         it('Should return 5 transactions', function(){

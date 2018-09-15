@@ -3,6 +3,7 @@ var UserBO = require('../business/userBO');
 var JWTHelper = require('../helpers/jwtHelper');
 var ModelHelper = require('../helpers/modelHelper');
 var CryptoHelper = require('../helpers/cryptoHelper');
+var FormPayment = require('../business/formPaymentBO');
 var jwtHelper = new JWTHelper();
 
 
@@ -15,6 +16,8 @@ function factory(business){
                 modelHelper: ModelHelper,
                 cryptoHelper: CryptoHelper
             });
+        case 'formPayment':
+            return new FormPayment({});
     }
 }
 
