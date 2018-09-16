@@ -80,30 +80,37 @@ describe('TransactionBO', function(){
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
-                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'});
+                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equals(1);
-                    expect(transaction.id).to.equals(1);
-                    expect(transaction.description).to.equals('Tênis');
-                    expect(transaction.value).to.equals(-99.0);
-                    expect(transaction.category).to.equals('Vestuário');
-                    expect(transaction.purchaseDate).to.equals(new Date());
-                    expect(transaction.formPayment).to.equals('507f1f77bcf86cd799439011');
+                    expect(transaction).to.be.eqls({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
+                    getByIdStub.restore();
+                    saveStub.restore();
                 });
         });
         var id = null;
         it('Should add a transactions with the number of installments greater than zero', function(){
-        return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011', installments: 5})
+            var getByIdStub = sinon.stub(formPayment, 'getById');
+            getByIdStub
+                .withArgs('507f1f77bcf86cd799439012')
+                .returns({id:'507f1f77bcf86cd799439012', name: 'Crédito', type: 'creditCard'});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
+                .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
+
+            return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
                 .then(function(transaction){
                     id = transaction.id;
-                    expect(transaction.description).to.equals('Tênis');
-                    expect(transaction.value).to.equals(-99.0);
-                    expect(transaction.category).to.equals('Vestuário');
-                    expect(transaction.purchaseDate).to.equals(new Date());
-                    expect(transaction.formPayment).to.equals('507f1f77bcf86cd799439011');
-                    expect(transaction.installments.length()).to.equals(5);
+                    expect(transaction).to.be.eqls({id:3, description: 'Tênis', value: -99.0,
+                        category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
+                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(saveStub.callCount).to.be.equal(6);
+                    getByIdStub.restore();
+                    saveStub.restore();
                 });
         });
         it('Should return 5 transactions', function(){

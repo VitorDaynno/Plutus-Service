@@ -1,8 +1,9 @@
 var logger = require('../config/logger')();
+var _ = require('lodash');
 
 module.exports = function(dependencies) {
-    var formPayment = dependencies.formPayment;
     var dao = dependencies.transactionDAO;
+    var formPayment = dependencies.formPayment;
 
     return {
         dependencies:dependencies,
@@ -46,6 +47,21 @@ module.exports = function(dependencies) {
                     .then(function(){
                         logger.info('[TransactionBO] A transaction will be inserted');
                         return dao.save(transaction);
+                    })
+                    .then(function(transaction){
+                        logger.info('[TransactionBO] A transaction was inserted: ', transaction);
+                        var p = [];
+                        if (transaction.installments){
+                            logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
+                            for (var i = 0; i < transaction.installments; i++) {
+                                var installmentsTransaction = _.clone(transaction);
+                                delete installmentsTransaction.installments;
+                                var originalDate = transaction.purchaseDate;
+                                installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth + i, 1);
+                                p.push(dao.save(installmentsTransaction));
+                            }
+                        }
+                        return transaction;
                     })
                     .then(function(transaction){
                         resolve(transaction);
