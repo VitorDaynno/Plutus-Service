@@ -123,9 +123,32 @@ describe('TransactionBO', function(){
 
     describe('getAll', function(){
         it('Should return zero transactions if userId does not exists', function(){
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({userId:22})
+                .returns({code: 404, message: 'User not found'});
+
             return transactionBO.getAll({userId: 22})
                 .then()
-                .catch(function(){
+                .catch(function(error){
+                    expect(error.code).to.be.equals(404);
+                    expect(error.message).to.be.equals('No transactions were found');
+                    getByIdStub.restore();
+                });
+        });
+        it('Should return zero transactions by valid user', function(){
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({userId:21})
+                .returns({userId: 21, name: 'test', email: 'test@test.com'});
+
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 21})
+                .returns({});
+
+            return transactionBO.getAll({})
+                .then(function(){
 
                 });
         });

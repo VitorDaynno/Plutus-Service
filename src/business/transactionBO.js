@@ -52,12 +52,13 @@ module.exports = function(dependencies) {
                         logger.info('[TransactionBO] A transaction was inserted: ', transaction);
                         var p = [];
                         if (transaction.installments){
-                            logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
                             for (var i = 0; i < transaction.installments; i++) {
                                 var installmentsTransaction = _.clone(transaction);
                                 delete installmentsTransaction.installments;
                                 var originalDate = transaction.purchaseDate;
                                 installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth + i, 1);
+
+                                logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
                                 p.push(dao.save(installmentsTransaction));
                             }
                         }
