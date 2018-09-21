@@ -145,7 +145,25 @@ describe('TransactionBO', function(){
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 21})
-                .returns({});
+                .returns([]);
+
+            return transactionBO.getAll({userId:21})
+                .then(function(transactions){
+                    expect(transactions.length).to.be.equal(0);
+                    expect(getByIdStub.callCount).to.be.equal(1);
+                    expect(getAllStub.callCount).to.be.equal(1);
+                });
+        });
+        it('Should return a transactions by valid user', function(){
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({userId:22})
+                .returns({userId: 22, name: 'test', email: 'test@test.com'});
+
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 22})
+                .returns([]);
 
             return transactionBO.getAll({})
                 .then(function(){
