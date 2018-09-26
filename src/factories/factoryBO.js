@@ -22,7 +22,8 @@ function factory(business){
             return new FormPaymentBO({});
         case 'transaction':
             return new TransactionBO({
-                transactionDAO: DAOFactory.getDAO('transaction')
+                transactionDAO: DAOFactory.getDAO('transaction'),
+                FormPayment: factory()
             });
     }
 }

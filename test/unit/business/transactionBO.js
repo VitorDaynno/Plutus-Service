@@ -9,10 +9,12 @@ describe('TransactionBO', function(){
 
     var transactionDAO = DAOFactory.getDAO('transaction');
     var formPayment = BusinessFactory.getBO('formPayment');
+    var userBO = BusinessFactory.getBO('user');
 
     var transactionBO = new TransactionBO({
         transactionDAO: transactionDAO,
-        formPayment: formPayment
+        formPayment: formPayment,
+        userBO: userBO
     });
 
     describe('add', function(){
@@ -133,6 +135,7 @@ describe('TransactionBO', function(){
                 .catch(function(error){
                     expect(error.code).to.be.equals(404);
                     expect(error.message).to.be.equals('No transactions were found');
+                    expect(getByIdStub.callCount).to.be.equals(1);
                     getByIdStub.restore();
                 });
         });
@@ -163,11 +166,15 @@ describe('TransactionBO', function(){
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 22})
-                .returns([]);
+                .returns([{id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5},
+                          {id: 4, description: 'Tênis 2', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5},
+                          {id: 5, description: 'Tênis 3', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5}]);
 
-            return transactionBO.getAll({})
-                .then(function(){
-
+            return transactionBO.getAll({userId: 22})
+                .then(function(transactions){
+                    expect(transactions.length).to.be.equal(3);
+                    expect(getByIdStub).to.be.equal(1);
+                    expect(getAllStub).to.be.equal(1);
                 });
         });
     });
