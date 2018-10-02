@@ -9,6 +9,10 @@ module.exports = function(dependencies) {
         save: function() {
             return new Promise(function(resolve, reject){
             });
+        },
+
+        getAll: function() {
+            
         }
     };
 };

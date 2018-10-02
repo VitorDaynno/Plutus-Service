@@ -130,13 +130,20 @@ describe('TransactionBO', function(){
                 .withArgs({userId:22})
                 .returns({code: 404, message: 'User not found'});
 
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 21})
+                .returns([]);
+
             return transactionBO.getAll({userId: 22})
                 .then()
                 .catch(function(error){
                     expect(error.code).to.be.equals(404);
                     expect(error.message).to.be.equals('No transactions were found');
                     expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAllStub.callCount).to.be.equals(0);
                     getByIdStub.restore();
+                    getAllStub.restore();
                 });
         });
         it('Should return zero transactions by valid user', function(){

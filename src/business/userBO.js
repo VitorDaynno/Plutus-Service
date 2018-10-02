@@ -47,6 +47,10 @@ module.exports = function(dependencies) {
                         });
                 };
             });
-        }
+        },
+
+        getById: function(){
+
+        },
     };
 };

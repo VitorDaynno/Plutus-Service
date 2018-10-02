@@ -75,7 +75,7 @@ module.exports = function(dependencies) {
         },
         getAll: function(){
             return new Promise(function(resolve, reject){
-                resolve();
+                reject([]);
             });
         }
     };

@@ -112,4 +112,38 @@ describe('userBO', function(){
                     });
         });
     });
+
+    describe('getById', function(){
+        it('should return error when body does not exist', function() {
+            var getByIdStub = sinon.stub(userDAO, 'getById');
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.getById()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(getByIdStub.callCount).to.be.equals(0);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(getByIdStub.callCount).to.be.equals(0);
+                        getByIdStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+        it('should return error when body does not contains the field userId', function() {
+            var getByIdStub = sinon.stub(userDAO, 'getById');
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.getById({})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(getByIdStub.callCount).to.be.equals(0);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        getByIdStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+    });
 });
