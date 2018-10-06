@@ -109,6 +109,10 @@ describe('userBO', function(){
                         expect(auth.name).to.be.equals('test');
                         expect(auth.email).to.be.equals('test@mailtest.com');
                         expect(auth.token).to.be.equals('token-jwt');
+                        encryptStub.restore();
+                        getAllStub.restore();
+                        parseUserStub.restore();
+                        createTokenStub.restore();
                     });
         });
     });
@@ -141,6 +145,45 @@ describe('userBO', function(){
                         expect(error.message).to.be.equals('UserId are required');
                         expect(getByIdStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getByIdStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+        it('should return error when userId does not exist', function() {
+            var getByIdStub = sinon.stub(userDAO, 'getById');
+            getByIdStub
+                .withArgs({userId: 0})
+                .returns({});
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.getById(0)
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(getByIdStub.callCount).to.be.equals(1);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        getByIdStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+        it('should return a user when userId belongs to some user', function() {
+            var getByIdStub = sinon.stub(userDAO, 'getById');
+            getByIdStub
+                .withArgs(1)
+                .returns({_id: 1, name: 'test', email: 'test@mailtest.com'});
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+            parseUserStub
+                .withArgs({_id: 1, name: 'test', email: 'test@mailtest.com'})
+                .returns({id: 1, name: 'test', email: 'test@mailtest.com'});
+
+            return userBO.getById({userId: 1})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(getByIdStub.callCount).to.be.equals(1);
+                        expect(parseUserStub.callCount).to.be.equals(1);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });

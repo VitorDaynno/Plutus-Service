@@ -16,6 +16,10 @@ module.exports = function(dependencies) {
                         resolve(user);
                     });
             });
+        },
+
+        getById: function(userId){
+
         }
     };
 };

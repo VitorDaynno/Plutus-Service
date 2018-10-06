@@ -49,8 +49,21 @@ module.exports = function(dependencies) {
             });
         },
 
-        getById: function(){
-
+        getById: function(body){
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        if (!body){
+                            logger.error('[UserBO] An error occurred because body or userId not exist');
+                            throw {code: 422, message: 'UserId are required'};
+                        }
+                    })
+                    .catch(function(error){
+                        logger.error('[UserBO] An error occurred: ', error);
+                        reject(error);
+                    });
+            });
         },
     };
 };
