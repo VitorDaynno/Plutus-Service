@@ -14,6 +14,18 @@ module.exports = function() {
                 .catch(function(error){
                     res.status(error.code).json(error.message);
                 });
+        },
+
+        getById: function(req, res){
+            logger.info('[User-Controller] Getting user by id ' + req.params.id);
+            var id = req.params.id ? req.params.id : null;
+            business.getById({id: id})
+                .then(function(user){
+                    res.send(user);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
+                });
         }
     };
 };

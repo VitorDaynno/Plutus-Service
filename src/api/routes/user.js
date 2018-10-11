@@ -3,4 +3,7 @@ module.exports = function(app) {
 
     app.route('/v1/users/auth')
         .post(controller.auth);
+
+    app.route('/v1/users/:id')
+        .get(controller.getById);
 };

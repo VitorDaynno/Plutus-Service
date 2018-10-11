@@ -54,10 +54,24 @@ module.exports = function(dependencies) {
                 var chain = Promise.resolve();
                 chain
                     .then(function(){
-                        if (!body){
-                            logger.error('[UserBO] An error occurred because body or userId not exist');
-                            throw {code: 422, message: 'UserId are required'};
+                        if (!body || !body.id){
+                            logger.error('[UserBO] An error occurred because body or field id not exist');
+                            throw {code: 422, message: 'Id are required'};
                         }
+                    })
+                    .then(function(){
+                        logger.info('[UserBO] Getting user by id: '+ body.id);
+                        return dao.getById(body.id);
+                    })
+                    .then(function(user){
+                        if (!user || !user._id){
+                            logger.error('[UserBO] User not found by id: ' + body.id);
+                            throw {code: 404, message: 'User not found'};
+                        }
+                        return modelHelper.parseUser(user);
+                    })
+                    .then(function(user){
+                        resolve(user);
                     })
                     .catch(function(error){
                         logger.error('[UserBO] An error occurred: ', error);

@@ -126,7 +126,7 @@ describe('userBO', function(){
                     .then()
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
-                        expect(error.message).to.be.equals('UserId are required');
+                        expect(error.message).to.be.equals('Id are required');
                         expect(getByIdStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         expect(getByIdStub.callCount).to.be.equals(0);
@@ -134,7 +134,7 @@ describe('userBO', function(){
                         parseUserStub.restore();
                     });
         });
-        it('should return error when body does not contains the field userId', function() {
+        it('should return error when body does not contains the field id', function() {
             var getByIdStub = sinon.stub(userDAO, 'getById');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
@@ -142,25 +142,25 @@ describe('userBO', function(){
                     .then()
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
-                        expect(error.message).to.be.equals('UserId are required');
+                        expect(error.message).to.be.equals('Id are required');
                         expect(getByIdStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });
         });
-        it('should return error when userId does not exist', function() {
+        it('should return error when id does not exist', function() {
             var getByIdStub = sinon.stub(userDAO, 'getById');
             getByIdStub
-                .withArgs({userId: 0})
+                .withArgs('5bbead798c2a8a92339e88b7')
                 .returns({});
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
-            return userBO.getById(0)
+            return userBO.getById({id: '5bbead798c2a8a92339e88b7'})
                     .then()
                     .catch(function(error) {
-                        expect(error.code).to.be.equals(422);
-                        expect(error.message).to.be.equals('UserId are required');
+                        expect(error.code).to.be.equals(404);
+                        expect(error.message).to.be.equals('User not found');
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
@@ -170,18 +170,16 @@ describe('userBO', function(){
         it('should return a user when userId belongs to some user', function() {
             var getByIdStub = sinon.stub(userDAO, 'getById');
             getByIdStub
-                .withArgs(1)
-                .returns({_id: 1, name: 'test', email: 'test@mailtest.com'});
+                .withArgs('5bbead798c2a8a92339e88b8')
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: 1, name: 'test', email: 'test@mailtest.com'})
-                .returns({id: 1, name: 'test', email: 'test@mailtest.com'});
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'})
+                .returns({id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
 
-            return userBO.getById({userId: 1})
-                    .then()
-                    .catch(function(error) {
-                        expect(error.code).to.be.equals(422);
-                        expect(error.message).to.be.equals('UserId are required');
+            return userBO.getById({id: '5bbead798c2a8a92339e88b8'})
+                    .then(function(user){
+                        expect(user).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
                         getByIdStub.restore();

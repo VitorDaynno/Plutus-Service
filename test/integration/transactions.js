@@ -11,7 +11,6 @@ describe('transactions', function(){
   });
 
   after(function(){
-    mongoose.connection.close();
     server.close();
   });
 

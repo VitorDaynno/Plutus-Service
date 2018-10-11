@@ -18,8 +18,24 @@ module.exports = function(dependencies) {
             });
         },
 
-        getById: function(userId){
-
+        getById: function(id){
+            return new Promise(function(resolve, reject){
+                logger.info('[UserDAO] Finding user by id ' + JSON.stringify(id));
+                user.find({_id: id})
+                    .exec()
+                    .then(function(user) {
+                        logger.info('[UserDAO] A user returned: ' + JSON.stringify(user));
+                        resolve(user);
+                    })
+                    .catch(function(error){
+                        logger.error('[UserDAO] An error occurred: ' + error);
+                        if (error.name === 'CastError'){
+                            reject({code: 422, message: error.message});
+                        } else {
+                            reject({code: 500, message: error.message});
+                        };
+                    });
+            });
         }
     };
 };

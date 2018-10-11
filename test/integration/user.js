@@ -62,4 +62,32 @@ describe('users', function(){
                 });
     });
   });
+
+  describe('v1/users/auth/:id',function() {
+    it('Should return error because id is invalid', function(){
+        return request(server)
+                .get('/v1/users/error')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(422);
+    });
+    it('Should return error because id does not exist', function(){
+        return request(server)
+                .get('/v1/users/5bbead798c2a8a92339e88b7')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(404);
+    });
+    it('Should return user with valid id', function(){
+        return request(server)
+                .get('/v1/users/5b9872580c3ed488505ffa68')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .then(function(response){
+                  expect(response.body.name).to.be.equal('admin');
+                  expect(response.body.email).to.be.equal('admin@plutus.com.br');
+                });
+    });
+  });
 });
