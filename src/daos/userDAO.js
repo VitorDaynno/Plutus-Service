@@ -21,7 +21,7 @@ module.exports = function(dependencies) {
         getById: function(id){
             return new Promise(function(resolve, reject){
                 logger.info('[UserDAO] Finding user by id ' + JSON.stringify(id));
-                user.find({_id: id})
+                user.findById(id)
                     .exec()
                     .then(function(user) {
                         logger.info('[UserDAO] A user returned: ' + JSON.stringify(user));

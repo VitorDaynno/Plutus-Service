@@ -56,28 +56,28 @@ describe('userDAO', function(){
 
     describe('getById', function(){
         it('Should return empty object when id dont exist', function(){
-            var findStub = sinon.mock(userModel).expects('find')
-                .withArgs({_id:'5bbead798c2a8a92339e88b7'})
+            var findByStub = sinon.mock(userModel).expects('findById')
+                .withArgs('5bbead798c2a8a92339e88b7')
                 .chain('exec')
                 .resolves({});
 
             return userDAO.getById('5bbead798c2a8a92339e88b7')
                 .then(function(){
-                    expect(findStub.callCount).to.be.equals(1);
+                    expect(findByStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
         });
 
         it('Should return a user when id exist', function(){
-            var findStub = sinon.mock(userModel).expects('find')
-                .withArgs({_id:'5bbead798c2a8a92339e88b8'})
+            var findByStub = sinon.mock(userModel).expects('findById')
+                .withArgs('5bbead798c2a8a92339e88b8')
                 .chain('exec')
                 .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
 
             return userDAO.getById('5bbead798c2a8a92339e88b8')
                 .then(function(user){
                     expect(user).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
-                    expect(findStub.callCount).to.be.equals(1);
+                    expect(findByStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
         });
