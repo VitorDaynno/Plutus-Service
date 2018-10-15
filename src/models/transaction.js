@@ -10,7 +10,7 @@ module.exports = function () {
             required: true
         },
         value: {
-            type: Float,
+            type: Number,
             required: true
         },
         category: {
@@ -27,7 +27,7 @@ module.exports = function () {
             ref: 'FormPayment'
         },
         installments: {
-            type: Float,
+            type: Number,
             required: false
         }
     });
