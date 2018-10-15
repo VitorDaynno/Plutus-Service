@@ -15,6 +15,14 @@ describe('transactions', function(){
   });
 
   describe('v1/transactions',function() {
+    it('Should return error because request not contain token auth', function(){
+      return request(server)
+              .post('/v1/transactions')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({value: 33.9, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .expect(422);
+  });
     it('Should return error because body is empty', function(){
         return request(server)
                 .post('/v1/transactions')

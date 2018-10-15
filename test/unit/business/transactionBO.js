@@ -92,7 +92,6 @@ describe('TransactionBO', function(){
                     saveStub.restore();
                 });
         });
-        var id = null;
         it('Should add a transactions with the number of installments greater than zero', function(){
             var getByIdStub = sinon.stub(formPayment, 'getById');
             getByIdStub
@@ -106,7 +105,6 @@ describe('TransactionBO', function(){
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
                 .then(function(transaction){
-                    id = transaction.id;
                     expect(transaction).to.be.eqls({id:3, description: 'Tênis', value: -99.0,
                         category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
                     expect(getByIdStub.callCount).to.be.equals(1);
@@ -115,12 +113,6 @@ describe('TransactionBO', function(){
                     saveStub.restore();
                 });
         });
-        it('Should return 5 transactions', function(){
-            return transactionBO.getAll({id: id})
-                    .then(function(transactions){
-                        expect(transactions.length()).to.equals(5);
-                    });
-            });
     });
 
     describe('getAll', function(){
