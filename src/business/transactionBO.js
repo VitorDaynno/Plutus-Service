@@ -4,6 +4,7 @@ var _ = require('lodash');
 module.exports = function(dependencies) {
     var dao = dependencies.transactionDAO;
     var formPayment = dependencies.formPayment;
+    var userBO = dependencies.userBO;
 
     return {
         dependencies:dependencies,
@@ -73,9 +74,28 @@ module.exports = function(dependencies) {
                     });
             });
         },
-        getAll: function(){
+        getAll: function(body){
             return new Promise(function(resolve, reject){
-                reject([]);
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        if (!body || !body.userId){
+                            logger.error('[TransactionBO] An error occurred because UserId not exist');
+                            throw {code: 422, message: 'UserId is required'};
+                        }
+                    })
+                    .then(function(){
+                        return userBO.getById(body);
+                    })
+                    .then(function(user){
+                        if (user.code) {
+                            throw {code: 404, message: 'No transactions were found'};
+                        }
+                    })
+                    .catch(function(error){
+                        logger.error('[TransactionBO] An error occurred: ', error);
+                        reject(error);
+                    });
             });
         }
     };

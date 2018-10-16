@@ -116,6 +116,50 @@ describe('TransactionBO', function(){
     });
 
     describe('getAll', function(){
+        it('Should return error because body does not exists', function(){
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({userId:22})
+                .returns({code: 404, message: 'User not found'});
+
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 21})
+                .returns([]);
+
+            return transactionBO.getAll()
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equals(422);
+                    expect(error.message).to.be.equals('UserId is required');
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAllStub.callCount).to.be.equals(0);
+                    getByIdStub.restore();
+                    getAllStub.restore();
+                });
+        });
+        it('Should return error because userId does not exists', function(){
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({userId:22})
+                .returns({code: 404, message: 'User not found'});
+
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 21})
+                .returns([]);
+
+            return transactionBO.getAll({})
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equals(422);
+                    expect(error.message).to.be.equals('UserId is required');
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAllStub.callCount).to.be.equals(0);
+                    getByIdStub.restore();
+                    getAllStub.restore();
+                });
+        });
         it('Should return zero transactions if userId does not exists', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub

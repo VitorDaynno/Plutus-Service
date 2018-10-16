@@ -24,4 +24,22 @@ describe('transactionDAO', function(){
                 });
         });
     });
+    describe('getAll', function(){
+        it('Should return a transaction which correspond to a query', function(){
+            var findStub = sinon.mock(transactionModel).expects('find')
+                .withArgs({userId: '5bbead798c2a8a92339e88b8'})
+                .resolves([{_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
+                            category: 'Vestuário', date: new Date(),formPayment: '507f1f77bcf86cd799439010',
+                            userId:'5bbead798c2a8a92339e88b8'},
+                           {_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
+                            category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010',
+                            userId: '5bbead798c2a8a92339e88b8'}]);
+
+            return transactionDAO.save({userId: '5bbead798c2a8a92339e88b8'})
+                .then(function(){
+                    expect(findStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
 });
