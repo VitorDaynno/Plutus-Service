@@ -71,12 +71,15 @@ describe('users', function(){
                 .expect('Content-Type', /json/)
                 .expect(422);
     });
-    it('Should return error because id does not exist', function(){
+    it('Should return a empty array because id does not exist', function(){
         return request(server)
                 .get('/v1/users/5bbead798c2a8a92339e88b7')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(404);
+                .expect(200)
+                .then(function(response){
+                  expect(response.body).to.be.equal([]);
+                });
     });
     it('Should return user with valid id', function(){
         return request(server)

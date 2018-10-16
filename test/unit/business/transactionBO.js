@@ -172,10 +172,8 @@ describe('TransactionBO', function(){
                 .returns([]);
 
             return transactionBO.getAll({userId: 22})
-                .then()
-                .catch(function(error){
-                    expect(error.code).to.be.equals(404);
-                    expect(error.message).to.be.equals('No transactions were found');
+                .then(function(transactions){
+                    expect(transactions.length).to.be.equals(0);
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(0);
                     getByIdStub.restore();
