@@ -157,10 +157,8 @@ describe('userBO', function(){
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.getById({id: '5bbead798c2a8a92339e88b7'})
-                    .then()
-                    .catch(function(error) {
-                        expect(error.code).to.be.equals(404);
-                        expect(error.message).to.be.equals('User not found');
+                    .then(function(user){
+                        expect(user).to.be.eqls({});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
