@@ -85,12 +85,22 @@ module.exports = function(dependencies) {
                         }
                     })
                     .then(function(){
+                        logger.info('[TransactionBO] Getting user by id: ' + body.userId);
                         return userBO.getById(body);
                     })
                     .then(function(user){
-                        if (user.code) {
-                            throw {code: 404, message: 'No transactions were found'};
+                        if (!user || !user.id) {
+                            logger.info('[TransactionBO] User not found by id: ' + body.userId);
+                            resolve([]);
+                        } else {
+                            logger.info('[TransactionBO] Getting transactions by userId: ' + body.userId);
+                            filter = {userId: body.userId};
+                            return dao.getAll(filter);
                         }
+                    })
+                    .then(function(transactions){
+                        logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
+                        resolve(transactions);
                     })
                     .catch(function(error){
                         logger.error('[TransactionBO] An error occurred: ', error);

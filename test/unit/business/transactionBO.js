@@ -164,7 +164,7 @@ describe('TransactionBO', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
                 .withArgs({userId:22})
-                .returns({code: 404, message: 'User not found'});
+                .returns({});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
@@ -184,7 +184,7 @@ describe('TransactionBO', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
                 .withArgs({userId:21})
-                .returns({userId: 21, name: 'test', email: 'test@test.com'});
+                .returns({id: 21, name: 'test', email: 'test@test.com'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
