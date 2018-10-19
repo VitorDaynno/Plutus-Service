@@ -66,9 +66,10 @@ module.exports = function(dependencies) {
                     .then(function(user){
                         if (!user || !user._id){
                             logger.error('[UserBO] User not found by id: ' + body.id);
-                            throw {code: 404, message: 'User not found'};
+                            resolve({});
+                        } else {
+                            return modelHelper.parseUser(user);
                         }
-                        return modelHelper.parseUser(user);
                     })
                     .then(function(user){
                         resolve(user);
