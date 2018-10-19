@@ -196,13 +196,15 @@ describe('TransactionBO', function(){
                     expect(transactions.length).to.be.equal(0);
                     expect(getByIdStub.callCount).to.be.equal(1);
                     expect(getAllStub.callCount).to.be.equal(1);
+                    getByIdStub.restore();
+                    getAllStub.restore();
                 });
         });
         it('Should return a transactions by valid user', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
                 .withArgs({userId:22})
-                .returns({userId: 22, name: 'test', email: 'test@test.com'});
+                .returns({id: 22, name: 'test', email: 'test@test.com'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
@@ -213,9 +215,9 @@ describe('TransactionBO', function(){
 
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
-                    expect(transactions.length).to.be.equal(3);
-                    expect(getByIdStub).to.be.equal(1);
-                    expect(getAllStub).to.be.equal(1);
+                    expect(transactions.length).to.be.equals(3);
+                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAllStub.callCount).to.be.equals(1);
                 });
         });
     });
