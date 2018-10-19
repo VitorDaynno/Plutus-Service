@@ -14,10 +14,11 @@ describe('transactionDAO', function(){
     describe('save', function(){
         it('Should return a transaction when a document transaction contain all fields', function(){
             var createStub = sinon.mock(transactionModel).expects('create')
-                .withArgs({description: 'Tênis', value: 99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'})
-                .resolves({_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: 9-9.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'});
+                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'})
+                .chain('exec')
+                .resolves({_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'});
 
-            return transactionDAO.save({email:'email@test.com', password:'123'})
+            return transactionDAO.save({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .then(function(){
                     expect(createStub.callCount).to.be.equals(1);
                     sinon.restore();
@@ -35,7 +36,7 @@ describe('transactionDAO', function(){
                             category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010',
                             userId: '5bbead798c2a8a92339e88b8'}]);
 
-            return transactionDAO.save({userId: '5bbead798c2a8a92339e88b8'})
+            return transactionDAO.getAll({userId: '5bbead798c2a8a92339e88b8'})
                 .then(function(){
                     expect(findStub.callCount).to.be.equals(1);
                     sinon.restore();
