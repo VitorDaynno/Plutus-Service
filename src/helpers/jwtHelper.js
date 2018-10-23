@@ -7,6 +7,11 @@ module.exports = function() {
         expiresIn: settings.jwt.expiresIn,
         createToken: function(user) {
             return jwt.sign(user, settings.jwt.secret, {expiresIn: settings.jwt.expiresIn});
+        },
+        verifyToken: function(req, res) {
+            jwt.verify(token, settings.jwt.secret, function(r, decoded){
+                
+            });
         }
     };
 };

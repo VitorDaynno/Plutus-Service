@@ -59,6 +59,7 @@ describe('users', function(){
                   expect(response.body.name).to.be.equal('admin');
                   expect(response.body.email).to.be.equal('admin@plutus.com.br');
                   expect(response.body.token).to.be.not.equal('');
+                  console.log(response.body.token)
                 });
     });
   });
