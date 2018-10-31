@@ -4,6 +4,7 @@ var chai     = require('chai');
 
 describe('transactions', function(){
   var server;
+  var validToken;
 
   before(function(){
     server = require('../../src/server');
@@ -31,10 +32,24 @@ describe('transactions', function(){
               .send({value: 33.9, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
+
+    it('Should return a valid token to continue the validates', function(){
+      return request(server)
+              .post('/v1/users/auth')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({email:'admin@plutus.com.br', password: '1234'})
+              .expect(200)
+              .then(function(response){
+                validToken = response.body.token;
+              });
+    });
+
     it('Should return error because body is empty', function(){
         return request(server)
                 .post('/v1/transactions')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({})
                 .expect(422);
