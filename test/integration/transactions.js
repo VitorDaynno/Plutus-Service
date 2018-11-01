@@ -20,7 +20,7 @@ describe('transactions', function(){
               .post('/v1/transactions')
               .set('Accept', 'application/json')
               .expect('Content-Type', /json/)
-              .send({value: 33.9, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({value: 33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
     it('Should return error because request contain a token invalid', function(){
@@ -29,7 +29,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
               .expect('Content-Type', /json/)
-              .send({value: 33.9, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({value: 33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
 
@@ -58,30 +58,34 @@ describe('transactions', function(){
         return request(server)
                 .post('/v1/transactions')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({value: -33.9, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({value: -33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Value does not exist', function(){
         return request(server)
                 .post('/v1/transactions')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({description: 'Tênis', category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Category does not exist', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -33.9, date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({description: 'Tênis', value: -33.9, purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(422);
     });
-    it('Should return error because Date does not exist', function(){
+    it('Should return error because PurchaseDate does not exist', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
               .send({description: 'Tênis', value: -99.0, category: 'Vestuário', formPayment: '507f1f77bcf86cd799439011'})
               .expect(422);
@@ -90,27 +94,30 @@ describe('transactions', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date()})
+              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date()})
               .expect(422);
     });
     it('Should return error when FormPayment does not found', function(){
         return request(server)
                 .post('/v1/transactions')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439010'})
+                .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .expect(404);
     });
     it('Should return a transaction when inserting with success', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
               .send({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(201)
               .then(function(transaction){
-                expect(transaction).to.be.equls({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'});
+                expect(transaction).to.be.equls({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'});
               });
     });
   });

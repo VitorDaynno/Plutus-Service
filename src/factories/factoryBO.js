@@ -19,7 +19,9 @@ function factory(business){
                 cryptoHelper: CryptoHelper
             });
         case 'formPayment':
-            return new FormPaymentBO({});
+            return new FormPaymentBO({
+                formPaymentDAO: DAOFactory.getDAO('formPayment')
+            });
         case 'transaction':
             return new TransactionBO({
                 transactionDAO: DAOFactory.getDAO('transaction'),
