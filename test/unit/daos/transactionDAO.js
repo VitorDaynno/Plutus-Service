@@ -3,7 +3,7 @@ var expect = chai.expect;
 var sinon = require('sinon');
 var TransactionDAO = require('../../../src/daos/transactionDAO');
 var transactionModel = require('../../../src/models/transaction')();
-require('sinon-mongoose');
+var sinonMongoose = require('sinon-mongoose');
 
 describe('transactionDAO', function(){
 

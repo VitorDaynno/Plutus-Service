@@ -3,7 +3,7 @@ var expect = chai.expect;
 var sinon = require('sinon');
 var UserDAO = require('../../../src/daos/userDAO');
 var userModel = require('../../../src/models/user')();
-require('sinon-mongoose');
+var sinonMongoose = require('sinon-mongoose');
 
 describe('userDAO', function(){
 
