@@ -3,13 +3,15 @@ var expect = chai.expect;
 var sinon = require('sinon');
 var FormPaymentBO = require('../../../src/business/formPaymentBO');
 var DAOFactory = require('../../../src/factories/factoryDAO');
+var ModelHelper = require('../../../src/helpers/modelHelper');
 
-describe('TransactionBO', function(){
+describe('FormPaymentBO', function(){
 
     var formPaymentDAO = DAOFactory.getDAO('formPayment');
 
     var formPaymentBO = new FormPaymentBO({
-        formPaymentDAO: formPaymentDAO
+        formPaymentDAO: formPaymentDAO,
+        modelHelper: ModelHelper
     });
 
     describe('getById', function(){
@@ -43,7 +45,7 @@ describe('TransactionBO', function(){
                         parseFormPaymentStub.restore();
                     });
         });
-        it('should return error when id does not exist', function() {
+        it('should return an empty object when id does not exist', function() {
             var getByIdStub = sinon.stub(formPaymentDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b7')
@@ -63,16 +65,16 @@ describe('TransactionBO', function(){
             var getByIdStub = sinon.stub(formPaymentDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b8')
-                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Credit', typeId: 0});
-            
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
+
             var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
             parseFormPaymentStub
-                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Credit', typeId: 0})
-                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Credit', typeId: 0});
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'})
+                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
 
             return formPaymentBO.getById({id: '5bbead798c2a8a92339e88b8'})
                     .then(function(formPayment){
-                        expect(formPayment).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
+                        expect(formPayment).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseFormPaymentStub.callCount).to.be.equals(1);
                         getByIdStub.restore();

@@ -6,5 +6,8 @@ module.exports = {
         entity.email= user.email;
 
         return entity;
+    },
+    parseFormPayment: function(formPayment){
+        return formPayment;
     }
 };
