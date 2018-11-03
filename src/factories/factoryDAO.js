@@ -3,7 +3,7 @@ var userModel = require('../models/user')();
 var TransactionDAO = require('../daos/transactionDAO');
 var transactionModel = require('../models/transaction');
 var FormPaymentDAO  = require('../daos/formPaymentDAO');
-var formPaymentModel = require('../models/formPayment');
+var formPaymentModel = require('../models/formPayment')();
 
 module.exports = {
     getDAO: function(dao){
