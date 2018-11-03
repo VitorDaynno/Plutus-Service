@@ -7,6 +7,43 @@ module.exports = function(dependencies) {
     return {
         dependencies:dependencies,
 
+        add: function(formPayment){
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        if(!formPayment){
+                            logger.error('[FormPaymentBO] An error occurred because object not exist');
+                            throw {code:422, message:'The entity can not be empty'};
+                        }
+                        if (!formPayment.name){
+                            logger.error('[FormPaymentBO] An error occurred because Name not exist');
+                            throw {code:422, message:'The entity should has a field name'};
+                        }
+                        if (!formPayment.type){
+                            logger.error('[FormPaymentBO] An error occurred because Type not exist');
+                            throw {code:422, message:'The entity should has a field type'};
+                        }                        
+                    })
+                    .then(function(){
+                        logger.info('[FormPaymentBO] A form a payment will be inserted');
+                        return dao.save(formPayment);
+                    })
+                    .then(function(formPayment){
+                        logger.info('[FormPaymentBO] A form a payment was inserted: ' + JSON.stringify(formPayment));
+                        return modelHelper.parseFormPayment(formPayment);
+                    })
+                    .then(function(formPayment){
+                        logger.info('[FormPaymentBO] A form a payment parsed was return: ' + JSON.stringify(formPayment));
+                        resolve(formPayment);
+                    })
+                    .catch(function(error){
+                        logger.error('[FormPaymentBO] An error occurred ', error);
+                        reject(error);
+                    });
+            });
+        },
+
         getById: function(body) {
             return new Promise(function(resolve, reject){
                 var chain = Promise.resolve();
@@ -23,8 +60,8 @@ module.exports = function(dependencies) {
                     })
                     .then(function(formPayment){
                         if (!formPayment || !formPayment._id){
-                            logger.info('[FormPaymentBO] Form of payment not found by id: ' + JSON.stringify(formPayment));
-                            resolve({});
+                            logger.info('[FormPaymentBO] Form of payment not found by id: ' + body.id);
+                            return {};
                         } else {
                             return modelHelper.parseFormPayment(formPayment);
                         }

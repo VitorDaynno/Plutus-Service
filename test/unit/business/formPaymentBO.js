@@ -14,6 +14,45 @@ describe('FormPaymentBO', function(){
         modelHelper: ModelHelper
     });
 
+    describe('add', function(){
+        it('Should return error because Name does not informed', function(){
+            return formPaymentBO.add({type: 'creditCard'})
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equals(422);
+                    expect(error.message).to.be.equals('The entity should has a field name');
+                });
+        });
+        it('Should return error because Type does not informed', function(){
+            return formPaymentBO.add({name: 'Card 1'})
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equals(422);
+                    expect(error.message).to.be.equals('The entity should has a field type');
+                });
+        });
+        it('Should add a transactions', function(){
+            var saveStub = sinon.stub(formPaymentDAO, 'save');
+            saveStub
+                .withArgs({name: 'Card 1', type: 'creditCard'})
+                .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+
+            var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
+            parseFormPaymentStub
+                .withArgs({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'})
+                .returns({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+
+            return formPaymentBO.add({name: 'Card 1', type: 'creditCard'})
+                .then(function(transaction){
+                    expect(saveStub.callCount).to.be.equals(1);
+                    expect(parseFormPaymentStub.callCount).to.be.equals(1);
+                    expect(transaction).to.be.eqls({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+                    saveStub.restore();
+                    parseFormPaymentStub.restore();
+                });
+        });    
+    });
+
     describe('getById', function(){
         it('should return error when body does not exist', function() {
             var getByIdStub = sinon.stub(formPaymentDAO, 'getById');
@@ -65,16 +104,16 @@ describe('FormPaymentBO', function(){
             var getByIdStub = sinon.stub(formPaymentDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b8')
-                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
 
             var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
             parseFormPaymentStub
-                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'})
-                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'})
+                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
 
             return formPaymentBO.getById({id: '5bbead798c2a8a92339e88b8'})
                     .then(function(formPayment){
-                        expect(formPayment).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'Nubank', type: 'Crédito'});
+                        expect(formPayment).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseFormPaymentStub.callCount).to.be.equals(1);
                         getByIdStub.restore();
