@@ -4,104 +4,238 @@ var sinon = require('sinon');
 var TransactionBO = require('../../../src/business/transactionBO');
 var DAOFactory = require('../../../src/factories/factoryDAO');
 var BusinessFactory = require('../../../src/factories/factoryBO');
+var ModelHelper = require('../../../src/helpers/modelHelper');
 
 describe('TransactionBO', function(){
 
     var transactionDAO = DAOFactory.getDAO('transaction');
-    var formPayment = BusinessFactory.getBO('formPayment');
+    var formPaymentBO = BusinessFactory.getBO('formPayment');
     var userBO = BusinessFactory.getBO('user');
 
     var transactionBO = new TransactionBO({
         transactionDAO: transactionDAO,
-        formPayment: formPayment,
-        userBO: userBO
+        formPaymentBO: formPaymentBO,
+        userBO: userBO,
+        modelHelper: ModelHelper
     });
 
     describe('add', function(){
         it('Should return error because Description does not informed', function(){
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
+            getByIdStub
+                .withArgs({})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
+                .returns({});
+
             return transactionBO.add({value: -33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field description');
+                    getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Value does not informed', function(){
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
+            getByIdStub
+                .withArgs({})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
+                .returns({});
+
             return transactionBO.add({description: 'Tênis', category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field value');
+                    getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Category does not informed', function(){
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
+            getByIdStub
+                .withArgs({})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
+                .returns({});
+
             return transactionBO.add({description: 'Tênis', value: -33.9, purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field category');
+                    getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because PurchaseDate does not informed', function(){
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
+            getByIdStub
+                .withArgs({})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
+                .returns({});
+
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', formPayment: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field purchaseDate');
+                    getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because FormPayment does not informed', function(){
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
+            getByIdStub
+                .withArgs({})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
+                .returns({});
+
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date()})
                 .then()
                 .catch(function(error){
+                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field formPayment');
+                    getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because FormPayment are not found', function(){
-            var getByIdStub = sinon.stub(formPayment, 'getById');
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
             getByIdStub
-                .withArgs('507f1f77bcf86cd799439010')
+                .withArgs({id: '507f1f77bcf86cd799439010'})
+                .returns({});
+
+            var saveStub = sinon.stub(transactionDAO, 'save');
+            saveStub
+                .withArgs({})
+                .returns({});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({})
                 .returns({});
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .then()
                 .catch(function(error){
                     expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(saveStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(404);
                     expect(error.message).to.be.equals('The formPayment not found');
                     getByIdStub.restore();
+                    saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should add a transactions', function(){
-            var getByIdStub = sinon.stub(formPayment, 'getById');
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
             getByIdStub
-                .withArgs('507f1f77bcf86cd799439011')
+                .withArgs({id: '507f1f77bcf86cd799439011'})
                 .returns({id:'507f1f77bcf86cd799439011', name: 'Débito', type: 'debitCard'});
 
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
-                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
+                .returns({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'})
+                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'}); 
+
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equals(1);
+                    expect(parseTransactionStub.callCount).to.be.equals(1);
                     expect(transaction).to.be.eqls({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
                     getByIdStub.restore();
                     saveStub.restore();
+                    parseTransactionStub.restore();
                 });
         });
         it('Should add a transactions with the number of installments greater than zero', function(){
-            var getByIdStub = sinon.stub(formPayment, 'getById');
+            var getByIdStub = sinon.stub(formPaymentBO, 'getById');
             getByIdStub
-                .withArgs('507f1f77bcf86cd799439012')
-                .returns({id:'507f1f77bcf86cd799439012', name: 'Crédito', type: 'creditCard'});
-
+                .withArgs({id: '507f1f77bcf86cd799439012'})
+                .returns({id:'507f1f77bcf86cd799439012', name: 'creditCard', type: 'creditCard'});
+                    
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
-                .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
+                .returns({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
+            
+            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
+            parseTransactionStub
+                .withArgs({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
+                .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5}); 
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
                 .then(function(transaction){
@@ -109,6 +243,7 @@ describe('TransactionBO', function(){
                         category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equal(6);
+                    expect(parseTransactionStub.callCount).to.be.equals(1);
                     getByIdStub.restore();
                     saveStub.restore();
                 });

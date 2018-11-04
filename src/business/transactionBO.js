@@ -3,8 +3,9 @@ var _ = require('lodash');
 
 module.exports = function(dependencies) {
     var dao = dependencies.transactionDAO;
-    var formPayment = dependencies.formPayment;
+    var formPaymentBO = dependencies.formPaymentBO;
     var userBO = dependencies.userBO;
+    var modelHelper = dependencies.modelHelper;
 
     return {
         dependencies:dependencies,
@@ -37,7 +38,7 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[TransactionBO] Getting formPayment by id ' + transaction.formPayment);
-                        return formPayment.getById(transaction.formPayment);
+                        return formPaymentBO.getById({id: transaction.formPayment});
                     })
                     .then(function(formPayment){
                         logger.info('[TransactionBO] A formPayment are returned ' + JSON.stringify(formPayment));
@@ -64,6 +65,9 @@ module.exports = function(dependencies) {
                             }
                         }
                         return transaction;
+                    })
+                    .then(function(transaction){
+                        return modelHelper.parseTransaction(transaction);
                     })
                     .then(function(transaction){
                         resolve(transaction);

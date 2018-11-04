@@ -1,7 +1,7 @@
 var UserDAO = require('../daos/userDAO');
 var userModel = require('../models/user')();
 var TransactionDAO = require('../daos/transactionDAO');
-var transactionModel = require('../models/transaction');
+var transactionModel = require('../models/transaction')();
 var FormPaymentDAO  = require('../daos/formPaymentDAO');
 var formPaymentModel = require('../models/formPayment')();
 

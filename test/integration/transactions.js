@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
 var request  = require('supertest');
 var chai     = require('chai');
+var expect   = chai.expect;
 
 describe('transactions', function(){
   var server;
   var validToken;
+  var validFormPaymentId;
 
   before(function(){
     server = require('../../src/server');
@@ -108,16 +110,34 @@ describe('transactions', function(){
                 .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .expect(404);
     });
+    it('Should return a form of payment when inserting with success', function(){
+      return request(server)
+          .post('/v1/formspayment')
+          .set('Accept', 'application/json')
+          .set('Authorization', 'Bearer ' + validToken)
+          .expect('Content-Type', /json/)
+          .send({name: 'Card 1', type: 'creditCard'})
+          .expect(201)
+          .then(function(formPayment){
+              validFormPaymentId = formPayment.body.id;
+          });
+    });
     it('Should return a transaction when inserting with success', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', date: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: validFormPaymentId})
               .expect(201)
-              .then(function(transaction){
-                expect(transaction).to.be.equls({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'});
+              .then(function(response){
+                var transaction = response.body;
+                expect(transaction).has.to.property('id');
+                expect(transaction).has.to.property('purchaseDate');
+                expect(transaction.description).to.be.equals('Tênis');
+                expect(transaction.value).to.be.equals(-99.0);
+                expect(transaction.category).to.be.equals('Vestuário');
+                expect(transaction.formPayment).to.be.equals(validFormPaymentId);                
               });
     });
   });

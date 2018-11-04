@@ -63,7 +63,7 @@ describe('users', function(){
     });
   });
 
-  describe('v1/users/auth/:id',function() {
+  describe('v1/users/:id',function() {
     it('Should return error because id is invalid', function(){
         return request(server)
                 .get('/v1/users/error')
@@ -77,8 +77,8 @@ describe('users', function(){
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
-                .then(function(response){
-                  expect(response.body).to.be.equal([]);
+                .then(function(response){                  
+                  expect(response.body).to.be.eqls({});
                 });
     });
     it('Should return user with valid id', function(){

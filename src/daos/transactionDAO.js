@@ -8,7 +8,7 @@ module.exports = function(dependencies) {
 
         save: function(object) {
             return new Promise(function(resolve, reject){
-                logger.info('[TransactionDAO] Saving transaction in database: ' + JSON.stringify(transaction));
+                logger.info('[TransactionDAO] Saving transaction in database: ' + JSON.stringify(object));
                 transaction.create(object)
                     .then(function(transaction){
                         logger.info('[TransactionDAO] The transaction saved in database with id: ' + transaction._id);

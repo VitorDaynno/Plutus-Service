@@ -14,5 +14,16 @@ module.exports = {
         entity.type = formPayment.type;
         
         return entity;
+    },
+    parseTransaction: function(transaction){
+        var entity = {};
+        entity.id = transaction._id;
+        entity.description = transaction.description;
+        entity.value = transaction.value;
+        entity.category = transaction.category;
+        entity.purchaseDate = transaction.purchaseDate;
+        entity.formPayment = transaction.formPayment;
+        
+        return entity;
     }
 };
