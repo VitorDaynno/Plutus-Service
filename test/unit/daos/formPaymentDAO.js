@@ -5,7 +5,7 @@ var FormPaymentDAO = require('../../../src/daos/formPaymentDAO');
 var formPaymentModel = require('../../../src/models/formPayment')();
 var sinonMongoose = require('sinon-mongoose');
 
-describe('userDAO', function(){
+describe('formPaymentDAO', function(){
 
     var formPaymentDAO = new FormPaymentDAO({
         formPayment: formPaymentModel
@@ -46,8 +46,8 @@ describe('userDAO', function(){
                 .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
 
             return formPaymentDAO.getById('5bbead798c2a8a92339e88b8')
-                .then(function(user){
-                    expect(user).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                .then(function(formPayment){
+                    expect(formPayment).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
                     expect(findByStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });

@@ -8,6 +8,11 @@ module.exports = {
         return entity;
     },
     parseFormPayment: function(formPayment){
-        return formPayment;
+        var entity = {};
+        entity.id = formPayment._id;
+        entity.name = formPayment.name;
+        entity.type = formPayment.type;
+        
+        return entity;
     }
 };
