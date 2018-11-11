@@ -5,5 +5,6 @@ module.exports = function(app) {
     var helper = new Helper();
 
     app.route('/v1/transactions')
-        .post(helper.verifyToken, controller.add);
+        .post(helper.verifyToken, controller.add)
+        .get(helper.verifyToken, controller.getAll);
 };

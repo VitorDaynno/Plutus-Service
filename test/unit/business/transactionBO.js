@@ -30,7 +30,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -59,7 +59,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -88,7 +88,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -117,7 +117,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -146,7 +146,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -175,7 +175,7 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({})
                 .returns({});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
@@ -204,11 +204,11 @@ describe('TransactionBO', function(){
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .returns({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'})
-                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'}); 
+                .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
@@ -226,16 +226,16 @@ describe('TransactionBO', function(){
             getByIdStub
                 .withArgs({id: '507f1f77bcf86cd799439012'})
                 .returns({id:'507f1f77bcf86cd799439012', name: 'creditCard', type: 'creditCard'});
-                    
+
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
                 .returns({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
-            
+
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
-                .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5}); 
+                .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
                 .then(function(transaction){
@@ -254,7 +254,7 @@ describe('TransactionBO', function(){
         it('Should return error because body does not exists', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
-                .withArgs({userId:22})
+                .withArgs({id: 22})
                 .returns({code: 404, message: 'User not found'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
@@ -276,7 +276,7 @@ describe('TransactionBO', function(){
         it('Should return error because userId does not exists', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
-                .withArgs({userId:22})
+                .withArgs({id: 22})
                 .returns({code: 404, message: 'User not found'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
@@ -298,7 +298,7 @@ describe('TransactionBO', function(){
         it('Should return zero transactions if userId does not exists', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
-                .withArgs({userId:22})
+                .withArgs({id: 22})
                 .returns({});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
@@ -318,7 +318,7 @@ describe('TransactionBO', function(){
         it('Should return zero transactions by valid user', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
-                .withArgs({userId:21})
+                .withArgs({id: 21})
                 .returns({id: 21, name: 'test', email: 'test@test.com'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
@@ -338,7 +338,7 @@ describe('TransactionBO', function(){
         it('Should return a transactions by valid user', function(){
             var getByIdStub = sinon.stub(userBO, 'getById');
             getByIdStub
-                .withArgs({userId:22})
+                .withArgs({id: 22})
                 .returns({id: 22, name: 'test', email: 'test@test.com'});
 
             var getAllStub = sinon.stub(transactionDAO, 'getAll');

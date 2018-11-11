@@ -47,6 +47,15 @@ module.exports = function() {
                         res.status(403).json({});
                     };
                 });
+        },
+
+        decodedToken: function(token){
+            return jwt.verify(token, settings.jwt.secret, function(error, decoded){
+                if (error){
+                    throw error;
+                }
+                return decoded;
+            });
         }
     };
 };

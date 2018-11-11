@@ -90,7 +90,7 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[TransactionBO] Getting user by id: ' + body.userId);
-                        return userBO.getById(body);
+                        return userBO.getById({id: body.userId});
                     })
                     .then(function(user){
                         if (!user || !user.id) {

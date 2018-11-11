@@ -1,4 +1,3 @@
-var mongoose = require('mongoose');
 var request  = require('supertest');
 var chai     = require('chai');
 var expect   = chai.expect;
@@ -137,8 +136,48 @@ describe('transactions', function(){
                 expect(transaction.description).to.be.equals('Tênis');
                 expect(transaction.value).to.be.equals(-99.0);
                 expect(transaction.category).to.be.equals('Vestuário');
-                expect(transaction.formPayment).to.be.equals(validFormPaymentId);                
+                expect(transaction.formPayment).to.be.equals(validFormPaymentId);
               });
     });
+  });
+
+  describe('v1/transactions',function() {
+    it('Should return error because request not contain token auth', function(){
+      return request(server)
+              .get('/v1/transactions')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(403);
+    });
+    it('Should return error because request contain a token invalid', function(){
+      return request(server)
+              .get('/v1/transactions')
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
+              .expect('Content-Type', /json/)
+              .expect(403);
+    });
+
+    it('Should return a valid token to continue the validates', function(){
+      return request(server)
+              .post('/v1/users/auth')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({email:'admin@plutus.com.br', password: '1234'})
+              .expect(200)
+              .then(function(response){
+                validToken = response.body.token;
+              });
+    });
+
+    it('Should return transactions belonging to the user', function(){
+        return request(server)
+                .get('/v1/transactions')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .expect(200);
+    });
+
   });
 });
