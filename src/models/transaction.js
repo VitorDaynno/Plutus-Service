@@ -29,6 +29,11 @@ module.exports = function () {
         installments: {
             type: Number,
             required: false
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Users'
         }
     });
 

@@ -9,7 +9,11 @@ module.exports = function() {
     return {
         add: function(req, res){
             logger.info('[Transactions-Controller] Adding a transaction ' + JSON.stringify(req.body));
-            business.add(req.body)
+            var token = req.headers.authorization.split(' ')[1];
+            tokenDecoded = helper.decodedToken(token);
+            var transaction = req.body;
+            transaction.userId = tokenDecoded.id;
+            business.add(transaction)
                 .then(function(transaction){
                     res.status(201).send(transaction);
                 })
