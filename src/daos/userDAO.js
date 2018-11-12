@@ -29,7 +29,7 @@ module.exports = function(dependencies) {
                     })
                     .catch(function(error){
                         logger.error('[UserDAO] An error occurred: ' + error);
-                        if (error.name === 'CastError'){
+                        if (error.name === 'CastError' || error.name === 'ValidatorError'){
                             reject({code: 422, message: error.message});
                         } else {
                             reject({code: 500, message: error.message});
