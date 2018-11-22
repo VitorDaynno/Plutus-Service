@@ -344,13 +344,14 @@ describe('TransactionBO', function(){
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 22})
-                .returns([{id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5},
-                          {id: 4, description: 'Tênis 2', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5},
-                          {id: 5, description: 'Tênis 3', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5}]);
+                .returns([{_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5},
+                          {_id: 4, description: 'Tênis 2', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5},
+                          {_id: 5, description: 'Tênis 3', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5}]);
 
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(3);
+                    expect(transactions[0].formPayment).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'});
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
                 });

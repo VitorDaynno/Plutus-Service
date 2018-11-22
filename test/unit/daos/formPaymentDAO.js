@@ -3,7 +3,7 @@ var expect = chai.expect;
 var sinon = require('sinon');
 var FormPaymentDAO = require('../../../src/daos/formPaymentDAO');
 var formPaymentModel = require('../../../src/models/formPayment')();
-var sinonMongoose = require('sinon-mongoose');
+require('sinon-mongoose');
 
 describe('formPaymentDAO', function(){
 

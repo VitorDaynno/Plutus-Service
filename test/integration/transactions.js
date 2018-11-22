@@ -176,7 +176,11 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .expect(200);
+                .expect(200)
+                .then(function(response){
+                  var transactions = response.body;
+                  expect(transactions[0].formPayment).to.be.an('object');
+                });
     });
 
   });

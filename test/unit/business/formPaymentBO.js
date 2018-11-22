@@ -50,7 +50,7 @@ describe('FormPaymentBO', function(){
                     saveStub.restore();
                     parseFormPaymentStub.restore();
                 });
-        });    
+        });
     });
 
     describe('getById', function(){
