@@ -1,3 +1,3 @@
 # Plutus-service
 
-A backend of the application Plutus.
+Backend da aplicação Plutus.
