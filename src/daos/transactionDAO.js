@@ -29,6 +29,7 @@ module.exports = function(dependencies) {
             return new Promise(function(resolve, reject){
                 logger.info('[TransactionDAO] Finding transaction by filter ' + JSON.stringify(filter));
                 transaction.find(filter)
+                .populate('formPayment')
                 .exec()
                 .then(function(transactions) {
                     logger.info('[TransactionsDAO] A transactions returned: ' + JSON.stringify(transactions));

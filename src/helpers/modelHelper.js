@@ -12,7 +12,7 @@ module.exports = {
         entity.id = formPayment._id;
         entity.name = formPayment.name;
         entity.type = formPayment.type;
-        
+
         return entity;
     },
     parseTransaction: function(transaction){
@@ -23,7 +23,7 @@ module.exports = {
         entity.category = transaction.category;
         entity.purchaseDate = transaction.purchaseDate;
         entity.formPayment = transaction.formPayment;
-        
+
         return entity;
     }
 };
