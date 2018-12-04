@@ -11,6 +11,68 @@ describe('userDAO', function(){
         user: userModel
     });
 
+    describe('save', function(){
+        it('Should return error because object is empty', function(){
+            var createStub = sinon.mock(userModel).expects('create')
+                .withArgs({})
+                .rejects();
+
+            return userDAO.save({})
+                .then()
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+        it('Should return error because object not contains email', function(){
+            var createStub = sinon.mock(userModel).expects('create')
+                .withArgs({name: 'test', password: '123'})
+                .rejects();
+
+            return userDAO.save({name: 'test', password: '123'})
+                .then()
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+        it('Should return error because object not contains name', function(){
+            var createStub = sinon.mock(userModel).expects('create')
+                .withArgs({email: 'email@test.com', password: '123'})
+                .rejects();
+
+            return userDAO.save({email: 'email@test.com', password: '123'})
+                .then()
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+        it('Should return error because object not contains password', function(){
+            var createStub = sinon.mock(userModel).expects('create')
+                .withArgs({email: 'email@test.com', name: 'test'})
+                .rejects();
+
+            return userDAO.save({email: 'email@test.com', name: 'test'})
+                .then()
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+        it('Should return a user with success', function(){
+            var createStub = sinon.mock(userModel).expects('create')
+                .withArgs({email: 'email@test.com', name: 'test', password: '123'})
+                .returns({_id: '5c05e59193a46d0d7464bdde', email: 'email@test.com', name: 'test', password: '123'});
+
+            return userDAO.save({_id: '5c05e59193a46d0d7464bdde', email: 'email@test.com', name: 'test', password: '123'})
+                .then(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
+
     describe('getAll', function(){
         it('Should return empty object when email dont exist', function(){
             var findStub = sinon.mock(userModel).expects('find')

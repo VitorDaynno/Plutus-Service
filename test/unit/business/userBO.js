@@ -117,6 +117,21 @@ describe('userBO', function(){
         });
     });
 
+    describe('save', function(){
+        it('Should return error when body does not exist', function(){
+            var saveStub = sinon.stub(userDAO, 'save');
+
+            return userBO.save()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Email are required');
+                        expect(saveStub.callCount).to.be.equals(0);
+                        getByIdStub.restore();
+                    });
+        });
+    });
+
     describe('getById', function(){
         it('should return error when body does not exist', function() {
             var getByIdStub = sinon.stub(userDAO, 'getById');
