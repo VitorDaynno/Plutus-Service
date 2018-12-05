@@ -77,7 +77,7 @@ describe('users', function(){
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
-                .then(function(response){                  
+                .then(function(response){
                   expect(response.body).to.be.eqls({});
                 });
     });
@@ -90,6 +90,54 @@ describe('users', function(){
                 .then(function(response){
                   expect(response.body.name).to.be.equal('admin');
                   expect(response.body.email).to.be.equal('admin@plutus.com.br');
+                });
+    });
+  });
+
+  describe('v1/users',function() {
+    it('Should return error because body is empty', function(){
+        return request(server)
+                .post('/v1/users')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({})
+                .expect(422);
+    });
+    it('Should return error because email does not exist', function(){
+        return request(server)
+                .post('/v1/users')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({name: 'test', password:'123'})
+                .expect(422);
+    });
+    it('Should return error because name does not exist', function(){
+      return request(server)
+              .post('/v1/users')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({email: 'test@emailtest.com', password:'123'})
+              .expect(422);
+  });
+    it('Should return error because password does not exist', function(){
+        return request(server)
+                .post('/v1/users')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({email:'test@mailtest.com', name: 'test'})
+                .expect(422);
+    });
+    it('Should return user with valid entity', function(){
+        return request(server)
+                .post('/v1/users')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({email:'test@emailtest.com', name:'test', password: '1234'})
+                .expect(201)
+                .then(function(response){
+                  expect(response.body.name).to.be.equal('test');
+                  expect(response.body.email).to.be.equal('test@emailtest.com');
+                  expect(response.body).to.not.have.property('password');
                 });
     });
   });
