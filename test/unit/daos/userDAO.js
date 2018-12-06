@@ -24,6 +24,7 @@ describe('userDAO', function(){
                     sinon.restore();
                 });
         });
+
         it('Should return error because object not contains email', function(){
             var createStub = sinon.mock(userModel).expects('create')
                 .withArgs({name: 'test', password: '123'})
@@ -36,6 +37,7 @@ describe('userDAO', function(){
                     sinon.restore();
                 });
         });
+
         it('Should return error because object not contains name', function(){
             var createStub = sinon.mock(userModel).expects('create')
                 .withArgs({email: 'email@test.com', password: '123'})
@@ -48,6 +50,7 @@ describe('userDAO', function(){
                     sinon.restore();
                 });
         });
+
         it('Should return error because object not contains password', function(){
             var createStub = sinon.mock(userModel).expects('create')
                 .withArgs({email: 'email@test.com', name: 'test'})
@@ -60,6 +63,7 @@ describe('userDAO', function(){
                     sinon.restore();
                 });
         });
+
         it('Should return a user with success', function(){
             var createStub = sinon.mock(userModel).expects('create')
                 .withArgs({email: 'email@test.com', name: 'test', password: '123'})
@@ -140,6 +144,46 @@ describe('userDAO', function(){
                 .then(function(user){
                     expect(user).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
                     expect(findByStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
+
+    describe('update', function(){
+        it('Should return error because id is empty', function(){
+            var updateStub = sinon.mock(userModel).expects('update')
+                .withArgs({})
+                .rejects();
+
+            return userDAO.update('', {})
+                .then()
+                .catch(function(){
+                    expect(updateStub.callCount).to.be.equals(0);
+                    sinon.restore();
+                });
+        });
+
+        it('Should return error because body is empty', function(){
+            var updateStub = sinon.mock(userModel).expects('update')
+                .withArgs({})
+                .rejects();
+
+            return userDAO.update('5c088673fb2f579adcca9ed1', {})
+                .then()
+                .catch(function(){
+                    expect(updateStub.callCount).to.be.equals(0);
+                    sinon.restore();
+                });
+        });
+
+        it('Should return a user when updated', function(){
+            var updateStub = sinon.mock(userModel).expects('update')
+                .withArgs({_id: '5c088673fb2f579adcca9ed1'}, {name: 'changedName'})
+                .resolve({_id: '5c088673fb2f579adcca9ed1', name: 'changedName', email: 'test@mailtest.com'});
+
+            return userDAO.update('5c088673fb2f579adcca9ed1', {name: 'changedName'})
+                .then(function(){
+                    expect(updateStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
         });

@@ -18,7 +18,7 @@ describe('userBO', function(){
         cryptoHelper: CryptoHelper
     });
 
-    describe('Auth', function(){
+    describe('auth', function(){
         it('Should return error when email dont exist', function(){
             return userBO.auth({password:'123'})
                 .then()
@@ -138,7 +138,7 @@ describe('userBO', function(){
         });
         it('Should return error when body is empty', function(){
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.save({})
@@ -147,16 +147,16 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Email are required');
                         expect(saveStub.callCount).to.be.equals(0);
-                        expect(encodeTokenStub.callCount).to.be.equals(0);
+                        expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         saveStub.restore();
-                        encodeTokenStub.restore();
+                        encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body not contains email', function(){
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.save({name: 'test', 'password': '123'})
@@ -165,16 +165,16 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Email are required');
                         expect(saveStub.callCount).to.be.equals(0);
-                        expect(encodeTokenStub.callCount).to.be.equals(0);
+                        expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         saveStub.restore();
-                        encodeTokenStub.restore();
+                        encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body not contains name', function(){
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.save({email: 'test@mailtest.com', password: '123'})
@@ -183,16 +183,16 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Name are required');
                         expect(saveStub.callCount).to.be.equals(0);
-                        expect(encodeTokenStub.callCount).to.be.equals(0);
+                        expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         saveStub.restore();
-                        encodeTokenStub.restore();
+                        encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body not contains password', function(){
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.save({email: 'test@mailtest.com', name: 'test'})
@@ -201,28 +201,37 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Password are required');
                         expect(saveStub.callCount).to.be.equals(0);
-                        expect(encodeTokenStub.callCount).to.be.equals(0);
+                        expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         saveStub.restore();
-                        encodeTokenStub.restore();
+                        encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return a user when entity are correct', function(){
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
+            encryptStub
+                .withArgs('123')
+                .resolve('efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19');
+
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
-            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+            saveStub
+                .withArgs({email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                .resolve({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
+
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser')
+            parseUserStub
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                resolve({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test');
 
             return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
-                    .then()
-                    .catch(function(error) {
-                        expect(error.code).to.be.equals(422);
-                        expect(error.message).to.be.equals('Password are required');
+                    .then(function(user) {
+                        expect(user).to.be.eqls()
                         expect(saveStub.callCount).to.be.equals(1);
-                        expect(encodeTokenStub.callCount).to.be.equals(1);
+                        expect(encryptStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
                         saveStub.restore();
-                        encodeTokenStub.restore();
+                        encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
@@ -292,6 +301,61 @@ describe('userBO', function(){
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
                         getByIdStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+    });
+
+    describe('update', function(){
+        it('Should return error when body does not exist', function(){
+            var updateStub = sinon.stub(userDAO, 'update');
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.update()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(updateStub.callCount).to.be.equals(0);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        updateStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+
+        it('Should return error when body does contains id', function(){
+            var updateStub = sinon.stub(userDAO, 'update');
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.update({name: 'tests'})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(updateStub.callCount).to.be.equals(0);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        updateStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+
+        it('Should return a user when updated with success', function(){
+            var updateStub = sinon.stub(userDAO, 'update');
+            updateStub
+                .withArgs({id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
+                .resolve({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+            parseUserStub
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'})
+                .resolve({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+
+            return userBO.update({id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
+                    .then(function(user) {
+                        expect(user).to.be.eqls({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+                        expect(updateStub.callCount).to.be.equals(1);
+                        expect(parseUserStub.callCount).to.be.equals(1);
+                        updateStub.restore();
                         parseUserStub.restore();
                     });
         });

@@ -118,7 +118,7 @@ describe('users', function(){
               .expect('Content-Type', /json/)
               .send({email: 'test@emailtest.com', password:'123'})
               .expect(422);
-  });
+    });
     it('Should return error because password does not exist', function(){
         return request(server)
                 .post('/v1/users')
