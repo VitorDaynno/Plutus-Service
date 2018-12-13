@@ -222,7 +222,7 @@ describe('userBO', function(){
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser')
             parseUserStub
                 .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
-                resolve({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test');
+                resolve({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
 
             return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
                     .then(function(user) {
@@ -357,6 +357,47 @@ describe('userBO', function(){
                         expect(parseUserStub.callCount).to.be.equals(1);
                         updateStub.restore();
                         parseUserStub.restore();
+                    });
+        });
+    });
+
+    describe('delete', function(){
+        it('Should return error when body does not exist', function(){
+            var deleteStub = sinon.stub(userDAO, 'delete');
+
+            return userBO.delete()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(deleteStub.callCount).to.be.equals(0);
+                        deleteStub.restore();
+                    });
+        });
+
+        it('Should return error when body does contains id', function(){
+            var deleteStub = sinon.stub(userDAO, 'delete');
+
+            return userBO.delete({})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(deleteStub.callCount).to.be.equals(0);
+                        deleteStub.restore();
+                    });
+        });
+
+        it('Should delete a user', function(){
+            var deleteStub = sinon.stub(userDAO, 'delete');
+            deleteStub
+                .withArgs({id: '5c088673fb2f579adcca9ed1'})
+                .resolve({});
+
+            return userBO.delete({id: '5c088673fb2f579adcca9ed1'})
+                    .then(function(r) {
+                        expect(deleteStub.callCount).to.be.equals(1);
+                        deleteStub.restore();
                     });
         });
     });
