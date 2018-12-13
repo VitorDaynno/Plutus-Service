@@ -22,7 +22,7 @@ module.exports = function(dependencies) {
                                 reject({code: 500, message: error.message});
                             };
                         });
-                });          
+                });
         },
 
         getById: function(id) {

@@ -67,10 +67,14 @@ describe('userDAO', function(){
         it('Should return a user with success', function(){
             var createStub = sinon.mock(userModel).expects('create')
                 .withArgs({email: 'email@test.com', name: 'test', password: '123'})
-                .returns({_id: '5c05e59193a46d0d7464bdde', email: 'email@test.com', name: 'test', password: '123'});
+                .resolves({_id: '5c05e59193a46d0d7464bdde', email: 'email@test.com', name: 'test', password: '123'});
 
-            return userDAO.save({_id: '5c05e59193a46d0d7464bdde', email: 'email@test.com', name: 'test', password: '123'})
-                .then(function(){
+            return userDAO.save({email: 'email@test.com', name: 'test', password: '123'})
+                .then(function(user){
+                    expect(user._id).to.be.equal('5c05e59193a46d0d7464bdde');
+                    expect(user.email).to.be.equal('email@test.com');
+                    expect(user.name).to.be.equal('test');
+                    expect(user.password).to.be.equal('123');
                     expect(createStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });

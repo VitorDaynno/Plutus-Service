@@ -1,15 +1,30 @@
 var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
-    var user = dependencies.user;
+    var userModel = dependencies.user;
 
     return {
         dependencies: dependencies,
 
+        save: function(user){
+            return new Promise(function(resolve, reject){
+                logger.info('[UserDAO] Creating user: ' + JSON.stringify(user));
+                userModel.create(user)
+                    .then(function(user){
+                        logger.info('[UserDAO] A user was created: ' + JSON.stringify(user));
+                        resolve(user);
+                    })
+                    .catch(function(error){
+                        logger.error('[UserDAO] A error occurred: ' + error);
+                        reject(error);
+                    });
+            });
+        },
+
         getAll: function(filter){
             return new Promise(function(resolve, reject){
                 logger.info('[UserDAO] Finding user by filter ' + JSON.stringify(filter));
-                user.find(filter)
+                userModel.find(filter)
                     .exec()
                     .then(function(user) {
                         logger.info('[UserDAO] A user returned: ' + JSON.stringify(user));
@@ -21,7 +36,7 @@ module.exports = function(dependencies) {
         getById: function(id){
             return new Promise(function(resolve, reject){
                 logger.info('[UserDAO] Finding user by id ' + JSON.stringify(id));
-                user.findById(id)
+                userModel.findById(id)
                     .exec()
                     .then(function(user) {
                         logger.info('[UserDAO] A user returned: ' + JSON.stringify(user));
