@@ -183,7 +183,7 @@ describe('userDAO', function(){
         it('Should return a user when updated', function(){
             var updateStub = sinon.mock(userModel).expects('update')
                 .withArgs({_id: '5c088673fb2f579adcca9ed1'}, {name: 'changedName'})
-                .resolve({_id: '5c088673fb2f579adcca9ed1', name: 'changedName', email: 'test@mailtest.com'});
+                .resolves({_id: '5c088673fb2f579adcca9ed1', name: 'changedName', email: 'test@mailtest.com'});
 
             return userDAO.update('5c088673fb2f579adcca9ed1', {name: 'changedName'})
                 .then(function(){
@@ -195,7 +195,7 @@ describe('userDAO', function(){
 
     describe('delete', function(){
         it('Should return error because id is empty', function(){
-            var updateStub = sinon.mock(userModel).expects('delete')
+            var updateStub = sinon.mock(userModel).expects('update')
                 .withArgs({})
                 .rejects();
 
@@ -207,23 +207,10 @@ describe('userDAO', function(){
                 });
         });
 
-        it('Should return error because body is empty', function(){
-            var updateStub = sinon.mock(userModel).expects('update')
-                .withArgs({})
-                .rejects();
-
-            return userDAO.delete('')
-                .then()
-                .catch(function(){
-                    expect(updateStub.callCount).to.be.equals(0);
-                    sinon.restore();
-                });
-        });
-
         it('Should delete a user when id is correct', function(){
             var updateStub = sinon.mock(userModel).expects('update')
                 .withArgs({_id: '5c088673fb2f579adcca9ed1'}, {isEnabled: false})
-                .resolve({_id: '5c088673fb2f579adcca9ed1', name: 'test', email: 'test@mailtest.com', isEnabled: false});
+                .resolves({_id: '5c088673fb2f579adcca9ed1', name: 'test', email: 'test@mailtest.com', isEnabled: false});
 
             return userDAO.delete('5c088673fb2f579adcca9ed1')
                 .then(function(){

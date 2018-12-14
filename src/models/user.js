@@ -16,6 +16,10 @@ module.exports = function () {
         password: {
             type: String,
             required: true
+        },
+        isEnabled: {
+            type: Boolean,
+            required: true
         }
     });
 

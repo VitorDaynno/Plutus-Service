@@ -51,6 +51,40 @@ module.exports = function(dependencies) {
                         };
                     });
             });
+        },
+
+        update: function(id, user) {
+            return new Promise(function(resolve, reject){
+                logger.info('[UserDAO] Updating user by id ' + id);
+                if (!id || id === ''){
+                    logger.error('[UserDAO] Id is empty');
+                    reject();
+                }
+                if (Object.keys(user).length === 0){
+                    logger.error('[UserDAO] user is empty');
+                    reject();
+                }
+                userModel.update({_id: id}, user)
+                    .then(function(user){
+                        logger.info('[UserDAO] User updated by id ' + id);
+                        resolve(user);
+                    });
+            });
+        },
+
+        delete: function(id) {
+            return new Promise(function(resolve, reject){
+                logger.info('[UserDAO] Deleting user by id ' + id);
+                if (!id || id === ''){
+                    logger.error('[UserDAO] Id is empty');
+                    reject();
+                }
+                userModel.update({_id: id}, {isEnabled: false})
+                    .then(function(user){
+                        logger.info('[UserDAO] User deleted by id ' + id);
+                        resolve(user);
+                    });
+            });
         }
     };
 };
