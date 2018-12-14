@@ -120,7 +120,7 @@ describe('userBO', function(){
     describe('save', function(){
         it('Should return error when body does not exist', function(){
             var saveStub = sinon.stub(userDAO, 'save');
-            var encodeTokenStub = sinon.stub(jwtHelper, 'encodeToken');
+            var encodeTokenStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
             return userBO.save()
@@ -219,14 +219,14 @@ describe('userBO', function(){
                 .withArgs({email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
                 .resolve({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
 
-            var parseUserStub = sinon.stub(ModelHelper, 'parseUser')
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
                 resolve({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
 
             return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
                     .then(function(user) {
-                        expect(user).to.be.eqls()
+                        expect(user).to.be.eqls({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
                         expect(saveStub.callCount).to.be.equals(1);
                         expect(encryptStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
@@ -395,7 +395,7 @@ describe('userBO', function(){
                 .resolve({});
 
             return userBO.delete({id: '5c088673fb2f579adcca9ed1'})
-                    .then(function(r) {
+                    .then(function() {
                         expect(deleteStub.callCount).to.be.equals(1);
                         deleteStub.restore();
                     });

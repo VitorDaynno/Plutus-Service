@@ -80,5 +80,9 @@ module.exports = function(dependencies) {
                     });
             });
         },
+
+        save: function(){
+            
+        }
     };
 };
