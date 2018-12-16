@@ -135,6 +135,36 @@ module.exports = function(dependencies) {
                         reject(error);
                     });
             });
+        },
+
+        update: function(body){
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        logger.info('[UserBO] Validating user: ', JSON.stringify(body));
+                        if (!body || !body.id){
+                            logger.error('[UserBO] Id not found in: ', JSON.stringify(body));
+                            throw {code: 422, message: 'Id are required'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[UserBO] Updating user: ', body.id);
+                        return dao.update(body.id, body);
+                    })
+                    .then(function(user){
+                        logger.info('[UserBO] User updated: ', user);
+                        return modelHelper.parseUser(user);
+                    })
+                    .then(function(user){
+                        logger.info('[UserBO] The user parsed: ', user);
+                        resolve(user);
+                    })
+                    .catch(function(error){
+                        logger.error('[UserBO] An error occurred: ', JSON.stringify(error));
+                        reject(error);
+                    });
+            });
         }
     };
 };

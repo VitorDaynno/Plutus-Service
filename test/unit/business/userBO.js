@@ -391,13 +391,13 @@ describe('userBO', function(){
         it('Should return a user when updated with success', function(){
             var updateStub = sinon.stub(userDAO, 'update');
             updateStub
-                .withArgs({id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
-                .resolve({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+                .withArgs('5c088673fb2f579adcca9ed1', {id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
+                .returns({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
                 .withArgs({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'})
-                .resolve({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+                .returns({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
 
             return userBO.update({id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
                     .then(function(user) {
