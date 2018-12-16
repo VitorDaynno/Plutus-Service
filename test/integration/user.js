@@ -256,5 +256,13 @@ describe('users', function(){
                   expect(response.body).to.not.have.property('password');
                 });
     });
+    it('Should return error because email already exist', function(){
+      return request(server)
+              .post('/v1/users')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({email:'test@emailtest.com', name:'test', password: '1234'})
+              .expect(409);
+    });
   });
 });

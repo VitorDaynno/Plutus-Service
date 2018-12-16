@@ -119,6 +119,7 @@ describe('userBO', function(){
 
     describe('save', function(){
         it('Should return error when body does not exist', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
             var saveStub = sinon.stub(userDAO, 'save');
             var encodeTokenStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
@@ -128,15 +129,18 @@ describe('userBO', function(){
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Email are required');
+                        expect(getAllStub.callCount).to.be.equals(0);
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encodeTokenStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encodeTokenStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body is empty', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
             var saveStub = sinon.stub(userDAO, 'save');
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
@@ -146,15 +150,18 @@ describe('userBO', function(){
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Email are required');
+                        expect(getAllStub.callCount).to.be.equals(0);
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body not contains email', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
             var saveStub = sinon.stub(userDAO, 'save');
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
@@ -164,9 +171,11 @@ describe('userBO', function(){
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Email are required');
+                        expect(getAllStub.callCount).to.be.equals(0);
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
                         parseUserStub.restore();
@@ -182,15 +191,18 @@ describe('userBO', function(){
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Name are required');
+                        expect(getAllStub.callCount).to.be.equals(0);
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return error when body not contains password', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
             var saveStub = sinon.stub(userDAO, 'save');
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
@@ -200,36 +212,72 @@ describe('userBO', function(){
                     .catch(function(error) {
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Password are required');
+                        expect(getAllStub.callCount).to.be.equals(0);
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
                         parseUserStub.restore();
                     });
         });
         it('Should return a user when entity are correct', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
+            getAllStub
+                .withArgs({email:'tests@mailtest.com'})
+                .returns(Promise.resolve({}));
+
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
             encryptStub
                 .withArgs('123')
-                .resolve('efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19');
+                .returns('efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19');
 
             var saveStub = sinon.stub(userDAO, 'save');
             saveStub
                 .withArgs({email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
-                .resolve({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
+                .returns({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
-                resolve({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                .returns({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
 
             return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
                     .then(function(user) {
                         expect(user).to.be.eqls({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
+                        expect(getAllStub.callCount).to.be.equals(1);
                         expect(saveStub.callCount).to.be.equals(1);
                         expect(encryptStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
+                        getAllStub.restore();
+                        saveStub.restore();
+                        encryptStub.restore();
+                        parseUserStub.restore();
+                    });
+        });
+        it('Should return a error when entity already exist', function(){
+            var getAllStub = sinon.stub(userDAO, 'getAll');
+            getAllStub
+                .withArgs({email:'tests@mailtest.com'})
+                .returns({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
+
+            var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
+
+            var saveStub = sinon.stub(userDAO, 'save');
+
+            var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
+            return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.eqls(409);
+                        expect(error.message).to.be.equals('Entered email is already being used');
+                        expect(getAllStub.callCount).to.be.equals(1);
+                        expect(saveStub.callCount).to.be.equals(0);
+                        expect(encryptStub.callCount).to.be.equals(0);
+                        expect(parseUserStub.callCount).to.be.equals(0);
+                        getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
                         parseUserStub.restore();

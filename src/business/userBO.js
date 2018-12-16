@@ -81,8 +81,43 @@ module.exports = function(dependencies) {
             });
         },
 
-        save: function(){
-            
+        save: function(body){
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        if (!body || !body.email){
+                            logger.error('[UserBO] Email not found in: ' + JSON.stringify(body));
+                            throw {code: 422, message: 'Email are required'};
+                        }
+                        if (!body.name){
+                            logger.error('[UserBO] Name not found in: ' + JSON.stringify(body));
+                            throw {code: 422, message: 'Name are required'};
+                        }
+                        if (!body.password){
+                            logger.error('[UserBO] Password not found in: ' + JSON.stringify(body));
+                            throw {code: 422, message: 'Password are required'};
+                        }
+                    })
+                    .then(function(){
+                        logger.error('[UserBO] Encrypting a password of ' + body.name);
+                        return cryptoHelper.encrypt(body.password);
+                    })
+                    .then(function(password){
+                        logger.error('[UserBO] Saving user in database');
+                        var user = {};
+                        user.name = body.name;
+                        user.email = body.email;
+                        user.password = password;
+                        user.isEnabled = true;
+
+                        return dao.save(user);
+                    })
+                    .catch(function(error){
+                        logger.error('[UserBO] An error occured: ' + error);
+                        reject(error);
+                    });
+            });
         }
     };
 };
