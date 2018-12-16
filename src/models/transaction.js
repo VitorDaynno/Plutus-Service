@@ -34,6 +34,10 @@ module.exports = function () {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'Users'
+        },
+        isEnabled: {
+            type: Boolean,
+            required: true
         }
     });
 

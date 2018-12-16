@@ -12,6 +12,10 @@ module.exports = function () {
         type: {
             type: String,
             required: true
+        },
+        isEnabled: {
+            type: Boolean,
+            required: true
         }
     });
 
