@@ -100,18 +100,35 @@ module.exports = function(dependencies) {
                         }
                     })
                     .then(function(){
-                        logger.error('[UserBO] Encrypting a password of ' + body.name);
+                        logger.info('[UserBO] Validating a email "' + body.email +'" in database ');
+                        return dao.getAll({email: body.email});
+                    })
+                    .then(function(user){
+                        if (user && user.email){
+                            logger.error('[UserBO] The email "' + user.email + '" is already in the database');
+                            throw {code: 409, message: 'Entered email is already being used'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[UserBO] Encrypting a password of ' + body.name);
                         return cryptoHelper.encrypt(body.password);
                     })
                     .then(function(password){
-                        logger.error('[UserBO] Saving user in database');
+                        logger.info('[UserBO] Saving user in database');
                         var user = {};
                         user.name = body.name;
                         user.email = body.email;
                         user.password = password;
                         user.isEnabled = true;
-
                         return dao.save(user);
+                    })
+                    .then(function(user){
+                        logger.info('[UserBO] User "'+ JSON.stringify(user) +'" save in database with success');
+                        return modelHelper.parseUser(user);
+                    })
+                    .then(function(user){
+                        logger.info('[UserBO] User parsed by helper: '+ JSON.stringify(user));
+                        resolve(user);
                     })
                     .catch(function(error){
                         logger.error('[UserBO] An error occured: ' + error);
