@@ -26,6 +26,22 @@ module.exports = function() {
                 .catch(function(error){
                     res.status(error.code).json(error.message);
                 });
+        },
+
+        save: function(req, res){
+            
+        },
+
+        update: function(req, res){
+            logger.info('[User-Controller] updating user by id ' + req.params.id);
+            var id = req.params.id ? req.params.id : null;
+            business.update({id: id})
+                .then(function(user){
+                    res.send(user);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
+                });
         }
     };
 };
