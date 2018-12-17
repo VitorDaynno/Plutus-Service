@@ -441,7 +441,7 @@ describe('userBO', function(){
             var deleteStub = sinon.stub(userDAO, 'delete');
             deleteStub
                 .withArgs({id: '5c088673fb2f579adcca9ed1'})
-                .resolve({});
+                .returns({});
 
             return userBO.delete({id: '5c088673fb2f579adcca9ed1'})
                     .then(function() {

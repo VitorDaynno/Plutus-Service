@@ -161,7 +161,32 @@ module.exports = function(dependencies) {
                         resolve(user);
                     })
                     .catch(function(error){
-                        logger.error('[UserBO] An error occurred: ', JSON.stringify(error));
+                        logger.error('[UserBO] An error occurred: ' + JSON.stringify(error));
+                        reject(error);
+                    });
+            });
+        },
+
+        delete: function(body){
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        logger.info('[UserBO] Delete user');
+                        if (!body || !body.id){
+                            logger.error('[UserBO] Id not found in ' + JSON.stringify(body));
+                            throw {code: 422, message: 'Id are required'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[UserBO] Delete user by id: ', body.id);
+                        return dao.delete(body.id);
+                    })
+                    .then(function(){
+                        resolve({});
+                    })
+                    .catch(function(error){
+                        logger.error('[UserBO] An error occurred: ' + JSON.stringify(error));
                         reject(error);
                     });
             });
