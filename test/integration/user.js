@@ -261,10 +261,37 @@ describe('users', function(){
   });
 
   describe('v1/users',function() {
+    it('Should return error because request not contain token auth', function(){
+      return request(server)
+          .post('/v1/users/')
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(403);
+    });
+    it('Should return error because request contain a token invalid', function(){
+        return request(server)
+            .post('/v1/users/')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
+            .expect('Content-Type', /json/)
+            .expect(403);
+    });
+    it('Should return a valid token to continue the validates', function(){
+      return request(server)
+              .post('/v1/users/auth')
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .send({email:'admin@plutus.com.br', password: '1234'})
+              .expect(200)
+              .then(function(response){
+                  validToken = response.body.token;
+              });
+    });
     it('Should return error because body is empty', function(){
         return request(server)
                 .post('/v1/users')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({})
                 .expect(422);
@@ -273,6 +300,7 @@ describe('users', function(){
         return request(server)
                 .post('/v1/users')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({name: 'test', password:'123'})
                 .expect(422);
@@ -281,6 +309,7 @@ describe('users', function(){
       return request(server)
               .post('/v1/users')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
               .send({email: 'test@emailtest.com', password:'123'})
               .expect(422);
@@ -289,6 +318,7 @@ describe('users', function(){
         return request(server)
                 .post('/v1/users')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({email:'test@mailtest.com', name: 'test'})
                 .expect(422);
@@ -297,6 +327,7 @@ describe('users', function(){
         return request(server)
                 .post('/v1/users')
                 .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({email:'test@emailtest.com', name:'test', password: '1234'})
                 .expect(201)
@@ -310,6 +341,7 @@ describe('users', function(){
       return request(server)
               .post('/v1/users')
               .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
               .send({email:'test@emailtest.com', name:'test', password: '1234'})
               .expect(409);

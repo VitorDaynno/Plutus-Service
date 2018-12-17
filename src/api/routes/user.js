@@ -8,7 +8,7 @@ module.exports = function(app) {
         .post(controller.auth);
 
     app.route('/v1/users')
-        .post(controller.save);
+        .post(helper.verifyToken, controller.save);
 
     app.route('/v1/users/:id')
         .get(helper.verifyToken, controller.getById)

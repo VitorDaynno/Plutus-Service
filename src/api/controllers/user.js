@@ -29,7 +29,15 @@ module.exports = function() {
         },
 
         save: function(req, res){
-            
+            logger.info('[User-Controller] Save a user');
+            body = req.body ? req.body: {};
+            business.save(body)
+                .then(function(user){
+                    res.status(201).json(user);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
+                });
         },
 
         update: function(req, res){
