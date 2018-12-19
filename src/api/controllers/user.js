@@ -50,6 +50,18 @@ module.exports = function() {
                 .catch(function(error){
                     res.status(error.code).json(error.message);
                 });
+        },
+
+        delete: function(req, res){
+            logger.info('[User-Controller] Deleting user by id ' + req.params.id);
+            var id = req.params.id ? req.params.id : null;
+            business.delete({id: id})
+                .then(function(user){
+                    res.send(user);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
+                });
         }
     };
 };

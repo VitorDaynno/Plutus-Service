@@ -260,8 +260,8 @@ describe('userBO', function(){
         it('Should return a error when entity already exist', function(){
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'test@mailtest.com'})
-                .returns({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
+                .withArgs({email:'test@mailtest.com', isEnabled: true})
+                .returns([{_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'}]);
 
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
 
