@@ -12,5 +12,6 @@ module.exports = function(app) {
 
     app.route('/v1/users/:id')
         .get(helper.verifyToken, controller.getById)
-        .put(helper.verifyToken, controller.update);
+        .put(helper.verifyToken, controller.update)
+        .delete(helper.verifyToken, controller.delete);
 };

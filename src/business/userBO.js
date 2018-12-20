@@ -101,10 +101,10 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[UserBO] Validating a email "' + body.email +'" in database ');
-                        return dao.getAll({email: body.email});
+                        return dao.getAll({email: body.email, isEnabled: true});
                     })
                     .then(function(user){
-                        if (user && user.email){
+                        if (user && user.length > 0){
                             logger.error('[UserBO] The email "' + user.email + '" is already in the database');
                             throw {code: 409, message: 'Entered email is already being used'};
                         }
