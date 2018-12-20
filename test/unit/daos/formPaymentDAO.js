@@ -14,10 +14,10 @@ describe('formPaymentDAO', function(){
     describe('save', function(){
         it('Should return a formPayment when a document transaction contain all fields', function(){
             var createStub = sinon.mock(formPaymentModel).expects('create')
-                .withArgs({name: 'Card 1', type: 'creditCard'})
-                .resolves({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+                .withArgs({name: 'Card 1', type: 'creditCard', isEnabled: true})
+                .resolves({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard', isEnabled: true});
 
-            return formPaymentDAO.save({name: 'Card 1', type: 'creditCard'})
+            return formPaymentDAO.save({name: 'Card 1', type: 'creditCard', isEnabled: true})
                 .then(function(){
                     expect(createStub.callCount).to.be.equals(1);
                     sinon.restore();
@@ -43,14 +43,14 @@ describe('formPaymentDAO', function(){
             var findByStub = sinon.mock(formPaymentModel).expects('findById')
                 .withArgs('5bbead798c2a8a92339e88b8')
                 .chain('exec')
-                .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true});
 
             return formPaymentDAO.getById('5bbead798c2a8a92339e88b8')
                 .then(function(formPayment){
-                    expect(formPayment).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                    expect(formPayment).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true});
                     expect(findByStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
         });
-    })
+    });
 });
