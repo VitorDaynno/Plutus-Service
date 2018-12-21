@@ -12,7 +12,7 @@ module.exports = function(dependencies) {
                 var chain = Promise.resolve();
                 chain
                     .then(function(){
-                        if(!formPayment){
+                        if (!formPayment){
                             logger.error('[FormPaymentBO] An error occurred because object not exist');
                             throw {code:422, message:'The entity can not be empty'};
                         }
@@ -23,10 +23,11 @@ module.exports = function(dependencies) {
                         if (!formPayment.type){
                             logger.error('[FormPaymentBO] An error occurred because Type not exist');
                             throw {code:422, message:'The entity should has a field type'};
-                        }                        
+                        }
                     })
                     .then(function(){
                         logger.info('[FormPaymentBO] A form a payment will be inserted');
+                        formPayment.isEnabled = true;
                         return dao.save(formPayment);
                     })
                     .then(function(formPayment){

@@ -35,7 +35,7 @@ describe('FormPaymentBO', function(){
             var saveStub = sinon.stub(formPaymentDAO, 'save');
             saveStub
                 .withArgs({name: 'Card 1', type: 'creditCard', isEnabled: true})
-                .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+                .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard', isEnabled: true});
 
             var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
             parseFormPaymentStub
