@@ -202,12 +202,12 @@ describe('TransactionBO', function(){
 
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
-                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
-                .returns({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
+                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011', isEnabled: true})
+                .returns({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011', isEnabled: true});
 
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
-                .withArgs({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'})
+                .withArgs({_id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011', isEnabled: true})
                 .returns({id: 1, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928385), formPayment: '507f1f77bcf86cd799439011'});
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
@@ -229,12 +229,12 @@ describe('TransactionBO', function(){
 
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
-                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
-                .returns({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
+                .withArgs({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true})
+                .returns({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true});
 
             var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
-                .withArgs({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
+                .withArgs({_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true})
                 .returns({id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5});
 
             return transactionBO.add({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: '507f1f77bcf86cd799439012', installments: 5})
@@ -344,9 +344,9 @@ describe('TransactionBO', function(){
             var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 22})
-                .returns([{_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5},
-                          {_id: 4, description: 'Tênis 2', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5},
-                          {_id: 5, description: 'Tênis 3', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5}]);
+                .returns([{_id: 3, description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true},
+                          {_id: 4, description: 'Tênis 2', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true},
+                          {_id: 5, description: 'Tênis 3', value: -99.0, category: 'Vestuário', purchaseDate: new Date(1537058928785), formPayment: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true}]);
 
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
