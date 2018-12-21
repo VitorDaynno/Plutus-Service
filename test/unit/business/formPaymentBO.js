@@ -34,12 +34,12 @@ describe('FormPaymentBO', function(){
         it('Should add a transactions', function(){
             var saveStub = sinon.stub(formPaymentDAO, 'save');
             saveStub
-                .withArgs({name: 'Card 1', type: 'creditCard'})
+                .withArgs({name: 'Card 1', type: 'creditCard', isEnabled: true})
                 .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
 
             var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
             parseFormPaymentStub
-                .withArgs({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'})
+                .withArgs({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard', isEnabled: true})
                 .returns({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
 
             return formPaymentBO.add({name: 'Card 1', type: 'creditCard'})
@@ -104,11 +104,11 @@ describe('FormPaymentBO', function(){
             var getByIdStub = sinon.stub(formPaymentDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b8')
-                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true});
 
             var parseFormPaymentStub = sinon.stub(ModelHelper, 'parseFormPayment');
             parseFormPaymentStub
-                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'})
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true})
                 .returns({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
 
             return formPaymentBO.getById({id: '5bbead798c2a8a92339e88b8'})

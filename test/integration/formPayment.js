@@ -73,7 +73,7 @@ describe('formPayment', function(){
                 .expect('Content-Type', /json/)
                 .send({name: 'Card 1'})
                 .expect(422);
-        });  
+        });
         it('Should return a form of payment when inserting with success', function(){
             return request(server)
                 .post('/v1/formspayment')
@@ -88,5 +88,5 @@ describe('formPayment', function(){
                     expect(formPayment.body.type).to.be.equals('creditCard');
                 });
         });
-    })
-})
+    });
+});
