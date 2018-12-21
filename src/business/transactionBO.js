@@ -48,6 +48,7 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[TransactionBO] A transaction will be inserted');
+                        transaction.isEnabled = true;
                         return dao.save(transaction);
                     })
                     .then(function(transaction){
