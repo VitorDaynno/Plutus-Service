@@ -13,10 +13,10 @@ module.exports = function () {
             type: Number,
             required: true
         },
-        category: {
+        category: [{
             type: String,
             required: true
-        },
+        }],
         purchaseDate: {
             type: Date,
             required: true

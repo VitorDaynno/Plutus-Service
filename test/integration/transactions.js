@@ -30,7 +30,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
               .expect('Content-Type', /json/)
-              .send({value: 33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({value: 33.9, category: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
 
@@ -61,7 +61,7 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({value: -33.9, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({value: -33.9, category: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Value does not exist', function(){
@@ -70,7 +70,7 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({description: 'Tênis', category: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Category does not exist', function(){
@@ -88,7 +88,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', formPayment: '507f1f77bcf86cd799439011'})
+              .send({description: 'Tênis', value: -99.0, category: ['Vestuário'], formPayment: '507f1f77bcf86cd799439011'})
               .expect(422);
     });
     it('Should return error because FormPayment does not exist', function(){
@@ -97,7 +97,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date()})
+              .send({description: 'Tênis', value: -99.0, category: ['Vestuário'], purchaseDate: new Date()})
               .expect(422);
     });
     it('Should return error when FormPayment does not found', function(){
@@ -106,7 +106,7 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
+                .send({description: 'Tênis', value: -99.0, category: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
                 .expect(404);
     });
     it('Should return a form of payment when inserting with success', function(){
@@ -127,7 +127,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, category: 'Vestuário', purchaseDate: new Date(), formPayment: validFormPaymentId})
+              .send({description: 'Tênis', value: -99.0, category: ['Vestuário'], purchaseDate: new Date(), formPayment: validFormPaymentId})
               .expect(201)
               .then(function(response){
                 var transaction = response.body;
@@ -135,7 +135,7 @@ describe('transactions', function(){
                 expect(transaction).has.to.property('purchaseDate');
                 expect(transaction.description).to.be.equals('Tênis');
                 expect(transaction.value).to.be.equals(-99.0);
-                expect(transaction.category).to.be.equals('Vestuário');
+                expect(transaction.category).to.be.eqls(['Vestuário']);
                 expect(transaction.formPayment).to.be.equals(validFormPaymentId);
               });
     });

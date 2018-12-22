@@ -182,7 +182,7 @@ describe('userDAO', function(){
 
         it('Should return a user when updated', function(){
             var updateStub = sinon.mock(userModel).expects('findByIdAndUpdate')
-                .withArgs('5c088673fb2f579adcca9ed1',{ $set: {name: 'changedName'}}, {new: true})
+                .withArgs('5c088673fb2f579adcca9ed1', {$set: {name: 'changedName'}}, {new: true})
                 .resolves({_id: '5c088673fb2f579adcca9ed1', name: 'changedName', email: 'test@mailtest.com'});
 
             return userDAO.update('5c088673fb2f579adcca9ed1', {name: 'changedName'})
