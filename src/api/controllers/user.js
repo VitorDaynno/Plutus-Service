@@ -43,7 +43,9 @@ module.exports = function() {
         update: function(req, res){
             logger.info('[User-Controller] updating user by id ' + req.params.id);
             var id = req.params.id ? req.params.id : null;
-            business.update({id: id})
+            body = req.body ? req.body : {};
+            body.id = id;
+            business.update(body)
                 .then(function(user){
                     res.send(user);
                 })

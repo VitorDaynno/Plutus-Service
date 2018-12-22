@@ -197,8 +197,16 @@ describe('users', function(){
                   .then(function(response){
                     expect(response.body.id).to.be.equal(userId);
                     expect(response.body.name).to.be.equal('changedName');
-                    expect(response.body.email).to.be.equal('test@testmail.com');
+                    expect(response.body.email).to.be.equal('test@emailtest.com');
                   });
+      });
+      it('Should return success when deleted a user', function(){
+        return request(server)
+                .delete('/v1/users/' + userId)
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .expect(200);
       });
     });
 
@@ -332,6 +340,7 @@ describe('users', function(){
                 .send({email:'test@emailtest.com', name:'test', password: '1234'})
                 .expect(201)
                 .then(function(response){
+                  userId = response.body.id;
                   expect(response.body.name).to.be.equal('test');
                   expect(response.body.email).to.be.equal('test@emailtest.com');
                   expect(response.body).to.not.have.property('password');
@@ -345,6 +354,14 @@ describe('users', function(){
               .expect('Content-Type', /json/)
               .send({email:'test@emailtest.com', name:'test', password: '1234'})
               .expect(409);
+    });
+    it('Should return success when deleted a user', function(){
+      return request(server)
+              .delete('/v1/users/' + userId)
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .expect(200);
     });
   });
 });

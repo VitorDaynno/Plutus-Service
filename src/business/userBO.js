@@ -142,9 +142,10 @@ module.exports = function(dependencies) {
                 var chain = Promise.resolve();
                 chain
                     .then(function(){
-                        logger.info('[UserBO] Validating user: ', JSON.stringify(body));
+                        console.log(body)
+                        logger.info('[UserBO] Validating user: '+ JSON.stringify(body));
                         if (!body || !body.id){
-                            logger.error('[UserBO] Id not found in: ', JSON.stringify(body));
+                            logger.error('[UserBO] Id not found in: '+ JSON.stringify(body));
                             throw {code: 422, message: 'Id are required'};
                         }
                     })
@@ -154,6 +155,9 @@ module.exports = function(dependencies) {
                     })
                     .then(function(user){
                         logger.info('[UserBO] User updated: ', user);
+                        if (!user || !user._id) {
+                            return {};
+                        }
                         return modelHelper.parseUser(user);
                     })
                     .then(function(user){
