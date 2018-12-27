@@ -43,6 +43,17 @@ module.exports = function(dependencies) {
                     };
                 });
             });
+        },
+
+        balances: function(filter) {
+            return new Promise(function(resolve){
+                logger.info('[FormPaymentDAO] Getting balances in database by filter ', filter);
+                formPayment.aggregate([{$match: filter}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                    .then(function(balances){
+                        logger.info('[FormPaymentDAO] The balances returns by database: ', balances);
+                        resolve(balances);
+                    });
+            });
         }
     };
 };

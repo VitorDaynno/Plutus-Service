@@ -13,6 +13,10 @@ module.exports = function () {
             type: String,
             required: true
         },
+        userId:{
+            type: String,
+            required: true
+        },
         isEnabled: {
             type: Boolean,
             required: true

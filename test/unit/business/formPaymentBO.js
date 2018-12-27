@@ -14,6 +14,8 @@ describe('FormPaymentBO', function(){
         modelHelper: ModelHelper
     });
 
+    
+
     describe('add', function(){
         it('Should return error because Name does not informed', function(){
             return formPaymentBO.add({type: 'creditCard'})
@@ -48,6 +50,87 @@ describe('FormPaymentBO', function(){
                     expect(parseFormPaymentStub.callCount).to.be.equals(1);
                     expect(transaction).to.be.eqls({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
                     saveStub.restore();
+                    parseFormPaymentStub.restore();
+                });
+        });
+    });
+
+    describe('getAll', function(){
+        it('Should return error because body does not exist', function(){
+            var getAllStub = sinon.stub(formPaymentDAO, 'getAll');
+            var parseFormPaymentStub = sinon.stub(modelHelper, 'parseFormPayment');
+
+            return formPaymentBO.getAll()
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equal(422);
+                    expect(error.message).to.be.equal('UserId are required');
+                    expect(getAllStub.callCount).to.be.equal(0);
+                    expect(parseFormPaymentStub.callCount).to.be.equal(0);
+                    getAllStub.restore();
+                    parseFormPaymentStub.restore();
+                });
+        });
+
+        it('Should return error because field userId does not exist', function(){
+            var getAllStub = sinon.stub(formPaymentDAO, 'getAll');
+            var parseFormPaymentStub = sinon.stub(modelHelper, 'parseFormPayment');
+
+            return formPaymentBO.getAll({})
+                .then()
+                .catch(function(error){
+                    expect(error.code).to.be.equal(422);
+                    expect(error.message).to.be.equal('UserId are required');
+                    expect(getAllStub.callCount).to.be.equal(0);
+                    expect(parseFormPaymentStub.callCount).to.be.equal(0);
+                    getAllStub.restore();
+                    parseFormPaymentStub.restore();
+                });
+        });
+
+        it('Should return a empty array because userId does not have formsPayment', function(){
+            var getAllStub = sinon.stub(formPaymentDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: '5bddd5a80a8cad1e079a334c'})
+                .returns([]);
+
+            var parseFormPaymentStub = sinon.stub(modelHelper, 'parseFormPayment');
+
+            return formPaymentBO.getAll({userId: '5bddd5a80a8cad1e079a334c'})
+                .then(function(formPayments){
+                    expect(formPayments).to.be.eqls([]);
+                    expect(getAllStub.callCount).to.be.equal(1);
+                    expect(parseFormPaymentStub.callCount).to.be.equal(0);
+                    getAllStub.restore();
+                    parseFormPaymentStub.restore();
+                });
+        });
+
+        it('Should return formPayments', function(){
+            var getAllStub = sinon.stub(formPaymentDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: '5bddd5a80a1cad1e079a334c'})
+                .returns([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard', isEnabled: true},
+                          {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard', isEnabled: true},
+                          {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard', isEnabled: true}]);
+
+            var parseFormPaymentStub = sinon.stub(modelHelper, 'parseFormPayment');
+            parseFormPaymentStub
+                .withArgs([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard', isEnabled: true},
+                           {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard', isEnabled: true},
+                           {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard', isEnabled: true}])
+                .returns([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard'},
+                          {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard'},
+                          {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard'}]);
+
+            return formPaymentBO.getAll({userId: '5bddd5a80a1cad1e079a334c'})
+                .then(function(formPayments){
+                    expect(formPayments).to.be.eqls([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard'},
+                                                     {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard'},
+                                                     {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard'}]);
+                    expect(getAllStub.callCount).to.be.equal(1);
+                    expect(parseFormPaymentStub.callCount).to.be.equal(1);
+                    getAllStub.restore();
                     parseFormPaymentStub.restore();
                 });
         });
@@ -118,6 +201,107 @@ describe('FormPaymentBO', function(){
                         expect(parseFormPaymentStub.callCount).to.be.equals(1);
                         getByIdStub.restore();
                         parseFormPaymentStub.restore();
+                    });
+        });
+    });
+
+    describe('balances', function(){
+        it('Should return error when body does not exist', function() {
+            var balancesStub = sinon.stub(formPaymentDAO, 'balances');
+            var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
+
+            return formPaymentBO.balances()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(balancesStub.callCount).to.be.equal(0);
+                        expect(parseBalanceStub.callCount).to.be.equal(0);
+                        balancesStub.restore();
+                        parseBalanceStub.restore();
+                    });
+        });
+        it('Should return error when body does not contains the field id', function() {
+            var balancesStub = sinon.stub(formPaymentDAO, 'balances');
+            var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
+
+            return formPaymentBO.balances({})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('UserId are required');
+                        expect(balancesStub.callCount).to.be.equal(0);
+                        expect(parseBalanceStub.callCount).to.be.equal(0);
+                        balancesStub.restore();
+                        parseBalanceStub.restore();
+                    });
+        });
+        it('Should return a empty object when userId does not have a formPayment', function() {
+            var balancesStub = sinon.stub(formPaymentDAO, 'balances');
+            balancesStub
+                .withArgs({userId: '5bbead798c2a8a92339e88b1'})
+                .returns([]);
+
+            var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
+            parseBalanceStub
+                .withArgs([])
+                .returns([]);
+
+            return formPaymentBO.balances({userId: '5bbead798c2a8a92339e88b1'})
+                    .then(function(balances) {
+                        expect(balances).to.be.eqls([]);
+                        expect(balancesStub.callCount).to.be.equal(1);
+                        expect(parseBalanceStub.callCount).to.be.equal(1);
+                        balancesStub.restore();
+                        parseBalanceStub.restore();
+                    });
+        });
+        it('Should return a array with balances when userId have a formsPayment', function() {
+            var balancesStub = sinon.stub(formPaymentDAO, 'balances');
+            balancesStub
+                .withArgs({userId: '5bbead798c2a8a92339e88b2'})
+                .returns([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
+                          {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+
+            var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
+            parseBalanceStub
+                .withArgs([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
+                           {_id : '5c1dd2322aa198732f07ad65', balance : -500}])
+                .returns([{id : '5c216945b7a96c6cf78f5df6', balance : -99},
+                          {id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+
+            return formPaymentBO.balances({userId: '5bbead798c2a8a92339e88b2'})
+                    .then(function(balances) {
+                        expect(balances[0]).to.be.eqls({id : '5c216945b7a96c6cf78f5df6', balance : -99});
+                        expect(balances[1]).to.be.eqls({id : '5c1dd2322aa198732f07ad65', balance : -500});
+                        expect(balancesStub.callCount).to.be.equal(1);
+                        expect(parseBalanceStub.callCount).to.be.equal(1);
+                        balancesStub.restore();
+                        parseBalanceStub.restore();
+                    });
+        });
+        it('Should return filtered balances per day', function() {
+            var balancesStub = sinon.stub(formPaymentDAO, 'balances');
+            balancesStub
+                .withArgs({userId: '5bbead798c2a8a92339e88b2', initialDate: new Date(1545506568424), finalDate: new Date(1545906578424)})
+                .returns([{_id : '5c216945b7a96c6cf78f5df6', balance : -49},
+                          {_id : '5c1dd2322aa198732f07ad65', balance : -40}]);
+
+            var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
+            parseBalanceStub
+                .withArgs([{_id : '5c216945b7a96c6cf78f5df6', balance : -49},
+                           {_id : '5c1dd2322aa198732f07ad65', balance : -40}])
+                .returns([{id : '5c216945b7a96c6cf78f5df6', balance : -49},
+                          {id : '5c1dd2322aa198732f07ad65', balance : -40}]);
+
+            return formPaymentBO.balances({userId: '5bbead798c2a8a92339e88b2', initialDate: new Date(1545506568424), finalDate: new Date(1545906578424)})
+                    .then(function(balances) {
+                        expect(balances[0]).to.be.eqls({id : '5c216945b7a96c6cf78f5df6', balance : -49});
+                        expect(balances[1]).to.be.eqls({id : '5c1dd2322aa198732f07ad65', balance : -40});
+                        expect(balancesStub.callCount).to.be.equal(1);
+                        expect(parseBalanceStub.callCount).to.be.equal(1);
+                        balancesStub.restore();
+                        parseBalanceStub.restore();
                     });
         });
     });

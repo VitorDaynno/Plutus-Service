@@ -25,5 +25,19 @@ module.exports = {
         entity.formPayment = transaction.formPayment;
 
         return entity;
+    },
+    parseBalance: function(balance){
+        if (Array.isArray(balance)) {
+            return balance.map(function(item){
+                var entity = {};
+                entity.id = item._id;
+                entity.balance = item.balance;
+                return entity;
+            });
+        }
+        var entity = {};
+        entity.id = balance._id;
+        entity.balance = balance.balance;
+        return entity;
     }
 };

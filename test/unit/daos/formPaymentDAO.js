@@ -53,4 +53,65 @@ describe('formPaymentDAO', function(){
                 });
         });
     });
+
+    describe('getAll', function(){
+        it('Should return a empty array when userId does not have formsPayments', function(){
+            var findStub = sinon.mock(formPaymentModel).expects('find')
+                .withArgs({userId: '5bbead798c2a8a92339e88b4'})
+                .chain('exec')
+                .resolves([]);
+
+            return formPaymentDAO.getAll({userId: '5bbead798c2a8a92339e88b4'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls([]);
+                    expect(findStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+
+        it('Should return a form of payment when userId have formsPayments', function(){
+            var findStub = sinon.mock(formPaymentModel).expects('find')
+                .withArgs({userId: '5bbead798c2a8a92339e88b3'})
+                .chain('exec')
+                .resolves({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true});
+
+            return formPaymentDAO.getAll({_id: '5bbead798c2a8a92339e88b3'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true});
+                    expect(findStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
+
+    describe('balances', function(){
+        it('Should return a empty array when userId does not have formsPayments', function(){
+            var aggregateStub = sinon.mock(formPaymentModel).expects('aggregate')
+                .withArgs([{$match: {userId: '4b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                .resolves([]);
+
+            return formPaymentDAO.balances({userId: '4b9872580c3ed488505ffa68'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls([]);
+                    expect(aggregateStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+
+        it('Should return a form of payment when userId have formsPayments', function(){
+            var aggregateStub = sinon.mock(formPaymentModel).expects('aggregate')
+                .withArgs([{$match: {userId: '7b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                .chain('exec')
+                .resolves([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
+                          {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+
+            return formPaymentDAO.balances({userId: '7b9872580c3ed488505ffa68'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls([{_id : '5c216945b7a96c6cf78f5df6', balance : -99}, {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+                    expect(aggregateStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
+
 });
