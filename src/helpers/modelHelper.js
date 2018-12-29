@@ -8,6 +8,16 @@ module.exports = {
         return entity;
     },
     parseFormPayment: function(formPayment){
+        if (Array.isArray(formPayment)) {
+            return formPayment.map(function(item){
+                var entity = {};
+                entity.id = item._id;
+                entity.name = item.name;
+                entity.type = item.type;
+                return entity;
+            });
+        }
+
         var entity = {};
         entity.id = formPayment._id;
         entity.name = formPayment.name;

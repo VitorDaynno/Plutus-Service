@@ -14,10 +14,10 @@ describe('formPaymentDAO', function(){
     describe('save', function(){
         it('Should return a formPayment when a document transaction contain all fields', function(){
             var createStub = sinon.mock(formPaymentModel).expects('create')
-                .withArgs({name: 'Card 1', type: 'creditCard', isEnabled: true})
+                .withArgs({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true})
                 .resolves({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard', isEnabled: true});
 
-            return formPaymentDAO.save({name: 'Card 1', type: 'creditCard', isEnabled: true})
+            return formPaymentDAO.save({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true})
                 .then(function(){
                     expect(createStub.callCount).to.be.equals(1);
                     sinon.restore();
@@ -75,7 +75,7 @@ describe('formPaymentDAO', function(){
                 .chain('exec')
                 .resolves({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true});
 
-            return formPaymentDAO.getAll({_id: '5bbead798c2a8a92339e88b3'})
+            return formPaymentDAO.getAll({userId: '5bbead798c2a8a92339e88b3'})
                 .then(function(formsPayment){
                     expect(formsPayment).to.be.eqls({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true});
                     expect(findStub.callCount).to.be.equals(1);
@@ -83,35 +83,4 @@ describe('formPaymentDAO', function(){
                 });
         });
     });
-
-    describe('balances', function(){
-        it('Should return a empty array when userId does not have formsPayments', function(){
-            var aggregateStub = sinon.mock(formPaymentModel).expects('aggregate')
-                .withArgs([{$match: {userId: '4b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
-                .resolves([]);
-
-            return formPaymentDAO.balances({userId: '4b9872580c3ed488505ffa68'})
-                .then(function(formsPayment){
-                    expect(formsPayment).to.be.eqls([]);
-                    expect(aggregateStub.callCount).to.be.equals(1);
-                    sinon.restore();
-                });
-        });
-
-        it('Should return a form of payment when userId have formsPayments', function(){
-            var aggregateStub = sinon.mock(formPaymentModel).expects('aggregate')
-                .withArgs([{$match: {userId: '7b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
-                .chain('exec')
-                .resolves([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
-                          {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
-
-            return formPaymentDAO.balances({userId: '7b9872580c3ed488505ffa68'})
-                .then(function(formsPayment){
-                    expect(formsPayment).to.be.eqls([{_id : '5c216945b7a96c6cf78f5df6', balance : -99}, {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
-                    expect(aggregateStub.callCount).to.be.equals(1);
-                    sinon.restore();
-                });
-        });
-    });
-
 });

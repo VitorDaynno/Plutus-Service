@@ -64,7 +64,6 @@ module.exports = function(dependencies) {
                     logger.error('[UserDAO] user is empty');
                     reject();
                 }
-                console.log(user)
                 userModel.findByIdAndUpdate(id, {$set: user}, {new: true})
                     .then(function(user){
                         logger.info('[UserDAO] User updated by id ' + id);

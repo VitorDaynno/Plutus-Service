@@ -31,7 +31,7 @@ module.exports = function () {
             required: false
         },
         userId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
             ref: 'Users'
         },

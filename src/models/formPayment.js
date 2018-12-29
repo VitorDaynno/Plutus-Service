@@ -15,7 +15,8 @@ module.exports = function () {
         },
         userId:{
             type: String,
-            required: true
+            required: true,
+            ref: 'Users'
         },
         isEnabled: {
             type: Boolean,

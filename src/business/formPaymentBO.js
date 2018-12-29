@@ -2,6 +2,7 @@ var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
     var dao = dependencies.formPaymentDAO;
+    var transactionDAO = dependencies.transactionDAO;
     var modelHelper = dependencies.modelHelper;
 
     return {
@@ -78,6 +79,42 @@ module.exports = function(dependencies) {
             });
         },
 
+        getAll: function(body) {
+            return new Promise(function(resolve, reject){
+                var chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        if (!body || !body.userId){
+                            logger.error('[FormPaymentBO] An error occurred because body or field userId not exist');
+                            throw {code: 422, message: 'UserId are required'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[FormPaymentBO] Init the mount filter');
+                        var filter = {};
+                        filter.userId = body.userId;
+
+                        return filter;
+                    })
+                    .then(function(filter){
+                        logger.info('[FormPaymentBO] Getting formsPayments in database by filter: ', filter);
+                        return dao.getAll(filter);
+                    })
+                    .then(function(formsPayment){
+                        logger.info('[FormPaymentBO] The formsPayments was returned: ', formsPayment);
+                        return modelHelper.parseFormPayment(formsPayment);
+                    })
+                    .then(function(formsPayment){
+                        logger.info('[FormPaymentBO] The formsPayments was parsed: ', JSON.stringify(formsPayment));
+                        resolve(formsPayment);
+                    })
+                    .catch(function(error){
+                        logger.error('[FormPaymentBO] An error occurred: ', error);
+                        reject(error);
+                    });
+            });
+        },
+
         balances: function(body) {
             return new Promise(function(resolve, reject){
                 var chain = Promise.resolve();
@@ -102,19 +139,18 @@ module.exports = function(dependencies) {
                     })
                     .then(function(filter){
                         logger.info('[FormPaymentBO] Getting balances by filter', filter);
-                        return dao.balances(filter);
+                        return transactionDAO.balances(filter);
                     })
                     .then(function(balances){
-                        logger.info('[FormPaymentBO] Balances are returned', balances);                        
+                        logger.info('[FormPaymentBO] Balances are returned', balances);
                         return modelHelper.parseBalance(balances);
                     })
                     .then(function(balances){
-                        console.log(balances)
                         logger.info('[FormPaymentBO] Balances parseds', balances);
                         resolve(balances);
                     })
                     .catch(function(error){
-                        logger.error('[FormPaymentBO] An error occurred', error);
+                        logger.error('[FormPaymentBO] An error occurred'+ error);
                         reject(error);
                     });
             });

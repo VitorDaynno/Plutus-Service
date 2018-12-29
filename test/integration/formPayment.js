@@ -127,9 +127,19 @@ describe('formPayment', function(){
                     });
             });
 
-            it('Should return formsPayment', function(){
+            it('Should return a form of payment when inserting with success', function(){
                 return request(server)
                     .post('/v1/formspayment')
+                    .set('Accept', 'application/json')
+                    .set('Authorization', 'Bearer ' + validToken)
+                    .expect('Content-Type', /json/)
+                    .send({name: 'Card 1', type: 'creditCard'})
+                    .expect(201);
+            });
+            
+            it('Should return formsPayment', function(){
+                return request(server)
+                    .get('/v1/formspayment')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -145,7 +155,7 @@ describe('formPayment', function(){
     describe('v1/formspayment/balances', function() {
         it('Should return error because request not contain token auth', function(){
             return request(server)
-                .get('/v1/formspayment')
+                .get('/v1/formspayment/balances')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(403);
@@ -153,7 +163,7 @@ describe('formPayment', function(){
 
         it('Should return error because request contain a token invalid', function(){
             return request(server)
-                .get('/v1/formspayment')
+                .get('/v1/formspayment/balances')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                 .expect('Content-Type', /json/)
@@ -174,13 +184,13 @@ describe('formPayment', function(){
 
         it('Should return balances array', function(){
             return request(server)
-                .get('/v1/formspayment')
+                .get('/v1/formspayment/balances')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .then(function(response){
-                    expect(response.body).to.be.eqls([]);
+                    expect(response.body.length).to.be.gt(0);
                 });
         });
     });

@@ -45,4 +45,34 @@ describe('transactionDAO', function(){
                 });
         });
     });
+
+    describe('balances', function(){
+        it('Should return a empty array when userId does not have formsPayments', function(){
+            var aggregateStub = sinon.mock(transactionModel).expects('aggregate')
+                .withArgs([{$match: {userId: '4b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                .resolves([]);
+
+            return transactionDAO.balances({userId: '4b9872580c3ed488505ffa68'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls([]);
+                    expect(aggregateStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+
+        it('Should return a form of payment when userId have formsPayments', function(){
+            var aggregateStub = sinon.mock(transactionModel).expects('aggregate')
+                .withArgs([{$match: {userId: '7b9872580c3ed488505ffa68'}}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                .chain('exec')
+                .resolves([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
+                          {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+
+            return transactionDAO.balances({userId: '7b9872580c3ed488505ffa68'})
+                .then(function(formsPayment){
+                    expect(formsPayment).to.be.eqls([{_id : '5c216945b7a96c6cf78f5df6', balance : -99}, {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
+                    expect(aggregateStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
 });

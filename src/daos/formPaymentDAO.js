@@ -45,14 +45,15 @@ module.exports = function(dependencies) {
             });
         },
 
-        balances: function(filter) {
-            return new Promise(function(resolve){
-                logger.info('[FormPaymentDAO] Getting balances in database by filter ', filter);
-                formPayment.aggregate([{$match: filter}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
-                    .then(function(balances){
-                        logger.info('[FormPaymentDAO] The balances returns by database: ', balances);
-                        resolve(balances);
-                    });
+        getAll: function(filter){
+            return new Promise(function(resolve, reject){
+                logger.info('[FormPaymentDAO] Finding a forms of payment by filter ', filter);
+                formPayment.find(filter)
+                .exec()
+                .then(function(formsPayment) {
+                    logger.info('[FormPaymentDAO] A forms of payment returned: ' + JSON.stringify(formsPayment));
+                    resolve(formsPayment);
+                });
             });
         }
     };
