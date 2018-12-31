@@ -41,7 +41,10 @@ module.exports = function(dependencies) {
         balances: function(filter) {
             return new Promise(function(resolve){
                 logger.info('[FormPaymentDAO] Getting balances in database by filter ', filter);
-                transaction.aggregate([{$match: filter}, {$group:{_id: '$formPayment', balance: {$sum: '$value'}}}])
+                transaction.aggregate([{$match: filter},
+                        {$group:{_id: '$formPayment', balance: {$sum: '$value'}}},
+                        {$lookup:{from: 'formpayments', localField: '_id', foreignField: '_id', as: 'formPayment'}}
+                    ])
                     .then(function(balances){
                         logger.info('[FormPaymentDAO] The balances returns by database: ', balances);
                         resolve(balances);

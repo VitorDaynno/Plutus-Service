@@ -42,12 +42,14 @@ module.exports = {
                 var entity = {};
                 entity.id = item._id;
                 entity.balance = item.balance;
+                entity.name = item.formPayment[0].name;
                 return entity;
             });
         }
         var entity = {};
         entity.id = balance._id;
         entity.balance = balance.balance;
+        entity.name = balance.formPayment[0].name;
         return entity;
     }
 };

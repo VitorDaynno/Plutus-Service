@@ -46,7 +46,7 @@ module.exports = function(dependencies) {
         },
 
         getAll: function(filter){
-            return new Promise(function(resolve, reject){
+            return new Promise(function(resolve){
                 logger.info('[FormPaymentDAO] Finding a forms of payment by filter ', filter);
                 formPayment.find(filter)
                 .exec()
