@@ -17,6 +17,18 @@ module.exports = function () {
             type: String,
             required: true
         },
+        creationDate: {
+            type: Date,
+            required: true
+        },
+        modificationDate: {
+            type: Date,
+            required: true
+        },
+        exclusionDate: {
+            type: Date,
+            required: true
+        },
         isEnabled: {
             type: Boolean,
             required: true

@@ -4,6 +4,7 @@ module.exports = function(dependencies) {
     var dao = dependencies.formPaymentDAO;
     var transactionDAO = dependencies.transactionDAO;
     var modelHelper = dependencies.modelHelper;
+    var dateHelper = dependencies.dateHelper;
 
     return {
         dependencies:dependencies,
@@ -29,6 +30,7 @@ module.exports = function(dependencies) {
                     .then(function(){
                         logger.info('[FormPaymentBO] A form a payment will be inserted');
                         formPayment.isEnabled = true;
+                        formPayment.creationDate = dateHelper.now();
                         return dao.save(formPayment);
                     })
                     .then(function(formPayment){

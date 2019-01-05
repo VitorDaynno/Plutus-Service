@@ -22,7 +22,7 @@ module.exports = function () {
             required: true
         },
         formPayment: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
             ref: 'FormPayment'
         },
@@ -34,6 +34,18 @@ module.exports = function () {
             type: String,
             required: true,
             ref: 'Users'
+        },
+        creationDate: {
+            type: Date,
+            required: true
+        },
+        modificationDate: {
+            type: Date,
+            required: true
+        },
+        exclusionDate: {
+            type: Date,
+            required: true
         },
         isEnabled: {
             type: Boolean,

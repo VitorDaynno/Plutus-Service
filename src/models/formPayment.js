@@ -18,6 +18,18 @@ module.exports = function () {
             required: true,
             ref: 'Users'
         },
+        creationDate: {
+            type: Date,
+            required: true
+        },
+        modificationDate: {
+            type: Date,
+            required: false
+        },
+        exclusionDate: {
+            type: Date,
+            required: false
+        },
         isEnabled: {
             type: Boolean,
             required: true
