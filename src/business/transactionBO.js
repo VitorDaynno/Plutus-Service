@@ -6,6 +6,7 @@ module.exports = function(dependencies) {
     var formPaymentBO = dependencies.formPaymentBO;
     var userBO = dependencies.userBO;
     var modelHelper = dependencies.modelHelper;
+    var dateHelper = dependencies.dateHelper;
 
     return {
         dependencies:dependencies,
@@ -49,12 +50,13 @@ module.exports = function(dependencies) {
                     .then(function(){
                         logger.info('[TransactionBO] A transaction will be inserted');
                         transaction.isEnabled = true;
+                        transaction.creationDate = dateHelper.now();
                         return dao.save(transaction);
                     })
                     .then(function(transaction){
                         logger.info('[TransactionBO] A transaction was inserted: ', transaction);
                         var p = [];
-                        if (transaction.installments){
+                        if (transaction && transaction.installments){
                             for (var i = 0; i < transaction.installments; i++) {
                                 var installmentsTransaction = _.clone(transaction);
                                 delete installmentsTransaction.installments;

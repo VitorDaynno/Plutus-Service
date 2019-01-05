@@ -41,11 +41,11 @@ module.exports = function () {
         },
         modificationDate: {
             type: Date,
-            required: true
+            required: false
         },
         exclusionDate: {
             type: Date,
-            required: true
+            required: false
         },
         isEnabled: {
             type: Boolean,

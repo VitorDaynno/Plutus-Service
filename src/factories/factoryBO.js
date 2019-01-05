@@ -31,7 +31,8 @@ function factory(business){
                 transactionDAO: DAOFactory.getDAO('transaction'),
                 formPaymentBO: factory('formPayment'),
                 userBO: factory('user'),
-                modelHelper: ModelHelper
+                modelHelper: ModelHelper,
+                dateHelper: DateHelper
             });
     }
 }
