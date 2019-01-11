@@ -2,7 +2,7 @@ var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
     var userModel = dependencies.user;
-
+    
     return {
         dependencies: dependencies,
 
@@ -80,14 +80,14 @@ module.exports = function(dependencies) {
             });
         },
 
-        delete: function(id) {
+        delete: function(id, user) {
             return new Promise(function(resolve, reject){
                 logger.info('[UserDAO] Deleting user by id ' + id);
                 if (!id || id === ''){
                     logger.error('[UserDAO] Id is empty');
                     reject();
                 }
-                userModel.update({_id: id}, {isEnabled: false})
+                userModel.update({_id: id}, user)
                     .then(function(user){
                         logger.info('[UserDAO] User deleted by id ' + id);
                         resolve(user);

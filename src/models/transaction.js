@@ -22,7 +22,7 @@ module.exports = function () {
             required: true
         },
         formPayment: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'FormPayment'
         },
@@ -31,7 +31,7 @@ module.exports = function () {
             required: false
         },
         userId: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'Users'
         },

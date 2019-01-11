@@ -1,4 +1,5 @@
 var logger = require('../config/logger')();
+var mongoose = require('mongoose');
 
 module.exports = function(dependencies) {
     var dao = dependencies.formPaymentDAO;
@@ -130,7 +131,7 @@ module.exports = function(dependencies) {
                     .then(function(){
                         logger.info('[FormPaymentBO] Mouting filters by body', body);
                         filter = {};
-                        filter.userId = body.userId;
+                        filter.userId = mongoose.Types.ObjectId(body.userId);
                         if (body.initialDate){
                             filter.initialDate = body.initialDate;
                         }

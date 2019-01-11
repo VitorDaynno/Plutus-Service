@@ -6,6 +6,7 @@ var DAOFactory = require('../../../src/factories/factoryDAO');
 var JWTHelper = require('../../../src/helpers/jwtHelper');
 var ModelHelper = require('../../../src/helpers/modelHelper');
 var CryptoHelper = require('../../../src/helpers/cryptoHelper');
+var DateHelper = require('../../../src/helpers/dateHelper');
 
 describe('userBO', function(){
     var userDAO = DAOFactory.getDAO('user');
@@ -15,7 +16,22 @@ describe('userBO', function(){
         userDAO: userDAO,
         jwtHelper: jwtHelper,
         modelHelper: ModelHelper,
-        cryptoHelper: CryptoHelper
+        cryptoHelper: CryptoHelper,
+        dateHelper: DateHelper
+    });
+
+    var nowStub;
+    var date;
+
+    beforeEach(function() {
+        nowStub = sinon.stub(DateHelper, 'now');
+        date = new Date();
+        nowStub
+            .returns(date);
+    });
+
+    afterEach(function() {
+        nowStub.restore();
     });
 
     describe('auth', function(){
@@ -133,6 +149,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encodeTokenStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encodeTokenStub.restore();
@@ -154,6 +171,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -175,6 +193,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -196,6 +215,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -217,6 +237,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -236,12 +257,14 @@ describe('userBO', function(){
 
             var saveStub = sinon.stub(userDAO, 'save');
             saveStub
-                .withArgs({email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true})
-                .returns({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'});
+                .withArgs({email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true, creationDate: date})
+                .returns({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test',
+                            password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true, creationDate: date});
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test',
+                            password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true, creationDate: date})
                 .returns({id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test'});
 
             return userBO.save({email: 'test@mailtest.com', name: 'test', password: '123'})
@@ -251,6 +274,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(1);
                         expect(encryptStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
+                        expect(nowStub.callCount).to.be.equals(1);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -261,7 +285,8 @@ describe('userBO', function(){
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
                 .withArgs({email:'test@mailtest.com', isEnabled: true})
-                .returns([{_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'}]);
+                .returns([{_id: '5c088673fb2f579adcca9ed1', email: 'test@mailtest.com', name: 'test',
+                            password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true, creationDate: date}]);
 
             var encryptStub = sinon.stub(CryptoHelper, 'encrypt');
 
@@ -278,6 +303,7 @@ describe('userBO', function(){
                         expect(saveStub.callCount).to.be.equals(0);
                         expect(encryptStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getAllStub.restore();
                         saveStub.restore();
                         encryptStub.restore();
@@ -299,6 +325,7 @@ describe('userBO', function(){
                         expect(getByIdStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
                         expect(getByIdStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });
@@ -314,6 +341,7 @@ describe('userBO', function(){
                         expect(error.message).to.be.equals('Id are required');
                         expect(getByIdStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });
@@ -330,6 +358,7 @@ describe('userBO', function(){
                         expect(user).to.be.eqls({});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });
@@ -338,10 +367,10 @@ describe('userBO', function(){
             var getByIdStub = sinon.stub(userDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b8')
-                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com', isEnabled: true, creationDate: date});
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'})
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com', isEnabled: true, creationDate: date})
                 .returns({id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
 
             return userBO.getById({id: '5bbead798c2a8a92339e88b8'})
@@ -349,6 +378,7 @@ describe('userBO', function(){
                         expect(user).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'test', email: 'test@mailtest.com'});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
+                        expect(nowStub.callCount).to.be.equals(0);
                         getByIdStub.restore();
                         parseUserStub.restore();
                     });
@@ -367,6 +397,7 @@ describe('userBO', function(){
                         expect(error.message).to.be.equals('Id are required');
                         expect(updateStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         updateStub.restore();
                         parseUserStub.restore();
                     });
@@ -383,6 +414,7 @@ describe('userBO', function(){
                         expect(error.message).to.be.equals('Id are required');
                         expect(updateStub.callCount).to.be.equals(0);
                         expect(parseUserStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         updateStub.restore();
                         parseUserStub.restore();
                     });
@@ -391,12 +423,12 @@ describe('userBO', function(){
         it('Should return a user when updated with success', function(){
             var updateStub = sinon.stub(userDAO, 'update');
             updateStub
-                .withArgs('5c088673fb2f579adcca9ed1', {id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
-                .returns({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
+                .withArgs('5c088673fb2f579adcca9ed1', {name: 'changeName', modificationDate: date})
+                .returns({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com', creationDate: date, modificationDate: date});
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');
             parseUserStub
-                .withArgs({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'})
+                .withArgs({_id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com', creationDate: date, modificationDate: date})
                 .returns({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
 
             return userBO.update({id: '5c088673fb2f579adcca9ed1', name: 'changeName'})
@@ -404,6 +436,7 @@ describe('userBO', function(){
                         expect(user).to.be.eqls({id: '5c088673fb2f579adcca9ed1', name: 'changeName', email: 'test@testemail.com'});
                         expect(updateStub.callCount).to.be.equals(1);
                         expect(parseUserStub.callCount).to.be.equals(1);
+                        expect(nowStub.callCount).to.be.equals(1);
                         updateStub.restore();
                         parseUserStub.restore();
                     });
@@ -420,6 +453,7 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Id are required');
                         expect(deleteStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         deleteStub.restore();
                     });
         });
@@ -433,6 +467,7 @@ describe('userBO', function(){
                         expect(error.code).to.be.equals(422);
                         expect(error.message).to.be.equals('Id are required');
                         expect(deleteStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
                         deleteStub.restore();
                     });
         });
@@ -440,12 +475,13 @@ describe('userBO', function(){
         it('Should delete a user', function(){
             var deleteStub = sinon.stub(userDAO, 'delete');
             deleteStub
-                .withArgs({id: '5c088673fb2f579adcca9ed1'})
+                .withArgs({id: '5c088673fb2f579adcca9ed1'},{isEnabled: false, exclusionDate: date})
                 .returns({});
 
             return userBO.delete({id: '5c088673fb2f579adcca9ed1'})
                     .then(function() {
                         expect(deleteStub.callCount).to.be.equals(1);
+                        expect(nowStub.callCount).to.be.equals(1);
                         deleteStub.restore();
                     });
         });

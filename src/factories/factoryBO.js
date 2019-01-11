@@ -17,7 +17,8 @@ function factory(business){
                 userDAO: DAOFactory.getDAO('user'),
                 jwtHelper: jwtHelper,
                 modelHelper: ModelHelper,
-                cryptoHelper: CryptoHelper
+                cryptoHelper: CryptoHelper,
+                dateHelper: DateHelper
             });
         case 'formPayment':
             return new FormPaymentBO({

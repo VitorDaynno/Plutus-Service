@@ -5,6 +5,7 @@ module.exports = function(dependencies) {
     var jwt = dependencies.jwtHelper;
     var modelHelper = dependencies.modelHelper;
     var cryptoHelper = dependencies.cryptoHelper;
+    var dateHelper = dependencies.dateHelper;
 
     return {
         dependencies:dependencies,
@@ -66,8 +67,9 @@ module.exports = function(dependencies) {
                     .then(function(user){
                         if (!user || !user._id){
                             logger.error('[UserBO] User not found by id: ' + body.id);
-                            resolve({});
+                            return {};
                         } else {
+                            logger.info('[UserBO] Parse user: ', user);
                             return modelHelper.parseUser(user);
                         }
                     })
@@ -120,6 +122,7 @@ module.exports = function(dependencies) {
                         user.email = body.email;
                         user.password = password;
                         user.isEnabled = true;
+                        user.creationDate = dateHelper.now();
                         return dao.save(user);
                     })
                     .then(function(user){
@@ -142,7 +145,6 @@ module.exports = function(dependencies) {
                 var chain = Promise.resolve();
                 chain
                     .then(function(){
-                        console.log(body)
                         logger.info('[UserBO] Validating user: '+ JSON.stringify(body));
                         if (!body || !body.id){
                             logger.error('[UserBO] Id not found in: '+ JSON.stringify(body));
@@ -151,7 +153,13 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[UserBO] Updating user: ', body.id);
-                        return dao.update(body.id, body);
+                        var user = {};
+                        if (body.name || body.name !== ''){
+                            user.name = body.name;
+                            user.modificationDate= dateHelper.now();
+                        }
+                        console.log(user)
+                        return dao.update(body.id, user);
                     })
                     .then(function(user){
                         logger.info('[UserBO] User updated: ', user);
@@ -184,7 +192,10 @@ module.exports = function(dependencies) {
                     })
                     .then(function(){
                         logger.info('[UserBO] Delete user by id: ', body.id);
-                        return dao.delete(body.id);
+                        var user = {};
+                        user.isEnabled = false;
+                        user.exclusionDate = dateHelper.now();
+                        return dao.delete(body.id, user);
                     })
                     .then(function(){
                         resolve({});
