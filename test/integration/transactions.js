@@ -139,6 +139,24 @@ describe('transactions', function(){
                 expect(transaction.formPayment).to.be.equals(validFormPaymentId);
               });
     });
+    it('Should return a transaction with installments when inserting with success', function(){
+      return request(server)
+              .post('/v1/transactions')
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .send({description: 'test with installments', value: -59.0, category: ['test'], purchaseDate: new Date(), formPayment: validFormPaymentId, installments: 5})
+              .expect(201)
+              .then(function(response){
+                var transaction = response.body;
+                expect(transaction).has.to.property('id');
+                expect(transaction).has.to.property('purchaseDate');
+                expect(transaction.description).to.be.equals('test');
+                expect(transaction.value).to.be.equals(-59.0);
+                expect(transaction.category).to.be.eqls(['test']);
+                expect(transaction.formPayment).to.be.equals(validFormPaymentId);
+              });
+    });
   });
 
   describe('v1/transactions',function() {

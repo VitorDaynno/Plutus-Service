@@ -58,12 +58,14 @@ module.exports = function(dependencies) {
                         var p = [];
                         if (transaction && transaction.installments){
                             for (var i = 0; i < transaction.installments; i++) {
-                                var installmentsTransaction = _.clone(transaction);
+                                var installmentsTransaction = _.cloneDeep(transaction)._doc;
+                               // var installmentsTransaction = {...transaction}._doc;
                                 delete installmentsTransaction.installments;
+                                delete installmentsTransaction._id;
                                 var originalDate = transaction.purchaseDate;
-                                installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth + i, 1);
-
+                                installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth() + i, originalDate.getDate());
                                 logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
+                                console.debug(installmentsTransaction)
                                 p.push(dao.save(installmentsTransaction));
                             }
                         }
