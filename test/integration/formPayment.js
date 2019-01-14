@@ -1,4 +1,3 @@
-var mongoose = require('mongoose');
 var request  = require('supertest');
 var chai     = require('chai');
 var expect   = chai.expect;
@@ -6,6 +5,7 @@ var expect   = chai.expect;
 describe('formPayment', function(){
     var server;
     var validToken;
+    var formPaymentId;
 
     before(function(){
         server = require('../../src/server');
@@ -136,7 +136,7 @@ describe('formPayment', function(){
                     .send({name: 'Card 1', type: 'creditCard'})
                     .expect(201);
             });
-            
+
             it('Should return formsPayment', function(){
                 return request(server)
                     .get('/v1/formspayment')
@@ -181,6 +181,29 @@ describe('formPayment', function(){
                     validToken = response.body.token;
                 });
         });
+
+        it('Should return a form of payment when inserting with success', function(){
+            return request(server)
+                .post('/v1/formspayment')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .send({name: 'Card 1', type: 'creditCard'})
+                .expect(201)
+                .then(function(response){
+                    formPaymentId = response.body.id;
+                });
+        });
+
+        it('Should return a transaction when inserting with success', function(){
+            return request(server)
+                    .post('/v1/transactions')
+                    .set('Accept', 'application/json')
+                    .set('Authorization', 'Bearer ' + validToken)
+                    .expect('Content-Type', /json/)
+                    .send({description: 'test', value: -99.0, category: ['test'], purchaseDate: new Date(), formPayment: formPaymentId})
+                    .expect(201);
+          });
 
         it('Should return balances array', function(){
             return request(server)

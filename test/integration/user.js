@@ -112,17 +112,37 @@ describe('users', function(){
                     expect(response.body).to.be.eqls({});
                   });
       });
+      it('Should return user with valid entity', function(){
+        return request(server)
+                .post('/v1/users')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .send({email:'test@emailtest.com', name:'test', password: '1234'})
+                .expect(201)
+                .then(function(response){
+                  userId = response.body.id;
+                });
+      });
       it('Should return user with valid id', function(){
           return request(server)
-                  .get('/v1/users/5b9872580c3ed488505ffa68')
+                  .get('/v1/users/'+ userId)
                   .set('Accept', 'application/json')
                   .set('Authorization', 'Bearer ' + validToken)
                   .expect('Content-Type', /json/)
                   .expect(200)
                   .then(function(response){
-                    expect(response.body.name).to.be.equal('admin');
-                    expect(response.body.email).to.be.equal('admin@plutus.com.br');
+                    expect(response.body.name).to.be.equal('test');
+                    expect(response.body.email).to.be.equal('test@emailtest.com');
                   });
+      });
+      it('Should return success when deleted a user', function(){
+        return request(server)
+                .delete('/v1/users/' + userId)
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .expect(200);
       });
     });
 
