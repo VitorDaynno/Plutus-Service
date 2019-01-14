@@ -6,6 +6,8 @@ var DAOFactory = require('../../../src/factories/factoryDAO');
 var ModelHelper = require('../../../src/helpers/modelHelper');
 var DateHelper = require('../../../src/helpers/dateHelper');
 
+var mongoose = require('mongoose');
+
 describe('FormPaymentBO', function(){
 
     var formPaymentDAO = DAOFactory.getDAO('formPayment');
@@ -257,7 +259,7 @@ describe('FormPaymentBO', function(){
         it('Should return a empty object when userId does not have a formPayment', function() {
             var balancesStub = sinon.stub(transactionDAO, 'balances');
             balancesStub
-                .withArgs({userId: '5bbead798c2a8a92339e88b1'})
+                .withArgs({userId: mongoose.Types.ObjectId('5bbead798c2a8a92339e88b1')})
                 .returns([]);
 
             var parseBalanceStub = sinon.stub(ModelHelper, 'parseBalance');
@@ -277,7 +279,7 @@ describe('FormPaymentBO', function(){
         it('Should return a array with balances when userId have a formsPayment', function() {
             var balancesStub = sinon.stub(transactionDAO, 'balances');
             balancesStub
-                .withArgs({userId: '5bbead798c2a8a92339e88b2'})
+                .withArgs({userId: mongoose.Types.ObjectId('5bbead798c2a8a92339e88b2')})
                 .returns([{_id : '5c216945b7a96c6cf78f5df6', balance : -99},
                           {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
 
@@ -301,7 +303,7 @@ describe('FormPaymentBO', function(){
         it('Should return filtered balances per day', function() {
             var balancesStub = sinon.stub(transactionDAO, 'balances');
             balancesStub
-                .withArgs({userId: '5bbead798c2a8a92339e88b2', initialDate: new Date(1545506568424), finalDate: new Date(1545906578424)})
+                .withArgs({userId: mongoose.Types.ObjectId('5bbead798c2a8a92339e88b2'), initialDate: new Date(1545506568424), finalDate: new Date(1545906578424)})
                 .returns([{_id : '5c216945b7a96c6cf78f5df6', balance : -49},
                           {_id : '5c1dd2322aa198732f07ad65', balance : -40}]);
 
