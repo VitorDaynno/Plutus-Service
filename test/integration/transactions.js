@@ -151,7 +151,7 @@ describe('transactions', function(){
                 var transaction = response.body;
                 expect(transaction).has.to.property('id');
                 expect(transaction).has.to.property('purchaseDate');
-                expect(transaction.description).to.be.equals('test');
+                expect(transaction.description).to.be.equals('test with installments');
                 expect(transaction.value).to.be.equals(-59.0);
                 expect(transaction.category).to.be.eqls(['test']);
                 expect(transaction.formPayment).to.be.equals(validFormPaymentId);

@@ -59,7 +59,6 @@ module.exports = function(dependencies) {
                         if (transaction && transaction.installments){
                             for (var i = 0; i < transaction.installments; i++) {
                                 var installmentsTransaction = _.cloneDeep(transaction)._doc;
-                               // var installmentsTransaction = {...transaction}._doc;
                                 delete installmentsTransaction.installments;
                                 delete installmentsTransaction._id;
                                 var originalDate = transaction.purchaseDate;
