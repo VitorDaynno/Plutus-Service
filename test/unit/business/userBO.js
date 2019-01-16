@@ -59,7 +59,7 @@ describe('userBO', function(){
 
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'tests@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb'})
+                .withArgs({email:'tests@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb', isEnabled: true})
                 .returns(Promise.resolve({}));
 
             return userBO.auth({email:'tests@mailtest.com', password: '1234'})
@@ -81,7 +81,7 @@ describe('userBO', function(){
 
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'test@mailtest.com', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19'})
+                .withArgs({email:'test@mailtest.com', password: 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19', isEnabled: true})
                 .returns(Promise.resolve({}));
 
             return userBO.auth({email: 'test@mailtest.com', password: '123'})
@@ -103,7 +103,7 @@ describe('userBO', function(){
 
             var getAllStub = sinon.stub(userDAO, 'getAll');
             getAllStub
-                .withArgs({email:'test@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb'})
+                .withArgs({email:'test@mailtest.com', password: '59701bbf983a8f461f9cd48e8a4ddbeeca80c7e6766eb907c9850205aa55a9cb', isEnabled: true})
                 .returns([{_id: 1, name: 'test', email: 'test@mailtest.com'}]);
 
             var parseUserStub = sinon.stub(ModelHelper, 'parseUser');

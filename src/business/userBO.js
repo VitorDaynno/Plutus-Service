@@ -23,7 +23,7 @@ module.exports = function(dependencies) {
                         })
                         .then(function(password){
                             logger.info('[UserBO] Get user by email ' + body.email);
-                            return dao.getAll({email: body.email, password: password});
+                            return dao.getAll({email: body.email, password: password, isEnabled: true});
                         })
                         .then(function(user){
                             logger.info('[UserBO] The user are returned: ' + JSON.stringify(user));
@@ -158,7 +158,6 @@ module.exports = function(dependencies) {
                             user.name = body.name;
                             user.modificationDate= dateHelper.now();
                         }
-                        console.log(user)
                         return dao.update(body.id, user);
                     })
                     .then(function(user){

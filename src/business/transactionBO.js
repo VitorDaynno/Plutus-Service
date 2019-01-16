@@ -64,7 +64,6 @@ module.exports = function(dependencies) {
                                 var originalDate = transaction.purchaseDate;
                                 installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth() + i, originalDate.getDate());
                                 logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
-                                console.debug(installmentsTransaction)
                                 p.push(dao.save(installmentsTransaction));
                             }
                         }

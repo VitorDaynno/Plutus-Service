@@ -2,7 +2,7 @@ var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
     var userModel = dependencies.user;
-    
+
     return {
         dependencies: dependencies,
 
