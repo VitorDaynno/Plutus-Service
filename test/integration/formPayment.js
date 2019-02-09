@@ -201,7 +201,7 @@ describe('formPayment', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
-                    .send({description: 'test', value: -99.0, category: ['test'], purchaseDate: new Date(), formPayment: formPaymentId})
+                    .send({description: 'test', value: -99.0, categories: ['test'], purchaseDate: new Date(), formPayment: formPaymentId})
                     .expect(201);
           });
 

@@ -19,12 +19,12 @@ describe('transactionDAO', function(){
                 .returns(new Date(1546665448537));
 
             var createStub = sinon.mock(transactionModel).expects('create')
-                .withArgs({description: 'Tênis', value: -99.0, category: ['Vestuário'], date: new Date(), formPayment: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
+                .withArgs({description: 'Tênis', value: -99.0, categories: ['Vestuário'], date: new Date(), formPayment: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
                 .resolves({_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            category: ['Vestuário'], date: new Date(), formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard', isEnabled: true},
+                            categories: ['Vestuário'], date: new Date(), formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard', isEnabled: true},
                             isEnabled: true, creationDate: dateHelper.now()});
 
-            return transactionDAO.save({description: 'Tênis', value: -99.0, category: ['Vestuário'],
+            return transactionDAO.save({description: 'Tênis', value: -99.0, categories: ['Vestuário'],
                                             date: new Date(), formPayment: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
                 .then(function(){
                     expect(createStub.callCount).to.be.equals(1);
@@ -44,10 +44,10 @@ describe('transactionDAO', function(){
                 .withArgs({userId: '5bbead798c2a8a92339e88b8'})
                 .chain('exec')
                 .resolves([{_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            category: ['Vestuário'], date: new Date(),formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
+                            categories: ['Vestuário'], date: new Date(),formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
                             userId:'5bbead798c2a8a92339e88b8', isEnabled: true, creationDate: dateHelper.now()},
                            {_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            category: ['Vestuário'], date: new Date(), formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
+                            categories: ['Vestuário'], date: new Date(), formPayment: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
                             userId: '5bbead798c2a8a92339e88b8', isEnabled: true, creationDate: dateHelper.now()}]);
 
             return transactionDAO.getAll({userId: '5bbead798c2a8a92339e88b8'})

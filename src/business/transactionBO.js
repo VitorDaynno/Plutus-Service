@@ -24,9 +24,9 @@ module.exports = function(dependencies) {
                             logger.error('[TransactionBO] An error occurred because Value not exist');
                             throw {code:422, message:'The entity should has a field value'};
                         }
-                        if (!transaction.category){
-                            logger.error('[TransactionBO] An error occurred because Category not exist');
-                            throw {code:422, message:'The entity should has a field category'};
+                        if (!transaction.categories){
+                            logger.error('[TransactionBO] An error occurred because Categories not exist');
+                            throw {code:422, message:'The entity should has a field categories'};
                         }
                         if (!transaction.purchaseDate){
                             logger.error('[TransactionBO] An error occurred because PurchaseDate not exist');

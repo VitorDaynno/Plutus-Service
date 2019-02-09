@@ -30,7 +30,7 @@ module.exports = {
         entity.id = transaction._id;
         entity.description = transaction.description;
         entity.value = transaction.value;
-        entity.category = transaction.category;
+        entity.categories = transaction.categories;
         entity.purchaseDate = transaction.purchaseDate;
         entity.formPayment = transaction.formPayment;
 

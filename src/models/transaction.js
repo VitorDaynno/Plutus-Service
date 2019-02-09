@@ -13,7 +13,7 @@ module.exports = function () {
             type: Number,
             required: true
         },
-        category: [{
+        categories: [{
             type: String,
             required: true
         }],
