@@ -21,10 +21,10 @@ module.exports = function () {
             type: Date,
             required: true
         },
-        formPayment: {
+        account: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: 'FormPayment'
+            ref: 'Account'
         },
         installments: {
             type: Number,

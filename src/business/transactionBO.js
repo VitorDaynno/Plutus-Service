@@ -3,7 +3,7 @@ var _ = require('lodash');
 
 module.exports = function(dependencies) {
     var dao = dependencies.transactionDAO;
-    var formPaymentBO = dependencies.formPaymentBO;
+    var accountBO = dependencies.accountBO;
     var userBO = dependencies.userBO;
     var modelHelper = dependencies.modelHelper;
     var dateHelper = dependencies.dateHelper;
@@ -32,19 +32,19 @@ module.exports = function(dependencies) {
                             logger.error('[TransactionBO] An error occurred because PurchaseDate not exist');
                             throw {code:422, message:'The entity should has a field purchaseDate'};
                         }
-                        if (!transaction.formPayment){
-                            logger.error('[TransactionBO] An error occurred because FormPayment not exist');
-                            throw {code:422, message:'The entity should has a field formPayment'};
+                        if (!transaction.account){
+                            logger.error('[TransactionBO] An error occurred because Account not exist');
+                            throw {code:422, message:'The entity should has a field Account'};
                         }
                     })
                     .then(function(){
-                        logger.info('[TransactionBO] Getting formPayment by id ' + transaction.formPayment);
-                        return formPaymentBO.getById({id: transaction.formPayment});
+                        logger.info('[TransactionBO] Getting account by id ' + transaction.account);
+                        return accountBO.getById({id: transaction.account});
                     })
-                    .then(function(formPayment){
-                        logger.info('[TransactionBO] A formPayment are returned ' + JSON.stringify(formPayment));
-                        if (!formPayment.id){
-                            throw {code:404, message: 'The formPayment not found'};
+                    .then(function(account){
+                        logger.info('[TransactionBO] A account are returned ' + JSON.stringify(account));
+                        if (!account.id){
+                            throw {code:404, message: 'The account not found'};
                         }
                     })
                     .then(function(){

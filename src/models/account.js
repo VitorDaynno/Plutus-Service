@@ -4,7 +4,7 @@ var model = null;
 
 module.exports = function () {
 
-    var formPayment = mongoose.Schema({
+    var account = mongoose.Schema({
         name: {
             type: String,
             required: true
@@ -36,7 +36,7 @@ module.exports = function () {
         }
     });
 
-    model = model ? model : mongoose.model('FormPayment', formPayment);
+    model = model ? model : mongoose.model('Account', account);
 
     return model;
 };

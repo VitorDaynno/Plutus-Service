@@ -5,7 +5,7 @@ var expect   = chai.expect;
 describe('transactions', function(){
   var server;
   var validToken;
-  var validFormPaymentId;
+  var validAccountId;
 
   before(function(){
     server = require('../../src/server');
@@ -21,7 +21,7 @@ describe('transactions', function(){
               .post('/v1/transactions')
               .set('Accept', 'application/json')
               .expect('Content-Type', /json/)
-              .send({value: 33.9, categories: 'Vestuário', purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({value: 33.9, categories: 'Vestuário', purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
     it('Should return error because request contain a token invalid', function(){
@@ -30,7 +30,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
               .expect('Content-Type', /json/)
-              .send({value: 33.9, categories: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({value: 33.9, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
               .expect(403);
     });
 
@@ -61,7 +61,7 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({value: -33.9, categories: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({value: -33.9, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Value does not exist', function(){
@@ -70,7 +70,7 @@ describe('transactions', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', categories: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+                .send({description: 'Tênis', categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .expect(422);
     });
     it('Should return error because Categories does not exist', function(){
@@ -79,7 +79,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -33.9, purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439011'})
+              .send({description: 'Tênis', value: -33.9, purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
               .expect(422);
     });
     it('Should return error because PurchaseDate does not exist', function(){
@@ -88,10 +88,10 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], formPayment: '507f1f77bcf86cd799439011'})
+              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], account: '507f1f77bcf86cd799439011'})
               .expect(422);
     });
-    it('Should return error because FormPayment does not exist', function(){
+    it('Should return error because Account does not exist', function(){
       return request(server)
               .post('/v1/transactions')
               .set('Accept', 'application/json')
@@ -100,25 +100,25 @@ describe('transactions', function(){
               .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date()})
               .expect(422);
     });
-    it('Should return error when FormPayment does not found', function(){
+    it('Should return error when Account does not found', function(){
         return request(server)
                 .post('/v1/transactions')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), formPayment: '507f1f77bcf86cd799439010'})
+                .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439010'})
                 .expect(404);
     });
-    it('Should return a form of payment when inserting with success', function(){
+    it('Should return a account when inserting with success', function(){
       return request(server)
-          .post('/v1/formspayment')
+          .post('/v1/accounts')
           .set('Accept', 'application/json')
           .set('Authorization', 'Bearer ' + validToken)
           .expect('Content-Type', /json/)
           .send({name: 'Card 1', type: 'creditCard'})
           .expect(201)
-          .then(function(formPayment){
-              validFormPaymentId = formPayment.body.id;
+          .then(function(account){
+              validAccountId = account.body.id;
           });
     });
     it('Should return a transaction when inserting with success', function(){
@@ -127,7 +127,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), formPayment: validFormPaymentId})
+              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: validAccountId})
               .expect(201)
               .then(function(response){
                 var transaction = response.body;
@@ -136,7 +136,7 @@ describe('transactions', function(){
                 expect(transaction.description).to.be.equals('Tênis');
                 expect(transaction.value).to.be.equals(-99.0);
                 expect(transaction.categories).to.be.eqls(['Vestuário']);
-                expect(transaction.formPayment).to.be.equals(validFormPaymentId);
+                expect(transaction.account).to.be.equals(validAccountId);
               });
     });
     it('Should return a transaction with installments when inserting with success', function(){
@@ -145,7 +145,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'test with installments', value: -59.0, categories: ['test'], purchaseDate: new Date(), formPayment: validFormPaymentId, installments: 5})
+              .send({description: 'test with installments', value: -59.0, categories: ['test'], purchaseDate: new Date(), account: validAccountId, installments: 5})
               .expect(201)
               .then(function(response){
                 var transaction = response.body;
@@ -154,7 +154,7 @@ describe('transactions', function(){
                 expect(transaction.description).to.be.equals('test with installments');
                 expect(transaction.value).to.be.equals(-59.0);
                 expect(transaction.categories).to.be.eqls(['test']);
-                expect(transaction.formPayment).to.be.equals(validFormPaymentId);
+                expect(transaction.account).to.be.equals(validAccountId);
               });
     });
   });
@@ -197,7 +197,7 @@ describe('transactions', function(){
                 .expect(200)
                 .then(function(response){
                   var transactions = response.body;
-                  expect(transactions[0].formPayment).to.be.an('object');
+                  expect(transactions[0].account).to.be.an('object');
                 });
     });
 

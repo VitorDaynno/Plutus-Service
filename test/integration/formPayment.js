@@ -2,10 +2,10 @@ var request  = require('supertest');
 var chai     = require('chai');
 var expect   = chai.expect;
 
-describe('formPayment', function(){
+describe('account', function(){
     var server;
     var validToken;
-    var formPaymentId;
+    var accountId;
 
     before(function(){
         server = require('../../src/server');
@@ -15,12 +15,12 @@ describe('formPayment', function(){
         server.close();
     });
 
-    describe('v1/formpayment', function() {
+    describe('v1/account', function() {
 
         describe('post', function(){
             it('Should return error because request not contain token auth', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
                     .send({name: 'Card 1', type: 'creditCard'})
@@ -29,7 +29,7 @@ describe('formPayment', function(){
 
             it('Should return error because request contain a token invalid', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                     .expect('Content-Type', /json/)
@@ -51,7 +51,7 @@ describe('formPayment', function(){
 
             it('Should return error because body is empty', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -61,7 +61,7 @@ describe('formPayment', function(){
 
             it('Should return error because Name does not exist', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -71,7 +71,7 @@ describe('formPayment', function(){
 
             it('Should return error because Type does not exist', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -79,18 +79,18 @@ describe('formPayment', function(){
                     .expect(422);
             });
 
-            it('Should return a form of payment when inserting with success', function(){
+            it('Should return a account when inserting with success', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
                     .send({name: 'Card 1', type: 'creditCard'})
                     .expect(201)
-                    .then(function(formPayment){
-                        expect(formPayment.body).has.to.property('id');
-                        expect(formPayment.body.name).to.be.equals('Card 1');
-                        expect(formPayment.body.type).to.be.equals('creditCard');
+                    .then(function(account){
+                        expect(account.body).has.to.property('id');
+                        expect(account.body.name).to.be.equals('Card 1');
+                        expect(account.body.type).to.be.equals('creditCard');
                     });
             });
         });
@@ -98,7 +98,7 @@ describe('formPayment', function(){
         describe('get', function(){
             it('Should return error because request not contain token auth', function(){
                 return request(server)
-                    .get('/v1/formspayment')
+                    .get('/v1/accounts')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
                     .send({name: 'Card 1', type: 'creditCard'})
@@ -107,7 +107,7 @@ describe('formPayment', function(){
 
             it('Should return error because request contain a token invalid', function(){
                 return request(server)
-                    .get('/v1/formspayment')
+                    .get('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                     .expect('Content-Type', /json/)
@@ -127,9 +127,9 @@ describe('formPayment', function(){
                     });
             });
 
-            it('Should return a form of payment when inserting with success', function(){
+            it('Should return a account when inserting with success', function(){
                 return request(server)
-                    .post('/v1/formspayment')
+                    .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -137,9 +137,9 @@ describe('formPayment', function(){
                     .expect(201);
             });
 
-            it('Should return formsPayment', function(){
+            it('Should return accounts', function(){
                 return request(server)
-                    .get('/v1/formspayment')
+                    .get('/v1/accounts')
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
@@ -152,10 +152,10 @@ describe('formPayment', function(){
         });
     });
 
-    describe('v1/formspayment/balances', function() {
+    describe('v1/accounts/balances', function() {
         it('Should return error because request not contain token auth', function(){
             return request(server)
-                .get('/v1/formspayment/balances')
+                .get('/v1/accounts/balances')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(403);
@@ -163,7 +163,7 @@ describe('formPayment', function(){
 
         it('Should return error because request contain a token invalid', function(){
             return request(server)
-                .get('/v1/formspayment/balances')
+                .get('/v1/accounts/balances')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                 .expect('Content-Type', /json/)
@@ -182,16 +182,16 @@ describe('formPayment', function(){
                 });
         });
 
-        it('Should return a form of payment when inserting with success', function(){
+        it('Should return a account when inserting with success', function(){
             return request(server)
-                .post('/v1/formspayment')
+                .post('/v1/accounts')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
                 .send({name: 'Card 1', type: 'creditCard'})
                 .expect(201)
                 .then(function(response){
-                    formPaymentId = response.body.id;
+                    accountId = response.body.id;
                 });
         });
 
@@ -201,13 +201,13 @@ describe('formPayment', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
-                    .send({description: 'test', value: -99.0, categories: ['test'], purchaseDate: new Date(), formPayment: formPaymentId})
+                    .send({description: 'test', value: -99.0, categories: ['test'], purchaseDate: new Date(), account: accountId})
                     .expect(201);
           });
 
         it('Should return balances array', function(){
             return request(server)
-                .get('/v1/formspayment/balances')
+                .get('/v1/accounts/balances')
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)

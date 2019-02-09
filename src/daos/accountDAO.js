@@ -1,21 +1,21 @@
 var logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
-    var formPayment = dependencies.formPayment;
+    var account = dependencies.account;
 
     return {
         dependencies: dependencies,
 
         save: function(entity) {
                 return new Promise(function(resolve, reject){
-                    logger.info('[FormPaymentDAO] Saving a form of payment in database: ' + JSON.stringify(entity));
-                    formPayment.create(entity)
-                        .then(function(formPayment){
-                            logger.info('[FormPaymentDAO] The formPayment saved in database with id: ' + formPayment._id);
-                            resolve(formPayment);
+                    logger.info('[AccountDAO] Saving a account in database: ' + JSON.stringify(entity));
+                    account.create(entity)
+                        .then(function(account){
+                            logger.info('[AcountDAO] The account saved in database with id: ' + account._id);
+                            resolve(account);
                         })
                         .catch(function(error){
-                            logger.error('[FormPaymentDAO] An error occurred: ', error);
+                            logger.error('[AccountDAO] An error occurred: ', error);
                             if (error.name === 'CastError' || error.name === 'ValidatorError'){
                                 reject({code: 422, message: error.message});
                             } else {
@@ -27,15 +27,15 @@ module.exports = function(dependencies) {
 
         getById: function(id) {
             return new Promise(function(resolve, reject){
-                logger.info('[FormPaymentDAO] Finding a form of payment by id ' + id);
-                formPayment.findById(id)
+                logger.info('[AccountDAO] Finding a account by id ' + id);
+                account.findById(id)
                     .exec()
-                    .then(function(formPayment) {
-                        logger.info('[FormPaymentDAO] A form of payment returned: ' + JSON.stringify(formPayment));
-                        resolve(formPayment);
+                    .then(function(account) {
+                        logger.info('[AccountDAO] A account returned: ' + JSON.stringify(account));
+                        resolve(account);
                     })
                 .catch(function(error){
-                    logger.error('[FormPaymentDAO] An error occurred: ' + error);
+                    logger.error('[AccountDAO] An error occurred: ' + error);
                     if (error.name === 'CastError' || error.name === 'ValidatorError'){
                         reject({code: 422, message: error.message});
                     } else {
@@ -47,12 +47,12 @@ module.exports = function(dependencies) {
 
         getAll: function(filter){
             return new Promise(function(resolve){
-                logger.info('[FormPaymentDAO] Finding a forms of payment by filter ', filter);
-                formPayment.find(filter)
+                logger.info('[AccountDAO] Finding a account by filter ', filter);
+                account.find(filter)
                 .exec()
-                .then(function(formsPayment) {
-                    logger.info('[FormPaymentDAO] A forms of payment returned: ' + JSON.stringify(formsPayment));
-                    resolve(formsPayment);
+                .then(function(accounts) {
+                    logger.info('[AccountDAO] A account returned: ' + JSON.stringify(accounts));
+                    resolve(accounts);
                 });
             });
         }

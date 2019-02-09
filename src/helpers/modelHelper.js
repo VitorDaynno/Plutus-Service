@@ -7,9 +7,9 @@ module.exports = {
 
         return entity;
     },
-    parseFormPayment: function(formPayment){
-        if (Array.isArray(formPayment)) {
-            return formPayment.map(function(item){
+    parseAccount: function(account){
+        if (Array.isArray(account)) {
+            return account.map(function(item){
                 var entity = {};
                 entity.id = item._id;
                 entity.name = item.name;
@@ -19,9 +19,9 @@ module.exports = {
         }
 
         var entity = {};
-        entity.id = formPayment._id;
-        entity.name = formPayment.name;
-        entity.type = formPayment.type;
+        entity.id = account._id;
+        entity.name = account.name;
+        entity.type = account.type;
 
         return entity;
     },
@@ -32,7 +32,7 @@ module.exports = {
         entity.value = transaction.value;
         entity.categories = transaction.categories;
         entity.purchaseDate = transaction.purchaseDate;
-        entity.formPayment = transaction.formPayment;
+        entity.account = transaction.account;
 
         return entity;
     },
@@ -42,14 +42,14 @@ module.exports = {
                 var entity = {};
                 entity.id = item._id;
                 entity.balance = item.balance;
-                entity.name = item.formPayment[0].name;
+                entity.name = item.account[0].name;
                 return entity;
             });
         }
         var entity = {};
         entity.id = balance._id;
         entity.balance = balance.balance;
-        entity.name = balance.formPayment[0].name;
+        entity.name = balance.account[0].name;
         return entity;
     }
 };

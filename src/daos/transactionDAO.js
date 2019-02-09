@@ -29,7 +29,7 @@ module.exports = function(dependencies) {
             return new Promise(function(resolve, reject){
                 logger.info('[TransactionDAO] Finding transaction by filter ' + JSON.stringify(filter));
                 transaction.find(filter)
-                .populate('formPayment')
+                .populate('account')
                 .exec()
                 .then(function(transactions) {
                     logger.info('[TransactionsDAO] A transactions returned: ' + JSON.stringify(transactions));
@@ -40,13 +40,13 @@ module.exports = function(dependencies) {
 
         balances: function(filter) {
             return new Promise(function(resolve){
-                logger.info('[FormPaymentDAO] Getting balances in database by filter ', filter);
+                logger.info('[AccountDAO] Getting balances in database by filter ', filter);
                 transaction.aggregate([{$match: filter},
-                        {$group:{_id: '$formPayment', balance: {$sum: '$value'}}},
-                        {$lookup:{from: 'formpayments', localField: '_id', foreignField: '_id', as: 'formPayment'}}
+                        {$group:{_id: '$account', balance: {$sum: '$value'}}},
+                        {$lookup:{from: 'accounts', localField: '_id', foreignField: '_id', as: 'account'}}
                     ])
                     .then(function(balances){
-                        logger.info('[FormPaymentDAO] The balances returns by database: ', balances);
+                        logger.info('[AccountDAO] The balances returns by database: ', balances);
                         resolve(balances);
                     });
             });
