@@ -1,5 +1,4 @@
 var logger = require('../config/logger')();
-var _ = require('lodash');
 
 module.exports = function(dependencies) {
     var dao = dependencies.transactionDAO;
@@ -7,6 +6,7 @@ module.exports = function(dependencies) {
     var userBO = dependencies.userBO;
     var modelHelper = dependencies.modelHelper;
     var dateHelper = dependencies.dateHelper;
+    var lodashHelper = dependencies.lodashHelper;
 
     return {
         dependencies:dependencies,
@@ -58,7 +58,7 @@ module.exports = function(dependencies) {
                         var p = [];
                         if (transaction && transaction.installments){
                             for (var i = 0; i < transaction.installments; i++) {
-                                var installmentsTransaction = _.cloneDeep(transaction)._doc;
+                                var installmentsTransaction = lodashHelper.clone(transaction);
                                 delete installmentsTransaction.installments;
                                 delete installmentsTransaction._id;
                                 var originalDate = transaction.purchaseDate;

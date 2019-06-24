@@ -13,6 +13,38 @@ describe('transactionDAO', function(){
     });
 
     describe('save', function(){
+        it('Should return a error when a document can not cast', function(){
+            var nowStub = sinon.stub(dateHelper, 'now');
+            nowStub
+                .returns(new Date(1546665448537));
+
+            var createStub = sinon.mock(transactionModel).expects('create')
+                .withArgs('error')
+                .rejects({name: 'CastError'});
+
+            return transactionDAO.save('error')
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                    nowStub.restore();
+                });
+        });
+        it('Should return a error when a document contain error of validation', function(){
+            var nowStub = sinon.stub(dateHelper, 'now');
+            nowStub
+                .returns(new Date(1546665448537));
+
+            var createStub = sinon.mock(transactionModel).expects('create')
+                .withArgs({value: -99.0, categories: ['Vestuário'], date: new Date(), account: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
+                .rejects({name: 'ValidadeError'});
+
+            return transactionDAO.save({value: -99.0, categories: ['Vestuário'], date: new Date(), account: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
+                .catch(function(){
+                    expect(createStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                    nowStub.restore();
+                });
+        });
         it('Should return a transaction when a document transaction contain all fields', function(){
             var nowStub = sinon.stub(dateHelper, 'now');
             nowStub
