@@ -6,6 +6,7 @@ var DateHelper = require('../helpers/dateHelper');
 var CryptoHelper = require('../helpers/cryptoHelper');
 var AccountBO = require('../business/accountBO');
 var TransactionBO = require('../business/transactionBO');
+var LodashHelper = require('../helpers/lodashHelper');
 
 var jwtHelper = new JWTHelper();
 
@@ -33,7 +34,8 @@ function factory(business){
                 accountBO: factory('account'),
                 userBO: factory('user'),
                 modelHelper: ModelHelper,
-                dateHelper: DateHelper
+                dateHelper: DateHelper,
+                lodashHelper: LodashHelper
             });
     }
 }

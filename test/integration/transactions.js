@@ -157,18 +157,6 @@ describe('transactions', function(){
                 expect(transaction.account).to.be.equals(validAccountId);
               });
     });
-    it('Should return transactions belonging to the user', function(){
-      return request(server)
-              .get('/v1/transactions')
-              .set('Accept', 'application/json')
-              .set('Authorization', 'Bearer ' + validToken)
-              .expect('Content-Type', /json/)
-              .expect(200)
-              .then(function(response){
-                var transactions = response.body;
-                expect(transactions.length).to.be.equal(6);
-              });
-    });
   });
 
   describe('v1/transactions',function() {
