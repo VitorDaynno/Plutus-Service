@@ -81,6 +81,7 @@ module.exports = function(dependencies) {
                     });
             });
         },
+
         getAll: function(body){
             return new Promise(function(resolve, reject){
                 var chain = Promise.resolve();
@@ -102,12 +103,23 @@ module.exports = function(dependencies) {
                         } else {
                             logger.info('[TransactionBO] Getting transactions by userId: ' + body.userId);
                             filter = {userId: body.userId};
+
                             return dao.getAll(filter);
                         }
                     })
                     .then(function(transactions){
                         logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
-                        resolve(transactions);
+                        if (!body.onlyCredit || body.onlyCredit !== '1'){
+                            resolve(transactions);
+                        } else if (body.onlyCredit && body.onlyCredit === '1'){
+                            logger.info('[TransactionBO] Filtering transactions of credit');
+                            filteredTransactions = transactions.filter(function(transaction){
+                                if (transaction.account.type === 'credit') {
+                                    return transaction;
+                                }
+                            });
+                            resolve(filteredTransactions);
+                        }
                     })
                     .catch(function(error){
                         logger.error('[TransactionBO] An error occurred: ', error);

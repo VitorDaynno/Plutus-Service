@@ -26,7 +26,8 @@ module.exports = function() {
             logger.info('[Transactions-Controller] Getting transactions');
             var token = req.headers.authorization.split(' ')[1];
             tokenDecoded = helper.decodedToken(token);
-            business.getAll({userId: tokenDecoded.id})
+            onlyCredit = req.query.onlyCredit ? req.query.onlyCredit : null;
+            business.getAll({userId: tokenDecoded.id, onlyCredit: onlyCredit})
                 .then(function(transactions){
                     res.status(200).send(transactions);
                 })
