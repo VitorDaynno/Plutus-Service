@@ -115,7 +115,7 @@ describe('transactions', function(){
           .set('Accept', 'application/json')
           .set('Authorization', 'Bearer ' + validToken)
           .expect('Content-Type', /json/)
-          .send({name: 'Card 1', type: 'creditCard'})
+          .send({name: 'Card 1', type: 'credit'})
           .expect(201)
           .then(function(account){
               validAccountId = account.body.id;
