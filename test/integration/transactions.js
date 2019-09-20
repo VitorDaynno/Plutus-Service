@@ -201,5 +201,20 @@ describe('transactions', function(){
                 });
     });
 
+    it('Should return only credit transactions belonging to the user', function(){
+      return request(server)
+              .get('/v1/transactions?onlyCredit=1')
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .then(function(response){
+                const transactions = response.body;
+                transactions.forEach(function(transaction) {
+                  expect(transaction.account.type).to.be.equal('credit');
+                })
+              });
+    });
+
   });
 });

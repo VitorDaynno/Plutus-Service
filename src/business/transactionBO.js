@@ -111,13 +111,15 @@ module.exports = function(dependencies) {
                         logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
                         if (!body.onlyCredit || body.onlyCredit !== '1'){
                             resolve(transactions);
-                        } else if (body.onlyCredit && body.onlyCredit === '1'){
+                        }
+                        if (body.onlyCredit && body.onlyCredit === '1'){
                             logger.info('[TransactionBO] Filtering transactions of credit');
                             filteredTransactions = transactions.filter(function(transaction){
                                 if (transaction.account.type === 'credit') {
                                     return transaction;
                                 }
                             });
+                            logger.info('[TransactionBO] Returns the filteredTransactions: ' + JSON.stringify(filteredTransactions));
                             resolve(filteredTransactions);
                         }
                     })
