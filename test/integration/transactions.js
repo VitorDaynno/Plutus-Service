@@ -115,7 +115,7 @@ describe('transactions', function(){
           .set('Accept', 'application/json')
           .set('Authorization', 'Bearer ' + validToken)
           .expect('Content-Type', /json/)
-          .send({name: 'Card 1', type: 'creditCard'})
+          .send({name: 'Card 1', type: 'credit'})
           .expect(201)
           .then(function(account){
               validAccountId = account.body.id;
@@ -199,6 +199,21 @@ describe('transactions', function(){
                   var transactions = response.body;
                   expect(transactions[0].account).to.be.an('object');
                 });
+    });
+
+    it('Should return only credit transactions belonging to the user', function(){
+      return request(server)
+              .get('/v1/transactions?onlyCredit=1')
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .then(function(response){
+                const transactions = response.body;
+                transactions.forEach(function(transaction) {
+                  expect(transaction.account.type).to.be.equal('credit');
+                })
+              });
     });
 
   });

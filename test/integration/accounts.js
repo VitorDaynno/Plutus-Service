@@ -23,7 +23,7 @@ describe('account', function(){
                     .post('/v1/accounts')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(403);
             });
 
@@ -33,7 +33,7 @@ describe('account', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(403);
             });
 
@@ -65,7 +65,7 @@ describe('account', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
-                    .send({type: 'creditCard'})
+                    .send({type: 'credit'})
                     .expect(422);
             });
 
@@ -85,12 +85,12 @@ describe('account', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(201)
                     .then(function(account){
                         expect(account.body).has.to.property('id');
                         expect(account.body.name).to.be.equals('Card 1');
-                        expect(account.body.type).to.be.equals('creditCard');
+                        expect(account.body.type).to.be.equals('credit');
                     });
             });
         });
@@ -101,7 +101,7 @@ describe('account', function(){
                     .get('/v1/accounts')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(403);
             });
 
@@ -111,7 +111,7 @@ describe('account', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(403);
             });
 
@@ -133,7 +133,7 @@ describe('account', function(){
                     .set('Accept', 'application/json')
                     .set('Authorization', 'Bearer ' + validToken)
                     .expect('Content-Type', /json/)
-                    .send({name: 'Card 1', type: 'creditCard'})
+                    .send({name: 'Card 1', type: 'credit'})
                     .expect(201);
             });
 
@@ -188,7 +188,7 @@ describe('account', function(){
                 .set('Accept', 'application/json')
                 .set('Authorization', 'Bearer ' + validToken)
                 .expect('Content-Type', /json/)
-                .send({name: 'Card 1', type: 'creditCard'})
+                .send({name: 'Card 1', type: 'credit'})
                 .expect(201)
                 .then(function(response){
                     accountId = response.body.id;

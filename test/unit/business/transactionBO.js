@@ -242,7 +242,7 @@ describe('TransactionBO', function(){
             var getByIdStub = sinon.stub(accountBO, 'getById');
             getByIdStub
                 .withArgs({id: '507f1f77bcf86cd799439012'})
-                .returns({id:'507f1f77bcf86cd799439012', name: 'creditCard', type: 'creditCard'});
+                .returns({id:'507f1f77bcf86cd799439012', name: 'credit', type: 'credit'});
 
             var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
@@ -374,19 +374,55 @@ describe('TransactionBO', function(){
             getAllStub
                 .withArgs({userId: 22})
                 .returns([{_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
-                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
                           {_id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
-                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
-                          {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785), 
-                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}]);
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}]);
 
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(3);
-                    expect(transactions[0].account).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'creditCard'});
+                    expect(transactions[0].account).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
                     expect(nowStub.callCount).to.be.equal(3);
+                    nowStub.restore();
+                    getByIdStub.restore();
+                    getAllStub.restore();
+                });
+        });
+        it('Should return only credit transactions by valid user', function(){
+            var nowStub = sinon.stub(DateHelper, 'now');
+            nowStub
+                .returns(new Date(1546665448552));
+
+            var getByIdStub = sinon.stub(userBO, 'getById');
+            getByIdStub
+                .withArgs({id: 22})
+                .returns({id: 22, name: 'test', email: 'test@test.com'});
+
+            var getAllStub = sinon.stub(transactionDAO, 'getAll');
+            getAllStub
+                .withArgs({userId: 22})
+                .returns([{_id: 2, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'money', type: 'physic'}, isEnabled: true, creationDate: DateHelper.now()},
+                          {_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {_id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {_id: 6, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {_id: '507f1f77bcf86cd799439012', name: 'money', type: 'physic'}, isEnabled: true, creationDate: DateHelper.now()}]);
+
+            return transactionBO.getAll({userId: 22, onlyCredit: '1'})
+                .then(function(transactions){
+                    expect(transactions.length).to.be.equals(3);
+                    expect(transactions[0].account).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
+                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAllStub.callCount).to.be.equals(1);
+                    expect(nowStub.callCount).to.be.equal(5);
                     nowStub.restore();
                     getByIdStub.restore();
                     getAllStub.restore();

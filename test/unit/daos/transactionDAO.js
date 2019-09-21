@@ -53,7 +53,7 @@ describe('transactionDAO', function(){
             var createStub = sinon.mock(transactionModel).expects('create')
                 .withArgs({description: 'Tênis', value: -99.0, categories: ['Vestuário'], date: new Date(), account: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
                 .resolves({_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard', isEnabled: true},
+                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'credit', isEnabled: true},
                             isEnabled: true, creationDate: dateHelper.now()});
 
             return transactionDAO.save({description: 'Tênis', value: -99.0, categories: ['Vestuário'],
@@ -76,10 +76,10 @@ describe('transactionDAO', function(){
                 .withArgs({userId: '5bbead798c2a8a92339e88b8'})
                 .chain('exec')
                 .resolves([{_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
+                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'credit'},
                             userId:'5bbead798c2a8a92339e88b8', isEnabled: true, creationDate: dateHelper.now()},
                            {_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
-                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'creditCard'},
+                            categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'credit'},
                             userId: '5bbead798c2a8a92339e88b8', isEnabled: true, creationDate: dateHelper.now()}]);
 
             return transactionDAO.getAll({userId: '5bbead798c2a8a92339e88b8'})

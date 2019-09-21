@@ -22,7 +22,7 @@ describe('AccountBO', function(){
 
     describe('add', function(){
         it('Should return error because Name does not informed', function(){
-            return accountBO.add({type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c'})
+            return accountBO.add({type: 'credit', userId: '9bddd5a80a2cad1e079a334c'})
                 .then()
                 .catch(function(error){
                     expect(error.code).to.be.equals(422);
@@ -44,21 +44,21 @@ describe('AccountBO', function(){
 
             var saveStub = sinon.stub(accountDAO, 'save');
             saveStub
-                .withArgs({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: DateHelper.now()})
-                .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard',
+                .withArgs({name: 'Card 1', type: 'credit', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: DateHelper.now()})
+                .returns({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c',isEnabled: true, creationDate: DateHelper.now()});
 
             var parseAccountStub = sinon.stub(ModelHelper, 'parseAccount');
             parseAccountStub
-                .withArgs({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard',
+                .withArgs({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: DateHelper.now()})
-                .returns({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+                .returns({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'credit'});
 
-            return accountBO.add({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c'})
+            return accountBO.add({name: 'Card 1', type: 'credit', userId: '9bddd5a80a2cad1e079a334c'})
                 .then(function(transaction){
                     expect(saveStub.callCount).to.be.equals(1);
                     expect(parseAccountStub.callCount).to.be.equals(1);
-                    expect(transaction).to.be.eqls({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard'});
+                    expect(transaction).to.be.eqls({id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'credit'});
                     nowStub.restore();
                     saveStub.restore();
                     parseAccountStub.restore();
@@ -124,30 +124,30 @@ describe('AccountBO', function(){
             var getAllStub = sinon.stub(accountDAO, 'getAll');
             getAllStub
                 .withArgs({userId: '5bddd5a80a1cad1e079a334c'})
-                .returns([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard',
+                .returns([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435759)},
-                          {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard',
+                          {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435758)},
-                          {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard',
+                          {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435757)}]);
 
             var parseAccountStub = sinon.stub(ModelHelper, 'parseAccount');
             parseAccountStub
-                .withArgs([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard',
+                .withArgs([{_id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435759)},
-                           {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard',
+                           {_id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435758)},
-                           {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard',
+                           {_id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'credit',
                             userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568435757)}])
-                .returns([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard'},
-                          {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard'},
-                          {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard'}]);
+                .returns([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'credit'},
+                          {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'credit'},
+                          {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'credit'}]);
 
             return accountBO.getAll({userId: '5bddd5a80a1cad1e079a334c'})
                 .then(function(accounts){
-                    expect(accounts).to.be.eqls([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'creditCard'},
-                                                     {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'creditCard'},
-                                                     {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'creditCard'}]);
+                    expect(accounts).to.be.eqls([{id: '5bddd5a80a2cad1e079a334d', name: 'Card 1', type: 'credit'},
+                                                     {id: '5bddd5a80a2cad1e079a334e', name: 'Card 2', type: 'credit'},
+                                                     {id: '5bddd5a80a2cad1e079a334f', name: 'Card 3', type: 'credit'}]);
                     expect(getAllStub.callCount).to.be.equal(1);
                     expect(parseAccountStub.callCount).to.be.equal(1);
                     getAllStub.restore();
@@ -207,16 +207,16 @@ describe('AccountBO', function(){
             var getByIdStub = sinon.stub(accountDAO, 'getById');
             getByIdStub
                 .withArgs('5bbead798c2a8a92339e88b8')
-                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true, creationDate: Date(1546653595338)});
+                .returns({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit', isEnabled: true, creationDate: Date(1546653595338)});
 
             var parseAccountStub = sinon.stub(ModelHelper, 'parseAccount');
             parseAccountStub
-                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true, creationDate: Date(1546653595338)})
-                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                .withArgs({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit', isEnabled: true, creationDate: Date(1546653595338)})
+                .returns({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit'});
 
             return accountBO.getById({id: '5bbead798c2a8a92339e88b8'})
                     .then(function(account){
-                        expect(account).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard'});
+                        expect(account).to.be.eqls({id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit'});
                         expect(getByIdStub.callCount).to.be.equals(1);
                         expect(parseAccountStub.callCount).to.be.equals(1);
                         getByIdStub.restore();

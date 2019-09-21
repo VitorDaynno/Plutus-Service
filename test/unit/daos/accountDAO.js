@@ -14,10 +14,10 @@ describe('accountDAO', function(){
     describe('save', function(){
         it('Should return a account when a document transaction contain all fields', function(){
             var createStub = sinon.mock(accountModel).expects('create')
-                .withArgs({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568033243)})
-                .resolves({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'creditCard', isEnabled: true, creationDate: Date(1546568033243)});
+                .withArgs({name: 'Card 1', type: 'credit', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568033243)})
+                .resolves({_id: '5bddd5a80a2cad1e079a334c', name: 'Card 1', type: 'credit', isEnabled: true, creationDate: Date(1546568033243)});
 
-            return accountDAO.save({name: 'Card 1', type: 'creditCard', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568033243)})
+            return accountDAO.save({name: 'Card 1', type: 'credit', userId: '9bddd5a80a2cad1e079a334c', isEnabled: true, creationDate: Date(1546568033243)})
                 .then(function(){
                     expect(createStub.callCount).to.be.equals(1);
                     sinon.restore();
@@ -43,11 +43,11 @@ describe('accountDAO', function(){
             var findByStub = sinon.mock(accountModel).expects('findById')
                 .withArgs('5bbead798c2a8a92339e88b8')
                 .chain('exec')
-                .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true, creationDate: Date(1546568233243)});
+                .resolves({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit', isEnabled: true, creationDate: Date(1546568233243)});
 
             return accountDAO.getById('5bbead798c2a8a92339e88b8')
                 .then(function(account){
-                    expect(account).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'creditCard', isEnabled: true, creationDate: Date(1546568233243)});
+                    expect(account).to.be.eqls({_id: '5bbead798c2a8a92339e88b8', name: 'Card 1', type: 'credit', isEnabled: true, creationDate: Date(1546568233243)});
                     expect(findByStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
@@ -73,11 +73,11 @@ describe('accountDAO', function(){
             var findStub = sinon.mock(accountModel).expects('find')
                 .withArgs({userId: '5bbead798c2a8a92339e88b3'})
                 .chain('exec')
-                .resolves({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true, creationDate: Date(1546568033253)});
+                .resolves({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'credit', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true, creationDate: Date(1546568033253)});
 
             return accountDAO.getAll({userId: '5bbead798c2a8a92339e88b3'})
                 .then(function(account){
-                    expect(account).to.be.eqls({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'creditCard', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true, creationDate: Date(1546568033253)});
+                    expect(account).to.be.eqls({_id: '5bbead798c2a8a92339e88b2', name: 'Card 1', type: 'credit', userId: '5bbead798c2a8a92339e88b3' ,isEnabled: true, creationDate: Date(1546568033253)});
                     expect(findStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
