@@ -14,6 +14,8 @@ describe('TransactionBO', function(){
     var accountBO = BusinessFactory.getBO('account');
     var userBO = BusinessFactory.getBO('user');
 
+    let parseTransactionStub;
+
     var transactionBO = new TransactionBO({
         transactionDAO: transactionDAO,
         accountBO: accountBO,
@@ -22,6 +24,14 @@ describe('TransactionBO', function(){
         dateHelper: DateHelper,
         lodashHelper: LodashHelper
     });
+
+    beforeEach(function() {
+        parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction')
+    })
+
+    afterEach(function(){
+        parseTransactionStub.restore()
+    })
 
     describe('add', function(){
         it('Should return error because Description does not informed', function(){
@@ -35,7 +45,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -64,7 +73,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -93,7 +101,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -122,7 +129,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -151,7 +157,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -180,7 +185,6 @@ describe('TransactionBO', function(){
                 .withArgs({})
                 .returns({});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({})
                 .returns({});
@@ -215,7 +219,6 @@ describe('TransactionBO', function(){
                 .returns({_id: 1, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928385),
                             account: '507f1f77bcf86cd799439011', isEnabled: true, creationDate: DateHelper.now()});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({_id: 1, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928385),
                             account: '507f1f77bcf86cd799439011', isEnabled: true, creationDate: DateHelper.now()})
@@ -253,7 +256,6 @@ describe('TransactionBO', function(){
                 .returns({_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                 account: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true, creationDate: DateHelper.now()});
 
-            var parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction');
             parseTransactionStub
                 .withArgs({_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true, creationDate: DateHelper.now()})
@@ -294,6 +296,7 @@ describe('TransactionBO', function(){
                     expect(error.message).to.be.equals('UserId is required');
                     expect(getByIdStub.callCount).to.be.equals(0);
                     expect(getAllStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     getByIdStub.restore();
                     getAllStub.restore();
                 });
@@ -316,6 +319,7 @@ describe('TransactionBO', function(){
                     expect(error.message).to.be.equals('UserId is required');
                     expect(getByIdStub.callCount).to.be.equals(0);
                     expect(getAllStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     getByIdStub.restore();
                     getAllStub.restore();
                 });
@@ -336,6 +340,7 @@ describe('TransactionBO', function(){
                     expect(transactions.length).to.be.equals(0);
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(0);
+                    expect(parseTransactionStub.callCount).to.be.equals(0);
                     getByIdStub.restore();
                     getAllStub.restore();
                 });
@@ -351,11 +356,16 @@ describe('TransactionBO', function(){
                 .withArgs({userId: 21})
                 .returns([]);
 
+            parseTransactionStub
+                .withArgs([])
+                .returns([]);
+
             return transactionBO.getAll({userId:21})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equal(0);
                     expect(getByIdStub.callCount).to.be.equal(1);
                     expect(getAllStub.callCount).to.be.equal(1);
+                    expect(parseTransactionStub.callCount).to.be.equals(1);
                     getByIdStub.restore();
                     getAllStub.restore();
                 });
@@ -380,13 +390,29 @@ describe('TransactionBO', function(){
                           {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}]);
 
+            parseTransactionStub
+                .withArgs([{_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                           {_id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                           {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}])
+                .returns([{id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                          {id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}]);
+                        
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(3);
-                    expect(transactions[0].account).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
+                    expect(transactions[0]).has.to.property('id');
+                    expect(transactions[0].account).to.be.eqls({id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
-                    expect(nowStub.callCount).to.be.equal(3);
+                    expect(nowStub.callCount).to.be.equal(9);
+                    expect(parseTransactionStub.callCount).to.be.equals(1);
                     nowStub.restore();
                     getByIdStub.restore();
                     getAllStub.restore();
@@ -415,14 +441,29 @@ describe('TransactionBO', function(){
                             account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
                           {_id: 6, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: {_id: '507f1f77bcf86cd799439012', name: 'money', type: 'physic'}, isEnabled: true, creationDate: DateHelper.now()}]);
+            
+            parseTransactionStub
+                .withArgs([{_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                            {_id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                            {_id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                                account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}])
+                .returns([{id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                        {id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
+                        {id: 5, description: 'Tênis 3', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
+                            account: {id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()}]);
 
             return transactionBO.getAll({userId: 22, onlyCredit: '1'})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(3);
-                    expect(transactions[0].account).to.be.eqls({_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
+                    expect(transactions[0].account).to.be.eqls({id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
                     expect(getByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
-                    expect(nowStub.callCount).to.be.equal(5);
+                    expect(nowStub.callCount).to.be.equal(11);
+                    expect(parseTransactionStub.callCount).to.be.equals(1);
                     nowStub.restore();
                     getByIdStub.restore();
                     getAllStub.restore();
