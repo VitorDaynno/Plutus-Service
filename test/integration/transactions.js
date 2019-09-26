@@ -5,7 +5,7 @@ var expect   = chai.expect;
 describe('transactions', function(){
   var server;
   var validToken;
-  var validAccountId;
+  var validAccount;
 
   before(function(){
     server = require('../../src/server');
@@ -118,7 +118,7 @@ describe('transactions', function(){
           .send({name: 'Card 1', type: 'credit'})
           .expect(201)
           .then(function(account){
-              validAccountId = account.body.id;
+              validAccount = { id: account.body.id};
           });
     });
     it('Should return a transaction when inserting with success', function(){
@@ -127,7 +127,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: validAccountId})
+              .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: validAccount.id})
               .expect(201)
               .then(function(response){
                 var transaction = response.body;
@@ -136,7 +136,7 @@ describe('transactions', function(){
                 expect(transaction.description).to.be.equals('Tênis');
                 expect(transaction.value).to.be.equals(-99.0);
                 expect(transaction.categories).to.be.eqls(['Vestuário']);
-                expect(transaction.account).to.be.equals(validAccountId);
+                expect(transaction.account.id).to.be.equals(validAccount.id);
               });
     });
     it('Should return a transaction with installments when inserting with success', function(){
@@ -145,7 +145,7 @@ describe('transactions', function(){
               .set('Accept', 'application/json')
               .set('Authorization', 'Bearer ' + validToken)
               .expect('Content-Type', /json/)
-              .send({description: 'test with installments', value: -59.0, categories: ['test'], purchaseDate: new Date(), account: validAccountId, installments: 5})
+              .send({description: 'test with installments', value: -59.0, categories: ['test'], purchaseDate: new Date(), account: validAccount.id, installments: 5})
               .expect(201)
               .then(function(response){
                 var transaction = response.body;
@@ -154,7 +154,7 @@ describe('transactions', function(){
                 expect(transaction.description).to.be.equals('test with installments');
                 expect(transaction.value).to.be.equals(-59.0);
                 expect(transaction.categories).to.be.eqls(['test']);
-                expect(transaction.account).to.be.equals(validAccountId);
+                expect(transaction.account.id).to.be.equals(validAccount.id);
               });
     });
   });

@@ -110,7 +110,7 @@ module.exports = function(dependencies) {
                     .then(function(transactions){
                         logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
                         if (!body.onlyCredit || body.onlyCredit !== '1'){
-                            resolve(transactions);
+                            return transactions;
                         }
                         if (body.onlyCredit && body.onlyCredit === '1'){
                             logger.info('[TransactionBO] Filtering transactions of credit');
@@ -120,8 +120,16 @@ module.exports = function(dependencies) {
                                 }
                             });
                             logger.info('[TransactionBO] Returns the filteredTransactions: ' + JSON.stringify(filteredTransactions));
-                            resolve(filteredTransactions);
+                            return filteredTransactions;
                         }
+                    })
+                    .then(function(transactions) {
+                        logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
+                        return modelHelper.parseTransaction(transactions);
+                    })
+                    .then(function(transactions){
+                        logger.info('[TransactionBO] The parsed transactions returned: ' + JSON.stringify(transactions));
+                        resolve(transactions);
                     })
                     .catch(function(error){
                         logger.error('[TransactionBO] An error occurred: ', error);
