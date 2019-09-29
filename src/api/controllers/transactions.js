@@ -1,17 +1,17 @@
-var logger = require('../../config/logger')();
-var BOFactory = require('../../factories/factoryBO');
-var Helper = require('../../helpers/jwtHelper');
-var helper = new Helper();
+const logger = require('../../config/logger')();
+const BOFactory = require('../../factories/factoryBO');
+const Helper = require('../../helpers/jwtHelper');
+const helper = new Helper();
 
 module.exports = function() {
-    var business = BOFactory.getBO('transaction');
+    const business = BOFactory.getBO('transaction');
 
     return {
         add: function(req, res){
             logger.info('[Transactions-Controller] Adding a transaction ' + JSON.stringify(req.body));
-            var token = req.headers.authorization.split(' ')[1];
-            tokenDecoded = helper.decodedToken(token);
-            var transaction = req.body;
+            const token = req.headers.authorization.split(' ')[1];
+            const tokenDecoded = helper.decodedToken(token);
+            const transaction = req.body;
             transaction.userId = tokenDecoded.id;
             business.add(transaction)
                 .then(function(transaction){
@@ -24,12 +24,24 @@ module.exports = function() {
 
         getAll: function(req, res){
             logger.info('[Transactions-Controller] Getting transactions');
-            var token = req.headers.authorization.split(' ')[1];
-            tokenDecoded = helper.decodedToken(token);
-            onlyCredit = req.query.onlyCredit ? req.query.onlyCredit : null;
+            const token = req.headers.authorization.split(' ')[1];
+            const tokenDecoded = helper.decodedToken(token);
+            const onlyCredit = req.query.onlyCredit ? req.query.onlyCredit : null;
             business.getAll({userId: tokenDecoded.id, onlyCredit: onlyCredit})
                 .then(function(transactions){
                     res.status(200).send(transactions);
+                })
+                .catch(function(error){
+                    res.status(error.code).json(error.message);
+                });
+        },
+
+        delete: function(req, res){
+            const id = req.params.id ? req.params.id : null;
+            logger.info('[Transactions-Controller] Deleting transaction by id ' + id);
+            business.delete({id: id})
+                .then(function(transaction){
+                    res.send(transaction);
                 })
                 .catch(function(error){
                     res.status(error.code).json(error.message);

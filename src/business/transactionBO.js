@@ -1,19 +1,19 @@
-var logger = require('../config/logger')();
+const logger = require('../config/logger')();
 
 module.exports = function(dependencies) {
-    var dao = dependencies.transactionDAO;
-    var accountBO = dependencies.accountBO;
-    var userBO = dependencies.userBO;
-    var modelHelper = dependencies.modelHelper;
-    var dateHelper = dependencies.dateHelper;
-    var lodashHelper = dependencies.lodashHelper;
+    const dao = dependencies.transactionDAO;
+    const accountBO = dependencies.accountBO;
+    const userBO = dependencies.userBO;
+    const modelHelper = dependencies.modelHelper;
+    const dateHelper = dependencies.dateHelper;
+    const lodashHelper = dependencies.lodashHelper;
 
     return {
         dependencies:dependencies,
 
         add: function(transaction){
             return new Promise(function(resolve, reject){
-                var chain = Promise.resolve();
+                const chain = Promise.resolve();
                 chain
                     .then(function(){
                         if (!transaction.description){
@@ -55,13 +55,13 @@ module.exports = function(dependencies) {
                     })
                     .then(function(transaction){
                         logger.info('[TransactionBO] A transaction was inserted: ', transaction);
-                        var p = [];
+                        const p = [];
                         if (transaction && transaction.installments){
-                            for (var i = 0; i < transaction.installments; i++) {
-                                var installmentsTransaction = lodashHelper.clone(transaction);
+                            for (let i = 0; i < transaction.installments; i++) {
+                                const installmentsTransaction = lodashHelper.clone(transaction);
                                 delete installmentsTransaction.installments;
                                 delete installmentsTransaction._id;
-                                var originalDate = transaction.purchaseDate;
+                                const originalDate = transaction.purchaseDate;
                                 installmentsTransaction.purchaseDate = new Date(originalDate.getFullYear(), originalDate.getMonth() + i, originalDate.getDate());
                                 logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
                                 p.push(dao.save(installmentsTransaction));
@@ -84,7 +84,7 @@ module.exports = function(dependencies) {
 
         getAll: function(body){
             return new Promise(function(resolve, reject){
-                var chain = Promise.resolve();
+                const chain = Promise.resolve();
                 chain
                     .then(function(){
                         if (!body || !body.userId){
@@ -102,7 +102,7 @@ module.exports = function(dependencies) {
                             resolve([]);
                         } else {
                             logger.info('[TransactionBO] Getting transactions by userId: ' + body.userId);
-                            filter = {userId: body.userId};
+                            let filter = {userId: body.userId};
 
                             return dao.getAll(filter);
                         }
@@ -114,7 +114,7 @@ module.exports = function(dependencies) {
                         }
                         if (body.onlyCredit && body.onlyCredit === '1'){
                             logger.info('[TransactionBO] Filtering transactions of credit');
-                            filteredTransactions = transactions.filter(function(transaction){
+                            let filteredTransactions = transactions.filter(function(transaction){
                                 if (transaction.account.type === 'credit') {
                                     return transaction;
                                 }
@@ -136,6 +136,34 @@ module.exports = function(dependencies) {
                         reject(error);
                     });
             });
-        }
+        },
+
+        delete: function(body){
+            return new Promise(function(resolve, reject){
+                const chain = Promise.resolve();
+                chain
+                    .then(function(){
+                        logger.info('[TransactionBO] Delete transaction');
+                        if (!body || !body.id){
+                            logger.error('[TransactionBO] Id not found in ' + JSON.stringify(body));
+                            throw {code: 422, message: 'Id are required'};
+                        }
+                    })
+                    .then(function(){
+                        logger.info('[TransactionBO] Delete transaction by id: ', body.id);
+                        const transaction = {};
+                        transaction.isEnabled = false;
+                        transaction.exclusionDate = dateHelper.now();
+                        return dao.delete(body.id, transaction);
+                    })
+                    .then(function(){
+                        resolve({});
+                    })
+                    .catch(function(error){
+                        logger.error('[TransactionBO] An error occurred: ' + JSON.stringify(error));
+                        reject(error);
+                    });
+            });
+        },
     };
 };

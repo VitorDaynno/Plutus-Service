@@ -1,11 +1,19 @@
-var request  = require('supertest');
-var chai     = require('chai');
-var expect   = chai.expect;
+const request = require('supertest');
+const chai = require('chai');
+const mocha = require('mocha');
+
+
+const describe = mocha.describe;
+const before = mocha.beforeEach;
+const after = mocha.afterEach;
+const it = mocha.it;
+const expect   = chai.expect;
 
 describe('transactions', function(){
-  var server;
-  var validToken;
-  var validAccount;
+  let server;
+  let validToken;
+  let validAccount;
+  let transactionId;
 
   before(function(){
     server = require('../../src/server');
@@ -130,14 +138,23 @@ describe('transactions', function(){
               .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: validAccount.id})
               .expect(201)
               .then(function(response){
-                var transaction = response.body;
+                const transaction = response.body;
                 expect(transaction).has.to.property('id');
                 expect(transaction).has.to.property('purchaseDate');
                 expect(transaction.description).to.be.equals('Tênis');
                 expect(transaction.value).to.be.equals(-99.0);
                 expect(transaction.categories).to.be.eqls(['Vestuário']);
                 expect(transaction.account.id).to.be.equals(validAccount.id);
+                transactionId = transaction.id;
               });
+    });
+    it('Should return success when deleted a transaction', function(){
+      return request(server)
+              .delete('/v1/transactions/' + transactionId)
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .expect(200);
     });
     it('Should return a transaction with installments when inserting with success', function(){
       return request(server)
@@ -148,14 +165,23 @@ describe('transactions', function(){
               .send({description: 'test with installments', value: -59.0, categories: ['test'], purchaseDate: new Date(), account: validAccount.id, installments: 5})
               .expect(201)
               .then(function(response){
-                var transaction = response.body;
+                const transaction = response.body;
                 expect(transaction).has.to.property('id');
                 expect(transaction).has.to.property('purchaseDate');
                 expect(transaction.description).to.be.equals('test with installments');
                 expect(transaction.value).to.be.equals(-59.0);
                 expect(transaction.categories).to.be.eqls(['test']);
                 expect(transaction.account.id).to.be.equals(validAccount.id);
+                transactionId = transaction.id;
               });
+    });
+    it('Should return success when deleted a transaction', function(){
+      return request(server)
+              .delete('/v1/transactions/' + transactionId)
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer ' + validToken)
+              .expect('Content-Type', /json/)
+              .expect(200);
     });
   });
 
@@ -196,7 +222,7 @@ describe('transactions', function(){
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .then(function(response){
-                  var transactions = response.body;
+                  const transactions = response.body;
                   expect(transactions[0].account).to.be.an('object');
                 });
     });
@@ -216,5 +242,64 @@ describe('transactions', function(){
               });
     });
 
+  });
+
+  describe('v1/transactions/:id', function() {
+    describe('delete', function(){
+      it('Should return error because request not contain token auth', function(){
+        return request(server)
+            .delete('/v1/transactions/error')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(403);
+      });
+      it('Should return error because request contain a token invalid', function(){
+          return request(server)
+              .delete('/v1/transactions/error')
+              .set('Accept', 'application/json')
+              .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs')
+              .expect('Content-Type', /json/)
+              .expect(403);
+      });
+      it('Should return error because id is invalid', function(){
+        return request(server)
+                .delete('/v1/transactions/error')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .expect(422);
+      });
+      it('Should return a empty object because id does not exist', function(){
+          return request(server)
+                  .delete('/v1/transactions/5bbead798c2a8a92339e88b7')
+                  .set('Accept', 'application/json')
+                  .set('Authorization', 'Bearer ' + validToken)
+                  .expect('Content-Type', /json/)
+                  .expect(200)
+                  .then(function(response){
+                    expect(response.body).to.be.eqls({});
+                  });
+      });
+      it('Should return a transaction with valid entity', function(){
+        return request(server)
+                .post('/v1/transactions')
+                .set('Accept', 'application/json')
+                .set('Authorization', 'Bearer ' + validToken)
+                .expect('Content-Type', /json/)
+                .send({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: validAccount.id})
+                .expect(201)
+                .then(function(response){
+                  transactionId = response.body.id;
+                });
+      });
+      it('Should return success when deleted a transaction', function(){
+          return request(server)
+                  .delete('/v1/transactions/' + transactionId)
+                  .set('Accept', 'application/json')
+                  .set('Authorization', 'Bearer ' + validToken)
+                  .expect('Content-Type', /json/)
+                  .expect(200);
+      });
+    });
   });
 });

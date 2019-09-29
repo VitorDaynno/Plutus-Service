@@ -7,4 +7,7 @@ module.exports = function(app) {
     app.route('/v1/transactions')
         .post(helper.verifyToken, controller.add)
         .get(helper.verifyToken, controller.getAll);
+    
+    app.route('/v1/transactions/:id')
+        .delete(helper.verifyToken, controller.delete);
 };

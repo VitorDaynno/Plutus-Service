@@ -1,24 +1,42 @@
-var chai = require('chai');
-var expect = chai.expect;
-var sinon = require('sinon');
-var sinonMongoose = require('sinon-mongoose');
-var TransactionDAO = require('../../../src/daos/transactionDAO');
-var transactionModel = require('../../../src/models/transaction')();
-var dateHelper = require('../../../src/helpers/dateHelper');
+const chai = require('chai');
+const mocha = require('mocha');
+const sinon = require('sinon');
+const sinonMongoose = require('sinon-mongoose');
+
+const expect = chai.expect;
+const describe = mocha.describe;
+const it = mocha.it;
+const beforeEach = mocha.beforeEach;
+const afterEach = mocha.afterEach;
+
+const TransactionDAO = require('../../../src/daos/transactionDAO');
+const transactionModel = require('../../../src/models/transaction')();
+const dateHelper = require('../../../src/helpers/dateHelper');
 
 describe('transactionDAO', function(){
 
-    var transactionDAO = new TransactionDAO({
+    const transactionDAO = new TransactionDAO({
         transaction: transactionModel
     });
 
+    let date;
+    let nowStub;
+
+    beforeEach(function() {
+        nowStub = sinon.stub(dateHelper, 'now');
+
+    })
+
+    afterEach(function(){
+        nowStub.restore();
+    })
+
     describe('save', function(){
         it('Should return a error when a document can not cast', function(){
-            var nowStub = sinon.stub(dateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448537));
 
-            var createStub = sinon.mock(transactionModel).expects('create')
+            const createStub = sinon.mock(transactionModel).expects('create')
                 .withArgs('error')
                 .rejects({name: 'CastError'});
 
@@ -30,11 +48,10 @@ describe('transactionDAO', function(){
                 });
         });
         it('Should return a error when a document contain error of validation', function(){
-            var nowStub = sinon.stub(dateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448537));
 
-            var createStub = sinon.mock(transactionModel).expects('create')
+            const createStub = sinon.mock(transactionModel).expects('create')
                 .withArgs({value: -99.0, categories: ['Vestuário'], date: new Date(), account: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
                 .rejects({name: 'ValidadeError'});
 
@@ -46,11 +63,10 @@ describe('transactionDAO', function(){
                 });
         });
         it('Should return a transaction when a document transaction contain all fields', function(){
-            var nowStub = sinon.stub(dateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448537));
 
-            var createStub = sinon.mock(transactionModel).expects('create')
+            const createStub = sinon.mock(transactionModel).expects('create')
                 .withArgs({description: 'Tênis', value: -99.0, categories: ['Vestuário'], date: new Date(), account: '507f1f77bcf86cd799439010', isEnabled: true, creationDate: dateHelper.now()})
                 .resolves({_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
                             categories: ['Vestuário'], date: new Date(), account: {_id: '507f1f77bcf86cd799439010', name: 'Card 1', type: 'credit', isEnabled: true},
@@ -68,11 +84,10 @@ describe('transactionDAO', function(){
 
     describe('getAll', function(){
         it('Should return a transaction which correspond to a query', function(){
-            var nowStub = sinon.stub(dateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448557));
 
-            var findStub = sinon.mock(transactionModel).expects('find')
+            const findStub = sinon.mock(transactionModel).expects('find')
                 .withArgs({userId: '5bbead798c2a8a92339e88b8'})
                 .chain('exec')
                 .resolves([{_id: '507f1f77bcf86cd799439012', description: 'Tênis', value: -99.0,
@@ -92,7 +107,7 @@ describe('transactionDAO', function(){
 
     describe('balances', function(){
         it('Should return a empty array when userId does not have accounts', function(){
-            var aggregateStub = sinon.mock(transactionModel).expects('aggregate')
+            const aggregateStub = sinon.mock(transactionModel).expects('aggregate')
                 .withArgs([{$match: {userId: '4b9872580c3ed488505ffa68'}},
                         {$group:{_id: '$account', balance: {$sum: '$value'}}},
                         {$lookup:{from: 'accounts', localField: '_id', foreignField: '_id', as: 'account'}}
@@ -108,7 +123,7 @@ describe('transactionDAO', function(){
         });
 
         it('Should return a account when userId have accounts', function(){
-            var aggregateStub = sinon.mock(transactionModel).expects('aggregate')
+            const aggregateStub = sinon.mock(transactionModel).expects('aggregate')
                 .withArgs([{$match: {userId: '7b9872580c3ed488505ffa68'}},
                         {$group:{_id: '$account', balance: {$sum: '$value'}}},
                         {$lookup:{from: 'accounts', localField: '_id', foreignField: '_id', as: 'account'}}
@@ -121,6 +136,33 @@ describe('transactionDAO', function(){
                 .then(function(accounts){
                     expect(accounts).to.be.eqls([{_id : '5c216945b7a96c6cf78f5df6', balance : -99}, {_id : '5c1dd2322aa198732f07ad65', balance : -500}]);
                     expect(aggregateStub.callCount).to.be.equals(1);
+                    sinon.restore();
+                });
+        });
+    });
+
+    describe('delete', function(){
+        it('Should return error because id is empty', function(){
+            const updateStub = sinon.mock(transactionModel).expects('update')
+                .withArgs({})
+                .rejects();
+
+            return transactionDAO.delete()
+                .then()
+                .catch(function(){
+                    expect(updateStub.callCount).to.be.equals(0);
+                    sinon.restore();
+                });
+        });
+
+        it('Should delete a transaction when id is correct', function(){
+            const updateStub = sinon.mock(transactionModel).expects('update')
+                .withArgs({_id: '5c088673fb2f579adcca9ed1'}, {isEnabled: false, exclusionDate: date})
+                .resolves({_id: '5c088673fb2f579adcca9ed1', name: 'test', email: 'test@mailtest.com', isEnabled: false, creationDate: date, exclusionDate: date});
+
+            return transactionDAO.delete('5c088673fb2f579adcca9ed1', {isEnabled: false, exclusionDate: date})
+                .then(function(){
+                    expect(updateStub.callCount).to.be.equals(1);
                     sinon.restore();
                 });
         });

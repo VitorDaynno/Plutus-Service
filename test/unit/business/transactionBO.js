@@ -1,22 +1,37 @@
-var chai = require('chai');
-var expect = chai.expect;
-var sinon = require('sinon');
-var TransactionBO = require('../../../src/business/transactionBO');
-var DAOFactory = require('../../../src/factories/factoryDAO');
-var BusinessFactory = require('../../../src/factories/factoryBO');
-var ModelHelper = require('../../../src/helpers/modelHelper');
-var DateHelper = require('../../../src/helpers/dateHelper');
-var LodashHelper = require('../../../src/helpers/lodashHelper');
+const chai = require('chai');
+const sinon = require('sinon');
+const mocha = require('mocha')
+
+const expect = chai.expect;
+const describe = mocha.describe;
+const beforeEach = mocha.beforeEach;
+const afterEach = mocha.afterEach;
+const it = mocha.it;
+
+const TransactionBO = require('../../../src/business/transactionBO');
+const DAOFactory = require('../../../src/factories/factoryDAO');
+const BusinessFactory = require('../../../src/factories/factoryBO');
+const ModelHelper = require('../../../src/helpers/modelHelper');
+const DateHelper = require('../../../src/helpers/dateHelper');
+const LodashHelper = require('../../../src/helpers/lodashHelper');
+
 
 describe('TransactionBO', function(){
 
-    var transactionDAO = DAOFactory.getDAO('transaction');
-    var accountBO = BusinessFactory.getBO('account');
-    var userBO = BusinessFactory.getBO('user');
+    const transactionDAO = DAOFactory.getDAO('transaction');
+    const accountBO = BusinessFactory.getBO('account');
+    const userBO = BusinessFactory.getBO('user');
 
+    let getAccountByIdStub;
+    let getUserByIdStub;
+    let saveStub;
+    let getAllStub;
     let parseTransactionStub;
+    let deleteStub;
+    let nowStub;
+    let date;
 
-    var transactionBO = new TransactionBO({
+    let transactionBO = new TransactionBO({
         transactionDAO: transactionDAO,
         accountBO: accountBO,
         userBO: userBO,
@@ -26,21 +41,34 @@ describe('TransactionBO', function(){
     });
 
     beforeEach(function() {
+        getAccountByIdStub = sinon.stub(accountBO, 'getById');
+        getUserByIdStub = sinon.stub(userBO, 'getById');
+        saveStub = sinon.stub(transactionDAO, 'save');
+        getAllStub = sinon.stub(transactionDAO, 'getAll');
         parseTransactionStub = sinon.stub(ModelHelper, 'parseTransaction')
+        deleteStub = sinon.stub(transactionDAO, 'delete');
+        nowStub = sinon.stub(DateHelper, 'now');
+        date = new Date();
+        nowStub
+            .returns(date);
     })
 
     afterEach(function(){
-        parseTransactionStub.restore()
+        getAccountByIdStub.restore();
+        getUserByIdStub.restore();
+        saveStub.restore();
+        getAllStub.restore();
+        parseTransactionStub.restore();
+        deleteStub.restore();
+        nowStub.restore();
     })
 
     describe('add', function(){
         it('Should return error because Description does not informed', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -52,23 +80,18 @@ describe('TransactionBO', function(){
             return transactionBO.add({value: -33.9, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAccountByIdStub.callCount).to.be.equals(0);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field description');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Value does not informed', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -80,23 +103,18 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAccountByIdStub.callCount).to.be.equals(0);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field value');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Categories does not informed', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -108,23 +126,18 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', value: -33.9, purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAccountByIdStub.callCount).to.be.equals(0);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field categories');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because PurchaseDate does not informed', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -136,23 +149,18 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', value: -99.0, categories: ['Vestuário'], account: '507f1f77bcf86cd799439011'})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAccountByIdStub.callCount).to.be.equals(0);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field purchaseDate');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Account does not informed', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -164,23 +172,18 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date()})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getAccountByIdStub.callCount).to.be.equals(0);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('The entity should has a field Account');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should return error because Account are not found', function(){
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({id: '507f1f77bcf86cd799439010'})
                 .returns({});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({})
                 .returns({});
@@ -192,27 +195,21 @@ describe('TransactionBO', function(){
             return transactionBO.add({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439010'})
                 .then()
                 .catch(function(error){
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAccountByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
                     expect(error.code).to.be.equals(404);
                     expect(error.message).to.be.equals('The account not found');
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
                 });
         });
         it('Should add a transactions', function(){
-            var nowStub = sinon.stub(DateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448555));
 
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+                getAccountByIdStub
                 .withArgs({id: '507f1f77bcf86cd799439011'})
                 .returns({id:'507f1f77bcf86cd799439011', name: 'Débito', type: 'debitCard'});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .withArgs({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(),
                             account: '507f1f77bcf86cd799439011', isEnabled: true, creationDate: DateHelper.now()})
@@ -226,33 +223,26 @@ describe('TransactionBO', function(){
 
             return transactionBO.add({description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(), account: '507f1f77bcf86cd799439011'})
                 .then(function(transaction){
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAccountByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equals(1);
                     expect(parseTransactionStub.callCount).to.be.equals(1);
                     expect(transaction).to.be.eqls({id: 1, description: 'Tênis', value: -99.0,
                             categories: ['Vestuário'], purchaseDate: new Date(1537058928385), account: '507f1f77bcf86cd799439011'});
-                    getByIdStub.restore();
-                    saveStub.restore();
-                    parseTransactionStub.restore();
-                    nowStub.restore();
                 });
         });
         it('Should add a transactions with the number of installments greater than zero', function(){
-            var nowStub = sinon.stub(DateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448557));
 
-            var getByIdStub = sinon.stub(accountBO, 'getById');
-            getByIdStub
+            getAccountByIdStub
                 .withArgs({id: '507f1f77bcf86cd799439012'})
                 .returns({id:'507f1f77bcf86cd799439012', name: 'credit', type: 'credit'});
 
-            var saveStub = sinon.stub(transactionDAO, 'save');
             saveStub
                 .returns({_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true, creationDate: DateHelper.now()});
 
-            var cloneStub = sinon.stub(LodashHelper, 'clone')
+            const cloneStub = sinon.stub(LodashHelper, 'clone')
                 .returns({_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                 account: '507f1f77bcf86cd799439012', installments: 5, isEnabled: true, creationDate: DateHelper.now()});
 
@@ -265,26 +255,21 @@ describe('TransactionBO', function(){
                 .then(function(transaction){
                     expect(transaction).to.be.eqls({id:3, description: 'Tênis', value: -99.0,
                         categories: ['Vestuário'], purchaseDate: new Date(1537058928785), account: '507f1f77bcf86cd799439012', installments: 5});
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getAccountByIdStub.callCount).to.be.equals(1);
                     expect(saveStub.callCount).to.be.equal(6);
                     expect(cloneStub.callCount).to.be.equal(5);
                     expect(parseTransactionStub.callCount).to.be.equals(1);
-                    getByIdStub.restore();
-                    saveStub.restore();
                     cloneStub.restore();
-                    nowStub.restore();
                 });
         });
     });
 
     describe('getAll', function(){
         it('Should return error because body does not exists', function(){
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 22})
                 .returns({code: 404, message: 'User not found'});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 21})
                 .returns([]);
@@ -294,20 +279,16 @@ describe('TransactionBO', function(){
                 .catch(function(error){
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('UserId is required');
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getUserByIdStub.callCount).to.be.equals(0);
                     expect(getAllStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
         it('Should return error because userId does not exists', function(){
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 22})
                 .returns({code: 404, message: 'User not found'});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 21})
                 .returns([]);
@@ -317,20 +298,16 @@ describe('TransactionBO', function(){
                 .catch(function(error){
                     expect(error.code).to.be.equals(422);
                     expect(error.message).to.be.equals('UserId is required');
-                    expect(getByIdStub.callCount).to.be.equals(0);
+                    expect(getUserByIdStub.callCount).to.be.equals(0);
                     expect(getAllStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
         it('Should return zero transactions if userId does not exists', function(){
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 22})
                 .returns({});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 21})
                 .returns([]);
@@ -338,20 +315,16 @@ describe('TransactionBO', function(){
             return transactionBO.getAll({userId: 22})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(0);
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getUserByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(0);
                     expect(parseTransactionStub.callCount).to.be.equals(0);
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
         it('Should return zero transactions by valid user', function(){
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 21})
                 .returns({id: 21, name: 'test', email: 'test@test.com'});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 21})
                 .returns([]);
@@ -363,24 +336,19 @@ describe('TransactionBO', function(){
             return transactionBO.getAll({userId:21})
                 .then(function(transactions){
                     expect(transactions.length).to.be.equal(0);
-                    expect(getByIdStub.callCount).to.be.equal(1);
+                    expect(getUserByIdStub.callCount).to.be.equal(1);
                     expect(getAllStub.callCount).to.be.equal(1);
                     expect(parseTransactionStub.callCount).to.be.equals(1);
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
         it('Should return a transactions by valid user', function(){
-            var nowStub = sinon.stub(DateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448552));
 
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 22})
                 .returns({id: 22, name: 'test', email: 'test@test.com'});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 22})
                 .returns([{_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
@@ -409,26 +377,20 @@ describe('TransactionBO', function(){
                     expect(transactions.length).to.be.equals(3);
                     expect(transactions[0]).has.to.property('id');
                     expect(transactions[0].account).to.be.eqls({id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getUserByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
                     expect(nowStub.callCount).to.be.equal(9);
                     expect(parseTransactionStub.callCount).to.be.equals(1);
-                    nowStub.restore();
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
         it('Should return only credit transactions by valid user', function(){
-            var nowStub = sinon.stub(DateHelper, 'now');
             nowStub
                 .returns(new Date(1546665448552));
 
-            var getByIdStub = sinon.stub(userBO, 'getById');
-            getByIdStub
+            getUserByIdStub
                 .withArgs({id: 22})
                 .returns({id: 22, name: 'test', email: 'test@test.com'});
 
-            var getAllStub = sinon.stub(transactionDAO, 'getAll');
             getAllStub
                 .withArgs({userId: 22})
                 .returns([{_id: 2, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
@@ -460,14 +422,47 @@ describe('TransactionBO', function(){
                 .then(function(transactions){
                     expect(transactions.length).to.be.equals(3);
                     expect(transactions[0].account).to.be.eqls({id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'});
-                    expect(getByIdStub.callCount).to.be.equals(1);
+                    expect(getUserByIdStub.callCount).to.be.equals(1);
                     expect(getAllStub.callCount).to.be.equals(1);
                     expect(nowStub.callCount).to.be.equal(11);
                     expect(parseTransactionStub.callCount).to.be.equals(1);
-                    nowStub.restore();
-                    getByIdStub.restore();
-                    getAllStub.restore();
                 });
         });
     });
+
+    describe('delete', function() {
+        it('Should return error when body does not exist', function(){
+            return transactionBO.delete()
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(deleteStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
+                    });
+        });
+
+        it('Should return error when body does contains id', function(){
+            return transactionBO.delete({})
+                    .then()
+                    .catch(function(error) {
+                        expect(error.code).to.be.equals(422);
+                        expect(error.message).to.be.equals('Id are required');
+                        expect(deleteStub.callCount).to.be.equals(0);
+                        expect(nowStub.callCount).to.be.equals(0);
+                    });
+        });
+
+        it('Should delete a user', function(){
+            deleteStub
+                .withArgs({id: '5c088673fb2f579adcca9ed1'}, {isEnabled: false, exclusionDate: date})
+                .returns({});
+
+            return transactionBO.delete({id: '5c088673fb2f579adcca9ed1'})
+                    .then(function() {
+                        expect(deleteStub.callCount).to.be.equals(1);
+                        expect(nowStub.callCount).to.be.equals(1);
+                    });
+        });
+    })
 });
