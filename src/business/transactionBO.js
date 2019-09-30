@@ -102,7 +102,7 @@ module.exports = function(dependencies) {
                             resolve([]);
                         } else {
                             logger.info('[TransactionBO] Getting transactions by userId: ' + body.userId);
-                            let filter = {userId: body.userId};
+                            let filter = {userId: body.userId, isEnabled: true};
 
                             return dao.getAll(filter);
                         }

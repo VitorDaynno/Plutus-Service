@@ -271,7 +271,7 @@ describe('TransactionBO', function(){
                 .returns({code: 404, message: 'User not found'});
 
             getAllStub
-                .withArgs({userId: 21})
+                .withArgs({userId: 21, isEnabled: true})
                 .returns([]);
 
             return transactionBO.getAll()
@@ -290,7 +290,7 @@ describe('TransactionBO', function(){
                 .returns({code: 404, message: 'User not found'});
 
             getAllStub
-                .withArgs({userId: 21})
+                .withArgs({userId: 21, isEnabled: true})
                 .returns([]);
 
             return transactionBO.getAll({})
@@ -309,7 +309,7 @@ describe('TransactionBO', function(){
                 .returns({});
 
             getAllStub
-                .withArgs({userId: 21})
+                .withArgs({userId: 21, isEnabled: true})
                 .returns([]);
 
             return transactionBO.getAll({userId: 22})
@@ -326,7 +326,7 @@ describe('TransactionBO', function(){
                 .returns({id: 21, name: 'test', email: 'test@test.com'});
 
             getAllStub
-                .withArgs({userId: 21})
+                .withArgs({userId: 21, isEnabled: true})
                 .returns([]);
 
             parseTransactionStub
@@ -350,7 +350,7 @@ describe('TransactionBO', function(){
                 .returns({id: 22, name: 'test', email: 'test@test.com'});
 
             getAllStub
-                .withArgs({userId: 22})
+                .withArgs({userId: 22, isEnabled: true})
                 .returns([{_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: {_id: '507f1f77bcf86cd799439012', name: 'Card 1', type: 'credit'}, installments: 5, isEnabled: true, creationDate: DateHelper.now()},
                           {_id: 4, description: 'Tênis 2', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
@@ -392,7 +392,7 @@ describe('TransactionBO', function(){
                 .returns({id: 22, name: 'test', email: 'test@test.com'});
 
             getAllStub
-                .withArgs({userId: 22})
+                .withArgs({userId: 22, isEnabled: true})
                 .returns([{_id: 2, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
                             account: {_id: '507f1f77bcf86cd799439012', name: 'money', type: 'physic'}, isEnabled: true, creationDate: DateHelper.now()},
                           {_id: 3, description: 'Tênis', value: -99.0, categories: ['Vestuário'], purchaseDate: new Date(1537058928785),
