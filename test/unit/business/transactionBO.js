@@ -932,9 +932,10 @@ describe('TransactionBO', function() {
             id: '5c088673fb2f579adcca9ed1',
             installments: 7,
           })
-          .then(function(error) {
+          .then()
+          .catch(function(error) {
             expect(error.code).to.be.equal(406);
-            expect(error.message).to.be.equal('Installments don\'t be updated');
+            expect(error.message).to.be.equal('Installments can\'t be updated');
             expect(updateStub.callCount).to.be.equals(0);
             expect(parseTransactionStub.callCount).to.be.equals(0);
             expect(nowStub.callCount).to.be.equals(0);

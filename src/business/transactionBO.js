@@ -208,13 +208,20 @@ module.exports = function(dependencies) {
                 error = { code: 422, message: 'Id are required' };
                 throw error;
               }
+              if (body.installments) {
+                error = { code: 406, message: 'Installments can\'t be updated'};
+                throw error;  
+              }
             })
             .then(function() {
               logger.info('[TransactionBO] Updating transaction: '+ body.id);
               const transaction = {};
               if (body.description || body.description !== '') {
                 transaction.description = body.description;
-              }
+              } 
+              return transaction
+            })
+            .then(function(transaction){
               transaction.modificationDate = dateHelper.now();
               return dao.update(body.id, transaction);
             })
