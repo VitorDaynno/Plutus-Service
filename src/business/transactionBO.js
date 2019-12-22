@@ -210,18 +210,30 @@ module.exports = function(dependencies) {
               }
               if (body.installments) {
                 error = { code: 406, message: 'Installments can\'t be updated'};
-                throw error;  
+                throw error;
               }
             })
             .then(function() {
               logger.info('[TransactionBO] Updating transaction: '+ body.id);
               const transaction = {};
-              if (body.description || body.description !== '') {
+              if (body.description && body.description !== '') {
                 transaction.description = body.description;
-              } 
-              return transaction
+              }
+              if (body.value) {
+                transaction.value = body.value;
+              }
+              if (body.categories && Array.isArray(body.categories)) {
+                transaction.categories = body.categories;
+              }
+              if (body.purchaseDate) {
+                transaction.purchaseDate = body.purchaseDate;
+              }
+              if (body.account && body.account !== '') {
+                transaction.account = body.account;
+              }
+              return transaction;
             })
-            .then(function(transaction){
+            .then(function(transaction) {
               transaction.modificationDate = dateHelper.now();
               return dao.update(body.id, transaction);
             })

@@ -1,6 +1,6 @@
 const chai = require('chai');
 const sinon = require('sinon');
-const mocha = require('mocha')
+const mocha = require('mocha');
 
 const expect = chai.expect;
 const describe = mocha.describe;
@@ -1233,7 +1233,7 @@ describe('TransactionBO', function() {
           return transactionBO
               .update({
                 id: '5c088673fb2f579adcca9ed1',
-                categories: ['Vestuário', 'Calçados'],
+                purchaseDate: date,
               })
               .then(function(transaction) {
                 expect(transaction).to.be.eqls({
@@ -1265,7 +1265,7 @@ describe('TransactionBO', function() {
               .withArgs(
                   '5c088673fb2f579adcca9ed1',
                   {
-                    account: '507f1f77bcf86cd799439013',
+                    account: '507f1f77bcf86cd799439014',
                     modificationDate: date,
                   }
               )
@@ -1275,7 +1275,7 @@ describe('TransactionBO', function() {
                 value: 10.0,
                 categories: ['Vestuário', 'Calçados'],
                 purchaseDate: date,
-                account: '507f1f77bcf86cd799439013',
+                account: '507f1f77bcf86cd799439014',
                 installments: 5,
                 isEnabled: true,
                 creationDate: date,
@@ -1289,7 +1289,7 @@ describe('TransactionBO', function() {
                 value: 10.0,
                 categories: ['Vestuário', 'Calçados'],
                 purchaseDate: date,
-                account: '507f1f77bcf86cd799439012',
+                account: '507f1f77bcf86cd799439014',
                 installments: 5,
                 isEnabled: true,
                 creationDate: date,
@@ -1301,7 +1301,7 @@ describe('TransactionBO', function() {
                 value: 10.0,
                 categories: ['Vestuário', 'Calçados'],
                 purchaseDate: date,
-                account: '507f1f77bcf86cd799439013',
+                account: '507f1f77bcf86cd799439014',
                 installments: 5,
                 creationDate: date,
                 modificationDate: date,
@@ -1310,7 +1310,7 @@ describe('TransactionBO', function() {
           return transactionBO
               .update({
                 id: '5c088673fb2f579adcca9ed1',
-                categories: ['Vestuário', 'Calçados'],
+                account: '507f1f77bcf86cd799439014',
               })
               .then(function(transaction) {
                 expect(transaction).to.be.eqls({
@@ -1319,7 +1319,7 @@ describe('TransactionBO', function() {
                   value: 10.0,
                   categories: ['Vestuário', 'Calçados'],
                   purchaseDate: date,
-                  account: '507f1f77bcf86cd799439013',
+                  account: '507f1f77bcf86cd799439014',
                   installments: 5,
                   creationDate: date,
                   modificationDate: date,
