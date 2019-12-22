@@ -1,4 +1,4 @@
-const logger = require('../config/logger')();
+const logger = require('../config/logger')('TransactionBO');
 
 module.exports = function(dependencies) {
   const dao = dependencies.transactionDAO;
@@ -18,7 +18,7 @@ module.exports = function(dependencies) {
         chain
             .then(function() {
               if (!transaction.description) {
-                logger.error('[TransactionBO] An error occurred because Description not exist');
+                logger.error('An error occurred because Description not exist');
                 error = {
                   code: 422,
                   message: 'The entity should has a field description',
@@ -26,7 +26,7 @@ module.exports = function(dependencies) {
                 throw error;
               }
               if (!transaction.value) {
-                logger.error('[TransactionBO] An error occurred because Value not exist');
+                logger.error('An error occurred because Value not exist');
                 error = {
                   code: 422,
                   message: 'The entity should has a field value',
@@ -34,7 +34,7 @@ module.exports = function(dependencies) {
                 throw error;
               }
               if (!transaction.categories) {
-                logger.error('[TransactionBO] An error occurred because Categories not exist');
+                logger.error('An error occurred because Categories not exist');
                 error = {
                   code: 422,
                   message: 'The entity should has a field categories',
@@ -42,7 +42,8 @@ module.exports = function(dependencies) {
                 throw error;
               }
               if (!transaction.purchaseDate) {
-                logger.error('[TransactionBO] An error occurred because PurchaseDate not exist');
+                logger
+                    .error('An error occurred because PurchaseDate not exist');
                 error = {
                   code: 422,
                   message: 'The entity should has a field purchaseDate',
@@ -50,7 +51,7 @@ module.exports = function(dependencies) {
                 throw error;
               }
               if (!transaction.account) {
-                logger.error('[TransactionBO] An error occurred because Account not exist');
+                logger.error('An error occurred because Account not exist');
                 error = {
                   code: 422,
                   message: 'The entity should has a field Account',
@@ -59,28 +60,29 @@ module.exports = function(dependencies) {
               }
             })
             .then(function() {
-              logger.info('[TransactionBO] Getting account by id ' + transaction.account);
+              logger.info('Getting account by id ' + transaction.account);
               return accountBO.getById({ id: transaction.account });
             })
             .then(function(account) {
-              logger.info('[TransactionBO] A account are returned ' + JSON.stringify(account));
+              logger.info('A account are returned ' + JSON.stringify(account));
               if (!account.id) {
                 error = { code: 404, message: 'The account not found' };
                 throw error;
               }
             })
             .then(function() {
-              logger.info('[TransactionBO] A transaction will be inserted');
+              logger.info('A transaction will be inserted');
               transaction.isEnabled = true;
               transaction.creationDate = dateHelper.now();
               return dao.save(transaction);
             })
             .then(function(transaction) {
-              logger.info('[TransactionBO] A transaction was inserted: ', transaction);
+              logger.info('A transaction was inserted: ', transaction);
               const p = [];
               if (transaction && transaction.installments) {
                 for (let i = 0; i < transaction.installments; i++) {
-                  const installmentsTransaction = lodashHelper.clone(transaction);
+                  const installmentsTransaction = lodashHelper
+                      .clone(transaction);
                   delete installmentsTransaction.installments;
                   delete installmentsTransaction._id;
                   const originalDate = transaction.purchaseDate;
@@ -89,7 +91,11 @@ module.exports = function(dependencies) {
                       originalDate.getDate()
                   );
                   installmentsTransaction.purchaseDate = date;
-                  logger.info('[TransactionBO] A installment transaction will be inserted: ', installmentsTransaction);
+                  logger
+                      .info(
+                          'A installment transaction will be inserted: ',
+                          installmentsTransaction
+                      );
                   p.push(dao.save(installmentsTransaction));
                 }
               }
@@ -102,7 +108,7 @@ module.exports = function(dependencies) {
               resolve(transaction);
             })
             .catch(function(error) {
-              logger.error('[TransactionBO] An error occurred ', error);
+              logger.error('An error occurred ', error);
               reject(error);
             });
       });
@@ -115,52 +121,69 @@ module.exports = function(dependencies) {
         chain
             .then(function() {
               if (!body || !body.userId) {
-                logger.error('[TransactionBO] An error occurred because UserId not exist');
+                logger.error('An error occurred because UserId not exist');
                 error = { code: 422, message: 'UserId is required' };
                 throw error;
               }
             })
             .then(function() {
-              logger.info('[TransactionBO] Getting user by id: ' + body.userId);
+              logger.info('Getting user by id: ' + body.userId);
               return userBO.getById({ id: body.userId });
             })
             .then(function(user) {
               if (!user || !user.id) {
-                logger.info('[TransactionBO] User not found by id: ' + body.userId);
+                logger.info('User not found by id: ' + body.userId);
                 resolve([]);
               } else {
-                logger.info('[TransactionBO] Getting transactions by userId: ' + body.userId);
+                logger.info('Getting transactions by userId: ' + body.userId);
                 const filter = { userId: body.userId, isEnabled: true };
 
                 return dao.getAll(filter);
               }
             })
             .then(function(transactions) {
-              logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
+              logger
+                  .info(
+                      'The transactions returned: ' +
+                      JSON.stringify(transactions)
+                  );
               if (!body.onlyCredit || body.onlyCredit !== '1') {
                 return transactions;
               }
               if (body.onlyCredit && body.onlyCredit === '1') {
-                logger.info('[TransactionBO] Filtering transactions of credit');
-                const filteredTransactions = transactions.filter(function(transaction) {
-                  if (transaction.account.type === 'credit') {
-                    return transaction;
-                  }
-                });
-                logger.info('[TransactionBO] Returns the filteredTransactions: ' + JSON.stringify(filteredTransactions));
+                logger.info('Filtering transactions of credit');
+                const filteredTransactions = transactions
+                    .filter(function(transaction) {
+                      if (transaction.account.type === 'credit') {
+                        return transaction;
+                      }
+                    });
+                logger
+                    .info(
+                        'Returns the filteredTransactions: ' +
+                        JSON.stringify(filteredTransactions)
+                    );
                 return filteredTransactions;
               }
             })
             .then(function(transactions) {
-              logger.info('[TransactionBO] The transactions returned: ' + JSON.stringify(transactions));
+              logger
+                  .info(
+                      'The transactions returned: ' +
+                      JSON.stringify(transactions)
+                  );
               return modelHelper.parseTransaction(transactions);
             })
             .then(function(transactions) {
-              logger.info('[TransactionBO] The parsed transactions returned: ' + JSON.stringify(transactions));
+              logger
+                  .info(
+                      'The parsed transactions returned: ' +
+                      JSON.stringify(transactions)
+                  );
               resolve(transactions);
             })
             .catch(function(error) {
-              logger.error('[TransactionBO] An error occurred: ', error);
+              logger.error('An error occurred: ', error);
               reject(error);
             });
       });
@@ -172,15 +195,15 @@ module.exports = function(dependencies) {
         const chain = Promise.resolve();
         chain
             .then(function() {
-              logger.info('[TransactionBO] Delete transaction');
+              logger.info('Delete transaction');
               if (!body || !body.id) {
-                logger.error('[TransactionBO] Id not found in ' + JSON.stringify(body));
+                logger.error('Id not found in ' + JSON.stringify(body));
                 error = { code: 422, message: 'Id are required' };
                 throw error;
               }
             })
             .then(function() {
-              logger.info('[TransactionBO] Delete transaction by id: ', body.id);
+              logger.info('Delete transaction by id: ', body.id);
               const transaction = {};
               transaction.isEnabled = false;
               transaction.exclusionDate = dateHelper.now();
@@ -190,7 +213,7 @@ module.exports = function(dependencies) {
               resolve({});
             })
             .catch(function(error) {
-              logger.error('[TransactionBO] An error occurred: ' + JSON.stringify(error));
+              logger.error('An error occurred: ' + JSON.stringify(error));
               reject(error);
             });
       });
@@ -202,19 +225,22 @@ module.exports = function(dependencies) {
         const chain = Promise.resolve();
         chain
             .then(function() {
-              logger.info('[TransactionBO] Validating transaction: '+ JSON.stringify(body));
+              logger.info('Validating transaction: '+ JSON.stringify(body));
               if (!body || !body.id) {
-                logger.error('[TransactionBO] Id not found in: '+JSON.stringify(body));
+                logger.error('Id not found in: '+JSON.stringify(body));
                 error = { code: 422, message: 'Id are required' };
                 throw error;
               }
               if (body.installments) {
-                error = { code: 406, message: 'Installments can\'t be updated'};
+                error = {
+                  code: 406,
+                  message: 'Installments can\'t be updated',
+                };
                 throw error;
               }
             })
             .then(function() {
-              logger.info('[TransactionBO] Updating transaction: '+ body.id);
+              logger.info('Updating transaction: '+ body.id);
               const transaction = {};
               if (body.description && body.description !== '') {
                 transaction.description = body.description;
@@ -238,18 +264,19 @@ module.exports = function(dependencies) {
               return dao.update(body.id, transaction);
             })
             .then(function(transaction) {
-              logger.info('[TransactionBO] Transaction updated: '+JSON.stringify(transaction));
+              logger.info('Transaction updated: '+JSON.stringify(transaction));
               if (!transaction || !transaction._id) {
                 return {};
               }
               return modelHelper.parseTransaction(transaction);
             })
             .then(function(transaction) {
-              logger.info('[TransactionBO] The transaction parsed: '+JSON.stringify(transaction));
+              logger
+                  .info('The transaction parsed: '+JSON.stringify(transaction));
               resolve(transaction);
             })
             .catch(function(error) {
-              logger.error('[TransactionBO] An error occurred: ' + JSON.stringify(error));
+              logger.error('An error occurred: ' + JSON.stringify(error));
               reject(error);
             });
       });
