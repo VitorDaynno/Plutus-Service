@@ -371,5 +371,185 @@ describe('transactions', function() {
             .expect(200);
       });
     });
+
+    describe('put', function() {
+      it('Should return error because request not contain token auth',
+          function() {
+            return request(server)
+                .put('/v1/transactions/error')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({ description: 'description' })
+                .expect(403);
+          });
+      it('Should return error because request contain a token invalid',
+          function() {
+            return request(server)
+                .put('/v1/transactions/error')
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${invalidToken}`)
+                .expect('Content-Type', /json/)
+                .send({ description: 'description' })
+                .expect(403);
+          });
+      it('Should return a valid token to continue the validates', function() {
+        return request(server)
+            .post('/v1/users/auth')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .send({ email: 'admin@plutus.com.br', password: '1234' })
+            .expect(200)
+            .then(function(response) {
+              validToken = response.body.token;
+            });
+      });
+      it('Should return error because id is invalid', function() {
+        return request(server)
+            .put('/v1/transactions/error')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .expect(422);
+      });
+      it('Should return a empty object because id does not exist', function() {
+        return request(server)
+            .put('/v1/transactions/5bbead798c2a8a92339e88b7')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(function(response) {
+              expect(response.body).to.be.eqls({});
+            });
+      });
+      it('Should return transaction with valid entity', function() {
+        return request(server)
+            .post('/v1/transactions')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({
+              description: 'test',
+              value: -45.0,
+              categories: ['test'],
+              purchaseDate: new Date(),
+              account: validAccount.id,
+            })
+            .expect(201)
+            .then(function(response) {
+              transactionId = response.body.id;
+            });
+      });
+      it('Should return transaction when updated description', function() {
+        return request(server)
+            .put('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ description: 'changed description' })
+            .expect(200)
+            .then(function(response) {
+              expect(response.body.id).to.be.equal(transactionId);
+              expect(response.body.description)
+                  .to.be.equal('changed description');
+              expect(response.body.value).to.be.equal(-45);
+              expect(response.body.categories).to.be.eqls(['test']);
+              expect(response.body.purchaseDate).to.be.equal(date);
+              expect(response.body.account).to.be.equal(validAccount.id);
+            });
+      });
+      it('Should return transaction when updated value', function() {
+        return request(server)
+            .put('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ value: -522 })
+            .expect(200)
+            .then(function(response) {
+              expect(response.body.id).to.be.equal(transactionId);
+              expect(response.body.description)
+                  .to.be.equal('changed description');
+              expect(response.body.value).to.be.equal(-522);
+              expect(response.body.categories).to.be.eqls(['test']);
+              expect(response.body.purchaseDate).to.be.equal(date);
+              expect(response.body.account).to.be.equal(validAccount.id);
+            });
+      });
+      it('Should return transaction when updated categories', function() {
+        return request(server)
+            .put('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ categories: ['test', 'category'] })
+            .expect(200)
+            .then(function(response) {
+              expect(response.body.id).to.be.equal(transactionId);
+              expect(response.body.description)
+                  .to.be.equal('changed description');
+              expect(response.body.value).to.be.equal(-522);
+              expect(response.body.categories).to.be.eqls(['test', 'category']);
+              expect(response.body.purchaseDate).to.be.equal(date);
+              expect(response.body.account).to.be.equal(validAccount.id);
+            });
+      });
+      it('Should return transaction when updated purchaseDate', function() {
+        return request(server)
+            .put('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ purchaseDate: date })
+            .expect(200)
+            .then(function(response) {
+              expect(response.body.id).to.be.equal(transactionId);
+              expect(response.body.description)
+                  .to.be.equal('changed description');
+              expect(response.body.value).to.be.equal(-522);
+              expect(response.body.categories).to.be.eqls(['test', 'category']);
+              expect(response.body.purchaseDate).to.be.equal(date);
+              expect(response.body.account).to.be.equal(validAccount.id);
+            });
+      });
+      it('Should return a account when inserting with success', function() {
+        return request(server)
+            .post('/v1/accounts')
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ name: 'Card 1', type: 'credit' })
+            .expect(201)
+            .then(function(account) {
+              validAccount = { id: account.body.id };
+            });
+      });
+      it('Should return transaction when updated account', function() {
+        return request(server)
+            .put('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .send({ account: validAccount.id })
+            .expect(200)
+            .then(function(response) {
+              expect(response.body.id).to.be.equal(transactionId);
+              expect(response.body.description)
+                  .to.be.equal('changed description');
+              expect(response.body.value).to.be.equal(-522);
+              expect(response.body.categories).to.be.eqls(['test', 'category']);
+              expect(response.body.purchaseDate).to.be.equal(date);
+              expect(response.body.account).to.be.equal(validAccount.id);
+            });
+      });
+      it('Should return success when deleted a transaction', function() {
+        return request(server)
+            .delete('/v1/transactions/' + transactionId)
+            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + validToken)
+            .expect('Content-Type', /json/)
+            .expect(200);
+      });
+    });
   });
 });
