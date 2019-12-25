@@ -108,7 +108,7 @@ module.exports = function(dependencies) {
               }
               if (!body.name) {
                 logger.error('Name not found in: ' + JSON.stringify(body));
-                errr = { code: 422, message: 'Name are required' };
+                error = { code: 422, message: 'Name are required' };
                 throw error;
               }
               if (!body.password) {
