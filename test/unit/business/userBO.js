@@ -22,8 +22,12 @@ describe('userBO', function() {
 
   let nowStub;
   let date;
+  let getAllStub;
+  let parseUserStub;
 
   beforeEach(function() {
+    getAllStub = sinon.stub(userDAO, 'getAll');
+    parseUserStub = sinon.stub(ModelHelper, 'parseUser');
     nowStub = sinon.stub(DateHelper, 'now');
     date = new Date();
     nowStub
@@ -32,6 +36,8 @@ describe('userBO', function() {
 
   afterEach(function() {
     nowStub.restore();
+    getAllStub.restore();
+    parseUserStub.restore();
   });
 
   describe('auth', function() {
@@ -606,6 +612,74 @@ describe('userBO', function() {
             expect(deleteStub.callCount).to.be.equals(1);
             expect(nowStub.callCount).to.be.equals(1);
             deleteStub.restore();
+          });
+    });
+  });
+
+  describe('getAll', function() {
+    it('Should return zero users', function() {
+      getAllStub
+          .withArgs({ isEnabled: true })
+          .returns([]);
+
+      parseUserStub
+          .withArgs([])
+          .returns([]);
+
+      return userBO.getAll()
+          .then(function(users) {
+            expect(users.length).to.be.equal(0);
+            expect(getAllStub.callCount).to.be.equal(1);
+            expect(parseTransactionStub.callCount).to.be.equals(1);
+          });
+    });
+    it('Should return a users', function() {
+      getAllStub
+          .withArgs({ isEnabled: true })
+          .returns([
+            {
+              _id: '5bbead798c2a8a92339e88b8',
+              name: 'test',
+              email: 'test@mailtest.com',
+              password: 'test',
+              isEnabled: true,
+              creationDate: date,
+            },
+            {
+              _id: '5bbead798c2a8a92339e88b9',
+              name: 'test 2',
+              email: 'test2@mailtest.com',
+              password: 'test',
+              isEnabled: true,
+              creationDate: date,
+            },
+          ]);
+
+      parseUserStub
+          .withArgs([
+            {
+              id: '5bbead798c2a8a92339e88b8',
+              name: 'test',
+              email: 'test@mailtest.com',
+              creationDate: date,
+            },
+            {
+              id: '5bbead798c2a8a92339e88b9',
+              name: 'test 2',
+              email: 'test2@mailtest.com',
+              creationDate: date,
+            },
+          ]);
+
+      return userBO.getAll()
+          .then(function(users) {
+            expect(users.length).to.be.equals(2);
+            expect(users[0]).has.to.property('id');
+            expect(users[1]).has.to.property('id');
+            expect(users[0]).not.has.to.property('password');
+            expect(users[1]).not.has.to.property('password');
+            expect(getAllStub.callCount).to.be.equals(1);
+            expect(parseUserStub.callCount).to.be.equals(1);
           });
     });
   });
