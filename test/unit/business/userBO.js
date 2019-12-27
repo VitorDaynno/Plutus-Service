@@ -70,7 +70,6 @@ describe('userBO', function() {
               encryptedPassword
           );
 
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       getAllStub
           .withArgs({
             email: 'tests@mailtest.com',
@@ -99,7 +98,6 @@ describe('userBO', function() {
           .withArgs('123')
           .returns(encryptedPassword);
 
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       getAllStub
           .withArgs({
             email: 'test@mailtest.com',
@@ -128,7 +126,6 @@ describe('userBO', function() {
           .withArgs('1234')
           .returns(encryptedPassword);
 
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       getAllStub
           .withArgs({
             email: 'test@mailtest.com',
@@ -137,7 +134,6 @@ describe('userBO', function() {
           })
           .returns([{ _id: 1, name: 'test', email: 'test@mailtest.com' }]);
 
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
       parseUserStub
           .withArgs({ _id: 1, name: 'test', email: 'test@mailtest.com' })
           .returns({ id: 1, name: 'test', email: 'test@mailtest.com' });
@@ -166,10 +162,8 @@ describe('userBO', function() {
 
   describe('save', function() {
     it('Should return error when body does not exist', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       const saveStub = sinon.stub(userDAO, 'save');
       const encodeTokenStub = sinon.stub(CryptoHelper, 'encrypt');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.save()
           .then()
@@ -188,10 +182,8 @@ describe('userBO', function() {
           });
     });
     it('Should return error when body is empty', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       const saveStub = sinon.stub(userDAO, 'save');
       const encryptStub = sinon.stub(CryptoHelper, 'encrypt');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.save({})
           .then()
@@ -210,10 +202,8 @@ describe('userBO', function() {
           });
     });
     it('Should return error when body not contains email', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       const saveStub = sinon.stub(userDAO, 'save');
       const encryptStub = sinon.stub(CryptoHelper, 'encrypt');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.save({ name: 'test', password: '123' })
           .then()
@@ -232,10 +222,8 @@ describe('userBO', function() {
           });
     });
     it('Should return error when body not contains name', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       const saveStub = sinon.stub(userDAO, 'save');
       const encryptStub = sinon.stub(CryptoHelper, 'encrypt');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.save({ email: 'test@mailtest.com', password: '123' })
           .then()
@@ -254,10 +242,8 @@ describe('userBO', function() {
           });
     });
     it('Should return error when body not contains password', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       const saveStub = sinon.stub(userDAO, 'save');
       const encryptStub = sinon.stub(CryptoHelper, 'encrypt');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.save({ email: 'test@mailtest.com', name: 'test' })
           .then()
@@ -276,7 +262,6 @@ describe('userBO', function() {
           });
     });
     it('Should return a user when entity are correct', function() {
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       // eslint-disable-next-line
       const encryptedPassword = 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19';
 
@@ -307,7 +292,6 @@ describe('userBO', function() {
             creationDate: date,
           });
 
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
       parseUserStub
           .withArgs({
             _id: '5c088673fb2f579adcca9ed1',
@@ -347,7 +331,6 @@ describe('userBO', function() {
     it('Should return a error when entity already exist', function() {
       // eslint-disable-next-line
       const encryptedPassword = 'efb0dd98ad3df96b06ce7fc361b2938826e9ccbac0cf31dba3c690b447254d19';
-      const getAllStub = sinon.stub(userDAO, 'getAll');
       getAllStub
           .withArgs({
             email: 'test@mailtest.com',
@@ -365,8 +348,6 @@ describe('userBO', function() {
       const encryptStub = sinon.stub(CryptoHelper, 'encrypt');
 
       const saveStub = sinon.stub(userDAO, 'save');
-
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO
           .save({
@@ -395,7 +376,6 @@ describe('userBO', function() {
   describe('getById', function() {
     it('should return error when body does not exist', function() {
       const getByIdStub = sinon.stub(userDAO, 'getById');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.getById()
           .then()
@@ -413,7 +393,6 @@ describe('userBO', function() {
     it('should return error when body does not contains the field id',
         function() {
           const getByIdStub = sinon.stub(userDAO, 'getById');
-          const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
           return userBO.getById({})
               .then()
@@ -432,7 +411,6 @@ describe('userBO', function() {
       getByIdStub
           .withArgs('5bbead798c2a8a92339e88b7')
           .returns({});
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.getById({ id: '5bbead798c2a8a92339e88b7' })
           .then(function(user) {
@@ -455,7 +433,7 @@ describe('userBO', function() {
             isEnabled: true,
             creationDate: date,
           });
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
+
       parseUserStub
           .withArgs({
             _id: '5bbead798c2a8a92339e88b8',
@@ -490,7 +468,6 @@ describe('userBO', function() {
   describe('update', function() {
     it('Should return error when body does not exist', function() {
       const updateStub = sinon.stub(userDAO, 'update');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.update()
           .then()
@@ -507,7 +484,6 @@ describe('userBO', function() {
 
     it('Should return error when body does contains id', function() {
       const updateStub = sinon.stub(userDAO, 'update');
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
 
       return userBO.update({ name: 'tests' })
           .then()
@@ -537,7 +513,6 @@ describe('userBO', function() {
             modificationDate: date,
           });
 
-      const parseUserStub = sinon.stub(ModelHelper, 'parseUser');
       parseUserStub
           .withArgs({
             _id: '5c088673fb2f579adcca9ed1',
@@ -630,7 +605,7 @@ describe('userBO', function() {
           .then(function(users) {
             expect(users.length).to.be.equal(0);
             expect(getAllStub.callCount).to.be.equal(1);
-            expect(parseTransactionStub.callCount).to.be.equals(1);
+            expect(parseUserStub.callCount).to.be.equals(1);
           });
     });
     it('Should return a users', function() {
@@ -657,6 +632,24 @@ describe('userBO', function() {
 
       parseUserStub
           .withArgs([
+            {
+              _id: '5bbead798c2a8a92339e88b8',
+              name: 'test',
+              email: 'test@mailtest.com',
+              password: 'test',
+              isEnabled: true,
+              creationDate: date,
+            },
+            {
+              _id: '5bbead798c2a8a92339e88b9',
+              name: 'test 2',
+              email: 'test2@mailtest.com',
+              password: 'test',
+              isEnabled: true,
+              creationDate: date,
+            },
+          ])
+          .returns([
             {
               id: '5bbead798c2a8a92339e88b8',
               name: 'test',

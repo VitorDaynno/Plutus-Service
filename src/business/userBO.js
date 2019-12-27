@@ -229,5 +229,29 @@ module.exports = function(dependencies) {
             });
       });
     },
+
+    getAll: function(body) {
+      logger.info('The getAll users started');
+      return new Promise(function(resolve, reject) {
+        const chain = Promise.resolve();
+        chain
+            .then(function() {
+              const filter = { isEnabled: true };
+              return dao.getAll(filter);
+            })
+            .then(function(users) {
+              return modelHelper.parseUser(users);
+            })
+            .then(function(users) {
+              logger
+                  .info(`The parsed users returned:${JSON.stringify(users)}`);
+              resolve(users);
+            })
+            .catch(function(error) {
+              logger.error('An error occurred: ', error);
+              reject(error);
+            });
+      });
+    },
   };
 };
