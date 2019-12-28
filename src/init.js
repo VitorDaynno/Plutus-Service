@@ -1,4 +1,4 @@
-const logger = require('../config/logger')('Init');
+const logger = require('./config/logger')('Init');
 const BOFactory = require('./factories/factoryBO');
 
 module.exports = function() {
