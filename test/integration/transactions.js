@@ -14,6 +14,7 @@ describe('transactions', function() {
   let validToken;
   let validAccount;
   let transactionId;
+  let date;
   // eslint-disable-next-line
   const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImlkIjoiMTEyIiwiaWF0IjoxNTE2MjM5MDIyfQ.RJBEFPnHm-t8-aMeHNkC7n9RocfTOHyKVCBWU2ogOTs'
 
@@ -321,7 +322,7 @@ describe('transactions', function() {
             return request(server)
                 .delete('/v1/transactions/error')
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${invalidtoken}`)
+                .set('Authorization', `Bearer ${invalidToken}`)
                 .expect('Content-Type', /json/)
                 .expect(403);
           });
@@ -423,6 +424,7 @@ describe('transactions', function() {
             });
       });
       it('Should return transaction with valid entity', function() {
+        date = new Date().toISOString();
         return request(server)
             .post('/v1/transactions')
             .set('Accept', 'application/json')
@@ -432,7 +434,7 @@ describe('transactions', function() {
               description: 'test',
               value: -45.0,
               categories: ['test'],
-              purchaseDate: new Date(),
+              purchaseDate: date,
               account: validAccount.id,
             })
             .expect(201)
@@ -455,7 +457,7 @@ describe('transactions', function() {
               expect(response.body.value).to.be.equal(-45);
               expect(response.body.categories).to.be.eqls(['test']);
               expect(response.body.purchaseDate).to.be.equal(date);
-              expect(response.body.account).to.be.equal(validAccount.id);
+              expect(response.body.account.id).to.be.equal(validAccount.id);
             });
       });
       it('Should return transaction when updated value', function() {
@@ -473,7 +475,7 @@ describe('transactions', function() {
               expect(response.body.value).to.be.equal(-522);
               expect(response.body.categories).to.be.eqls(['test']);
               expect(response.body.purchaseDate).to.be.equal(date);
-              expect(response.body.account).to.be.equal(validAccount.id);
+              expect(response.body.account.id).to.be.equal(validAccount.id);
             });
       });
       it('Should return transaction when updated categories', function() {
@@ -491,7 +493,7 @@ describe('transactions', function() {
               expect(response.body.value).to.be.equal(-522);
               expect(response.body.categories).to.be.eqls(['test', 'category']);
               expect(response.body.purchaseDate).to.be.equal(date);
-              expect(response.body.account).to.be.equal(validAccount.id);
+              expect(response.body.account.id).to.be.equal(validAccount.id);
             });
       });
       it('Should return transaction when updated purchaseDate', function() {
@@ -509,7 +511,7 @@ describe('transactions', function() {
               expect(response.body.value).to.be.equal(-522);
               expect(response.body.categories).to.be.eqls(['test', 'category']);
               expect(response.body.purchaseDate).to.be.equal(date);
-              expect(response.body.account).to.be.equal(validAccount.id);
+              expect(response.body.account.id).to.be.equal(validAccount.id);
             });
       });
       it('Should return a account when inserting with success', function() {
@@ -539,7 +541,7 @@ describe('transactions', function() {
               expect(response.body.value).to.be.equal(-522);
               expect(response.body.categories).to.be.eqls(['test', 'category']);
               expect(response.body.purchaseDate).to.be.equal(date);
-              expect(response.body.account).to.be.equal(validAccount.id);
+              expect(response.body.account.id).to.be.equal(validAccount.id);
             });
       });
       it('Should return success when deleted a transaction', function() {

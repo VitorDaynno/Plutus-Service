@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "istanbul cover --reporter=html ./node_modules/mocha/bin/_mocha -- -R spec --recursive"
+    "test": "istanbul cover --reporter=html ./node_modules/mocha/bin/_mocha -- -R spec --recursive --exit"
   },
   "repository": {
     "type": "git",
