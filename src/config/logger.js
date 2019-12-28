@@ -8,7 +8,7 @@ const { Console, File } = transports;
 module.exports = (filename) => {
   const myFormat = printf(({ level, message, timestamp }) => {
     const format = filename ?
-      `${level}: [${timestamp}][${filename}]${message}` :
+      `${level}: [${timestamp}][${filename}] ${message}` :
       `${level}: [${timestamp}]${message}`;
     return format;
   });
