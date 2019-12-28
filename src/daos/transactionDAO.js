@@ -73,6 +73,33 @@ module.exports = function(dependencies) {
                         }
                     });
             });
-        }
+        },
+
+        update: function(id, user) {
+            return new Promise(function(resolve, reject){
+                logger.info('[TransactionDAO] Updating transaction by id ' + id);
+                if (!id || id === ''){
+                    logger.error('[TransactionDAO] Id is empty');
+                    reject();
+                }
+                if (Object.keys(user).length === 0){
+                    logger.error('[TransactionDAO] transaction is empty');
+                    reject();
+                }
+                transactionModel.findByIdAndUpdate(id, {$set: user}, {new: true})
+                    .then(function(user){
+                        logger.info('[TransactionDAO] transaction updated by id ' + id);
+                        resolve(user);
+                    })
+                    .catch(function(error){
+                        logger.error('[TransactionDAO] An error occurred: ', error);
+                        if (error.name === 'CastError' || error.name === 'ValidatorError'){
+                            reject({code: 422, message: error.message});
+                        } else {
+                            reject({code: 500, message: error.message});
+                        }
+                    });
+            });
+        },
     };
 };

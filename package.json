@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "istanbul cover --reporter=html ./node_modules/mocha/bin/_mocha -- -R spec --recursive"
+    "test": "istanbul cover --reporter=html ./node_modules/mocha/bin/_mocha -- -R spec --recursive --exit"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/VitorDaynno/Plutus-Service#readme",
   "dependencies": {
+    "eslint-config-google": "0.14.0",
     "express": "4.16.3",
     "express-load": "1.1.16",
     "jsonwebtoken": "8.3.0",

@@ -1,9 +1,13 @@
-var http = require('http');
-var app = require('./config/express')();
-          require('./config/database.js')();
+const http = require('http');
+const app = require('./config/express')();
+const database = require('./config/database.js');
+const init = require('./init');
 
-var server = http.createServer(app).listen(app.get('port'),function (){
-    console.log('Express is running on port now ' + app.get('port'));
+database();
+init();
+
+const server = http.createServer(app).listen(app.get('port'), function() {
+  console.log('Express is running on port now ' + app.get('port'));
 });
 
 module.exports = server;

@@ -4,7 +4,9 @@
         "es6": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "google"
+    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -13,5 +15,8 @@
         "ecmaVersion": 2018
     },
     "rules": {
+        "require-jsdoc" : 0,
+        "object-curly-spacing": [2, "always"],
+        "arrow-spacing": ["error", { "before": true, "after": true }]
     }
 }

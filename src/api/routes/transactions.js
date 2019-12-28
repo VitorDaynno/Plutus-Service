@@ -1,13 +1,14 @@
-var Helper = require('../../helpers/jwtHelper');
+const Helper = require('../../helpers/jwtHelper');
 
 module.exports = function(app) {
-    var controller = app.controllers.transactions;
-    var helper = new Helper();
+  const controller = app.controllers.transactions;
+  const helper = new Helper();
 
-    app.route('/v1/transactions')
-        .post(helper.verifyToken, controller.add)
-        .get(helper.verifyToken, controller.getAll);
-    
-    app.route('/v1/transactions/:id')
-        .delete(helper.verifyToken, controller.delete);
+  app.route('/v1/transactions')
+      .post(helper.verifyToken, controller.add)
+      .get(helper.verifyToken, controller.getAll);
+
+  app.route('/v1/transactions/:id')
+      .put(helper.verifyToken, controller.update)
+      .delete(helper.verifyToken, controller.delete);
 };
